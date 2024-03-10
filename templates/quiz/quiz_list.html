@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock title %}
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+
+<div id="input-nav">
+    <a href="{% url 'home' %}" class="primary1">Home</a> <i>&rsaquo;</i> 
+    <a href="{% url 'programs' %}" class="primary1"> Programs</a> <i>&rsaquo;</i> 
+    <a href="{% url 'program_detail' pk=1 %}" class="primary1"> {{ course.program }}</a> <i>&rsaquo;</i> 
+    <a href="{{ course.get_absolute_url }}" class="primary1"> {{ course }}</a> <i>&rsaquo;</i> Quiz List
+</div>
+
+<div class="container">
+
+    {% if messages %}
+        <div id="popup-box-messages">
+            <div class="box-messages">
+                <a id="popup-btn-messages" class="btn btn-light"><i class="fas fa-times"></i></a><br><br>
+                {% for message in messages %}
+                    <div class="alert alert-{{message.tags}}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <style>.bg-light-warning{background-color: rgb(252, 217, 111) !important;}</style>
+
+    <div class="header-title-xl text-center">Quiz list of {{ course }}</div>
+    <div class="title-line mb-5"></div>
+
+    {% if request.user.is_superuser or request.user.is_lecturer %}
+        <a class="btn btn-outline-primary br-2 mb-4" href="{% url 'quiz_create' course.slug %}">&plus; Add Quiz</a>
+    {% endif %}
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Quiz Title</th>
+                    <th>Category</th>
+                    <th>Number of Questions</th>
+                    <th>Description</th>
+                    {% if request.user.is_superuser or request.user.is_lecturer %}
+                    <th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                        <th>Take Quiz</th>
+                    </th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for quiz in quizzes %}
+                    <tr>
+                        <td>{{ quiz.title|title }}</td>
+                        <td>{{ quiz.category|title }}</td>
+                        <td>{{ quiz.get_questions.count }}</td>
+                        <td>{{ quiz.description }}</td>
+                        {% if request.user.is_superuser or request.user.is_lecturer %}
+                        <td>
+                            <td>
+                                <a href="{% url 'quiz_update' slug=course.slug pk=quiz.id %}" class=""><i class="fas fa-pencil-alt"></i></a>
+                            </td>
+                            <td>
+                                <a href="{% url 'quiz_delete' slug=course.slug pk=quiz.id %}" class=""><i class="fas fa-trash-alt"></i></a>
+                            </td>
+                        </td>
+
+                        {% endif %}
+                        <td>
+                            <a href="{% url 'quiz_take' pk=course.pk slug=quiz.slug %}" class="btn btn-sm y"><i class="fas fa-play"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

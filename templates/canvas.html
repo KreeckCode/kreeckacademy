@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Activity Tracking</title>
+  <style>
+    #left-sign {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 48px;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>User Activity Tracking</h1>
+
+  <div id="left-sign">&#8592;</div>
+
+  <script>
+    var leaveCount = 0;
+    var leftSign = document.getElementById("left-sign");
+
+    function showLeftSign() {
+      leftSign.style.display = "block";
+      setTimeout(function () {
+        leftSign.style.display = "none";
+      }, 3000); // Hide the sign after 3 seconds
+    }
+
+    // Check for browser support
+    if (typeof document.hidden === "undefined") {
+      console.log("Page Visibility API is not supported in this browser.");
+    } else {
+      // Handle the visibility change event
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "hidden") {
+          // User has switched tabs or minimized the window
+          leaveCount++;
+          showLeftSign();
+          console.log("User has left the page. Leaves Count: " + leaveCount);
+        } else if (document.visibilityState === "visible") {
+          // User is back on the page
+          console.log("User is back on the page.");
+        }
+      });
+    }
+  </script>
+</body>
+</html>

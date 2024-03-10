@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock title %}
+{% load static %}
+
+{% block content %}
+
+<div id="input-nav"><a href="{% url 'home' %}" class="primary1">Home</a> <i>&rsaquo;</i> Manage Score</div>
+
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'error' %}
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>{{ message }}
+            </div>
+        {% else %}
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>{{ message }}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<br>
+<div class="title"><i class="fas fa-table"></i>Manage Score</div>
+<div class="title-line"></div><br>
+
+<div class="row">
+    <div class="col-md-8 p-0 mx-auto">
+        <p class="form-title">
+            {{ current_semester }} Semester - <i class="result-title">{{ current_session }}</i>
+        </p><br>
+        <div class="container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Course Code</th>
+                        <th>Course Name</th>
+                        <th>Course Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                        <tr>
+                            <td><a href="{% url 'add_score_for' course.id %}" title="{{ course.title }}">{{ course.code }}</a></td>
+                            <td>{{ course.title }}</td>
+                            <td>{{ course.summary|truncatechars:50 }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center"><i class="far fa-frown fa-1x"></i> No courses available.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <!-- <div class="drop-down">
+                <a class="add-button" href="#">Select Course Here <i class="fas fa-angle-down"></i></a>
+
+                <div class="content">
+                    <div class="content-a">
+                        {% for course in courses %}
+                            <a href="{% url 'add_score_for' course.id %}" title="{{ course.title }}">{{ course.code }}</a>
+                        {% empty %}
+                            <p><i class="far fa-frown"></i>No course.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div> -->
+            <p>To manage score first select your course in the buttom above.</p>
+        </div>
+    </div>
+</div>
+{% endblock content %}
