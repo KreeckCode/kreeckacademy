@@ -16,6 +16,14 @@ from SMS.settings import DEBUG
 # ########################################################
 
 
+#@cache_page(60 * 100 )
+def landing(request):
+    context = {
+        'title': 'kreeck academy | Connecting students with coding experts'
+    }
+    return render(request, 'landing.html', context)
+
+
 
 @login_required
 def home_view(request):
