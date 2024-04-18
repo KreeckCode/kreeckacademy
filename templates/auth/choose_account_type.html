@@ -1,0 +1,57 @@
+{% extends 'base/base_auth.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <div class="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
+        <div class="d-flex align-items-center justify-content-center w-100">
+            <div class="row justify-content-center w-100">
+                <div class="col-md-8 col-lg-6 col-xxl-3">
+                    <div class="card mb-0">
+                        <div class="card-body">
+                            <a href="" class="text-nowrap logo-img text-center d-block py-3 w-100">
+                                <img src="{% static 'images/kreecklogo_black.svg' %}" width="100" alt="">
+                            </a>
+                            <h5 class="text-center mb-4">Choose Account Type</h5>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="card text-center mb-3">
+                                        <div class="card-body developer-card">
+                                            <h5 class="card-title">Developer</h5>
+                                            <p class="card-text">Create an account as a developer</p>
+                                            <form method="post" action="{% url 'auth:developer_registration' %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-primary">Select</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="card text-center mb-3">
+                                        <div class="card-body student-card">
+                                            <h5 class="card-title">Student</h5>
+                                            <p class="card-text">Create an account as a student</p>
+                                            <form method="post" action="{% url 'auth:student_registration' %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-primary">Select</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Redirect after 10 seconds
+    setTimeout(function() {
+        window.location.href = "{% url 'auth:choose_account_type' %}";
+    }, 10000); // 10000 milliseconds = 10 seconds
+</script>
+{% endblock content %}

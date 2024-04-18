@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponseRedirect
@@ -85,7 +86,7 @@ def add_score_for(request, id):
             ids = ids + (str(key),)  # gather all the all students id (i.e the keys) in a tuple
         for s in range(0, len(ids)):  # iterate over the list of student ids gathered above
             student = TakenCourse.objects.get(id=ids[s])
-            # print(student)
+           
             # print(student.student)
             # print(student.student.department.id)
             courses = Course.objects.filter(level=student.student.level).filter(program__pk=student.student.department.id).filter(
@@ -343,14 +344,120 @@ def result_sheet_pdf_view(request, id):
 @login_required
 @student_required
 def course_registration_form(request):
+    """
+    Generates a modern-styled course registration form for a student.
+
+    This function retrieves the current semester, current session, and courses taken by the student.
+    Then it creates a PDF document with the student's registration details and course information.
+    The PDF includes the school logo, student photo, registration details, and a list of courses taken.
+
+    Parameters:
+    - request: The HTTP request object.
+
+    Returns:
+    - HttpResponse: An HTTP response containing the generated PDF file.
+    """
     current_semester = Semester.objects.get(is_current_semester=True)
     current_session = Session.objects.get(is_current_session=True)
     courses = TakenCourse.objects.filter(student__student__id=request.user.id)
     fname = request.user.username + '.pdf'
     fname = fname.replace("/", "-")
-    # flocation = '/tmp/' + fname
-    # print(MEDIA_ROOT + "\\" + fname)
     flocation = settings.MEDIA_ROOT + "/registration_form/" + fname
+    
+    # Check if directory exists, if not create it
+    directory = os.path.dirname(flocation)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    # Create a PDF document if it doesn't exist
+    if not os.path.exists(flocation):
+        doc = SimpleDocTemplate(flocation, rightMargin=15, leftMargin=15, topMargin=0, bottomMargin=0)
+        styles = getSampleStyleSheet()
+
+        Story = [Spacer(1, 0.5)]
+        Story.append(Spacer(1, 0.4 * inch))
+
+        # Add school name
+        school_style = styles["Title"]
+        school_style.alignment = 1  # Center alignment
+        school_title = "<font size=16 color=navy>KREECK ACADEMY</font>"
+        Story.append(Paragraph(school_title, school_style))
+        Story.append(Spacer(1, 0.2 * inch))
+
+        # Add department name
+        department_style = styles["Title"]
+        department_style.alignment = 1  # Center alignment
+        department_title = "<font size=14>SCHOOL OF COMPUTING</font>"
+        Story.append(Paragraph(department_title, department_style))
+        Story.append(Spacer(1, 0.3 * inch))
+
+        # Add registration form title
+        title_style = styles["Heading1"]
+        title_style.alignment = 1  # Center alignment
+        reg_form_title = "<u>STUDENT COURSE REGISTRATION FORM</u>"
+        Story.append(Paragraph(reg_form_title, title_style))
+        Story.append(Spacer(1, 0.3 * inch))
+
+        # Add registration details
+        reg_details = [
+            f"<b>Registration Number:</b> {request.user.username.upper()}",
+            f"<b>Name:</b> {request.user.get_full_name().upper()}",
+            f"<b>Session:</b> {current_session.session.upper()}",
+            f"<b>Level:</b> {Student.objects.get(student__pk=request.user.id).level}"
+        ]
+        reg_details_style = styles["Normal"]
+        reg_details_style.alignment = 0  # Left alignment
+        for detail in reg_details:
+            Story.append(Paragraph(detail, reg_details_style))
+            Story.append(Spacer(1, 0.1 * inch))
+
+        # Add courses table headers
+        table_data = [('S/No', 'Course Code', 'Course Title', 'Unit', 'Name, Signature of course lecturer & Date')]
+        table_style = TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+        ])
+        table_data.extend([('', '', '', '', '')])  # Empty row for spacing
+        Story.append(Table(table_data, style=table_style))
+
+        # Add courses taken by the student
+        count = 1
+        for course in courses:
+            course_data = [
+                count,
+                course.course.code.upper(),
+                course.course.title,
+                course.course.credit,
+                ''
+            ]
+            Story.append(Table([course_data], style=table_style))
+            count += 1
+
+        # Add student certification
+        cert_text = ("CERTIFICATION OF REGISTRATION: I certify that "
+                     f"<b>{request.user.get_full_name().upper()}</b> "
+                     f"has been duly registered for the "
+                     f"<b>{Student.objects.get(student__pk=request.user.id).level} level</b> "
+                     "of study in the department of COMPUTING & PROGRAMMING. "
+                     "Courses and credits registered are as approved by the senate of the Kreeck Academy")
+        Story.append(Paragraph(cert_text, reg_details_style))
+
+        # Build the PDF document
+        doc.build(Story)
+
+    # Save the PDF file and return as HTTP response
+    fs = FileSystemStorage(settings.MEDIA_ROOT + "/registration_form")
+    with fs.open(fname) as pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'inline; filename=' + fname
+        return response
+    return response
+
+"""
     doc = SimpleDocTemplate(flocation, rightMargin=15, leftMargin=15, topMargin=0, bottomMargin=0)
     styles = getSampleStyleSheet()
 
@@ -568,3 +675,4 @@ def course_registration_form(request):
         response['Content-Disposition'] = 'inline; filename='+fname+''
         return response
     return response
+"""
