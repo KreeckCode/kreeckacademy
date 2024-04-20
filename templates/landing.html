@@ -9,7 +9,7 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
     <meta name="author" content="kreeck.com" />
-    <link rel="shortcut icon" href="{% static 'img/logo.png' %}" />
+    <link rel="shortcut icon" href="{% static 'img/kreeck_box_logo.svg' %}" />
 
     <meta name="description" content="" />
     <meta name="keywords" content="bootstrap, bootstrap4" />
@@ -18,14 +18,14 @@
   <meta property="og:title" content="Kreeck Academy">
   <meta property="og:description" content="Your Path to Knowledge and Skills">
   <meta property="og:url" content="https://academy.kreeck.com">
-  <meta property="og:image" content="{% static 'img/logo.png' %}">
+  <meta property="og:image" content="{% static 'img/kreeck_box_logo.svg' %}">
   <meta property="og:type" content="website">
   
   <!-- Twitter Card meta tags for Twitter sharing -->
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Kreeck Academy">
   <meta name="twitter:description" content="Your Path to Knowledge and Skills">
-  <meta name="twitter:image" content="{% static 'img/logo.png' %}">
+  <meta name="twitter:image" content="{% static 'img/kreeck_box_logo.svg' %}">
   <meta name="twitter:url" content="https://academy.kreeck.com">
 
     <!-- Bootstrap CSS -->
@@ -59,6 +59,17 @@
       .announcement h5{
         font-size: 15px;
       }
+      .nav_logo_mobile{
+        display: none;
+      }
+      @media (max-width: 765px) {
+        .nav_logo_mobile{
+          display: block;
+        }
+        .nav_logo{
+          display: none;
+        }
+      }
      </style>
   </head>
 
@@ -71,9 +82,13 @@
       arial-label="kreeck navigation bar"
     >
       <div class="container">
-        <a class="navbar-brand" href="{% url 'landing_page' %}"
-          >Kreeck Academy<span>.</span></a
-        >
+        <a class="navbar-brand nav_logo" href="{% url 'landing_page' %}"
+          >Kreeck Academy<span>.</span></a>
+
+          <a class="navbar-brand nav_logo_mobile" href="{% url 'landing_page' %}"
+          >
+          <img src="{% static 'img/kreeck_light_logo.svg' %}" style="margin-left: 0.6rem;" alt="" height="auto" width="40px" >
+        </a>
 
         <button
           class="navbar-toggler"
@@ -90,8 +105,8 @@
         <div class="collapse navbar-collapse" id="navbarskreeck">
           <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
             {% if request.user.is_superuser %}
-            <li><a class="nav-link active" href="" onclick="openOopsModal()">Courses</a></li>
-			      <li><a class="nav-link" href="" onclick="openOopsModal()">Blog</a></li>
+            <li><a class="nav-link active"  onclick="openOopsModal()">Courses</a></li>
+			      <li><a class="nav-link"  onclick="openOopsModal()">Blog</a></li>
             {% endif %}
             <li><a class="nav-link" href="{% url 'home' %}">Dashboard</a></li>
           </ul>
@@ -119,8 +134,8 @@
                 Knowledge, Growth, and Success
               </p>
               <p>
-                <button href="" class="btn btn-secondary me-2" onclick="openOopsModal()">Enrol Now</button>
-                <a href="{% url 'home' %}" class="btn btn-white-outline">Dashboard</a>
+                <button class="btn btn-secondary me-2 hero-button" onclick="openOopsModal()">Enrol Now</button>
+                <a href="{% url 'home' %}" class="btn btn-white-outline hero-button">Dashboard</a>
               </p>
             </div>
           </div>
@@ -223,13 +238,13 @@
               <div
                 class="card-custom-img"
                 style="
-                  background-image: url({% static 'img/asserts/Coding-vs-programming.jpg' %});
+                  background-image: url({% static 'img/devops.jpg' %});
                 "
               ></div>
               <div class="card-custom-avatar">
                 <img
                   class="img-fluid" style="background-color: white;"
-                  src="{% static 'img/asserts/IMG_3269.jpg' %}"
+                  src="{% static 'img/avatar.jpg' %}"
                   alt="Avatar"
                 />
               </div>
@@ -248,8 +263,8 @@
                 class="card-footer"
                 style="background: inherit; border-color: inherit"
               >
-                <button href="#" class="btn btn-primary" onclick="openOopsModal()"> View More</button>
-                <button href="#" class="btn btn-secondary me-2" onclick="openOopsModal()">Enrol Now</button>
+                <button  class="btn btn-primary" onclick="openOopsModal()"> View More</button>
+                <button  class="btn btn-secondary me-2" onclick="openOopsModal()">Enrol Now</button>
               </div>
             </div>
             <!-- Copy until here -->
@@ -260,13 +275,13 @@
 				<div
                 class="card-custom-img"
                 style="
-                  background-image: url({% static 'img/asserts/Coding-vs-programming.jpg' %});
+                  background-image: url({% static 'img/uiux.jpg' %});
                 "
               ></div>
               <div class="card-custom-avatar">
                 <img
                   class="img-fluid" style="background-color: white;"
-                  src="{% static 'img/asserts/IMG_3269.jpg' %}"
+                  src="{% static 'img/avatar2.jpg' %}"
                   alt="Avatar"
                 />
               </div>
@@ -286,8 +301,8 @@
                 class="card-footer"
                 style="background: inherit; border-color: inherit"
               >
-                <a href="#" class="btn btn-primary" onclick="openOopsModal()">View More</a>
-                <a href="#" class="btn btn-secondary me-2" onclick="openOopsModal()">Enrol Now</a>
+                <a  class="btn btn-primary" onclick="openOopsModal()">View More</a>
+                <a  class="btn btn-secondary me-2" onclick="openOopsModal()">Enrol Now</a>
               </div>
             </div>
             <!-- Copy until here -->
@@ -298,20 +313,20 @@
 				<div
                 class="card-custom-img"
                 style="
-                  background-image: url({% static 'img/asserts/Coding-vs-programming.jpg' %});
+                  background-image: url({% static 'img/fullstack.jpg' %});
                 "
               ></div>
               <div class="card-custom-avatar">
                 <img
                   class="img-fluid" style="background-color: white;"
-                  src="{% static 'img/asserts/IMG_3269.jpg' %}"
+                  src="{% static 'img/avatar3.jpg' %}"
                   alt="Avatar"
                 />
               </div>
               <div class="card-body" style="overflow-y: auto">
-                <h4 class="card-title">Backend Development</h4>
+                <h4 class="card-title">Fullstack Development</h4>
                 <p class="card-text">
-                  With the increasing complexity of websites backend programming grows bigger and bigger
+                  With the increasing complexity of websites fullstack development grows bigger and bigger
                   <a
                     href="https://getbootstrap.com/docs/4.0/components/card/#card-decks"
                     target="_blank"
@@ -324,8 +339,8 @@
                 class="card-footer"
                 style="background: inherit; border-color: inherit"
               >
-                <button href="#" class="btn btn-primary" onclick="openOopsModal()">View More</button>
-                <a href="#" class="btn btn-secondary me-2" onclick="openOopsModal()">Enrol Now</a>
+                <button  class="btn btn-primary" onclick="openOopsModal()">View More</button>
+                <a  class="btn btn-secondary me-2" onclick="openOopsModal()">Enrol Now</a>
               </div>
             </div>
             <!-- Copy until here -->
@@ -428,61 +443,65 @@
 
     
     <!--Section: FAQ-->
+    
 	<div class="faq">
 		<h3 class="text-center mb-4 pb-2 text-primary fw-bold">FAQ</h3>
-		<p class="text-center mb-5">
-		Find the answers for the most frequently asked questions below
-		</p>
-	
-		<div class="row">
-		<div class="col-md-6 col-lg-4 mb-4">
-			<h6 class="mb-3 text-primary"><i class="far fa-paper-plane text-primary pe-2"></i> Can i learn 
-        programming on kreeck?</h6>
-			<p>
-			<strong><u>Absolutely!</u></strong> Our courses are <strong>free</strong> and beginner friendly, meaning you dont need any prior
-      programming or computer experience to start learning.
-			</p>
-		</div>
-	
-		<div class="col-md-6 col-lg-4 mb-4">
-			<h6 class="mb-3 text-primary"><i class="fas fa-pen-alt text-primary pe-2"></i> Is kreeck free for everyone?</h6>
-			<p>
-			<strong><u>Yes, it is!</u></strong> with support from our <strong>Sponsores & NGO partners</strong> we are able to provide high quality courses 
-      for <Strong>free</Strong>.
-			</p>
-		</div>
-	
-		<div class="col-md-6 col-lg-4 mb-4">
-			<h6 class="mb-3 text-primary"><i class="fas fa-user text-primary pe-2"></i> How many coding courses does kreeck offer?
-			</h6>
-			<p>
-			Currently, we only offer 4 Beginner to intermediate courses: DevOps, UI UX Design and Backend Development with Python.
-			</p>
-		</div>
-	
-		<div class="col-md-6 col-lg-4 mb-4">
-			<h6 class="mb-3 text-primary"><i class="fas fa-rocket text-primary pe-2"></i> What is Kreeck?
-			</h6>
-			<p>
-			<strong>Kreeck</strong> is a software company based in Pretoria Gauteng it is a parent company of <strong><u>Kreeck Academy</u></strong> 
-      which is an online programming institution.
-			</p>
-		</div>
-	
-		<div class="col-md-6 col-lg-4 mb-4">
-			<h6 class="mb-3 text-primary"><i class="fas fa-home text-primary pe-2"></i> Is kreeck Accredited?
-			</h6>
-			<p><strong><u>Unfortunately no</u>.</strong> kreeck offers short introduction courses. </p>
-		</div>
-	
-		<div class="col-md-6 col-lg-4 mb-4">
-			<h6 class="mb-3 text-primary"><i class="fas fa-book-open text-primary pe-2"></i> Does kreeck have student support?</h6>
-			<p>
-			Of course! We're always happy to on any programming related queries, Our large Discord community allowes upcoming developers to have 
-      a foundation in networking.
-			</p>
-		</div>
-		</div>
+    <div class="container">
+      <p class="text-center mb-5">
+        Find the answers for the most frequently asked questions below
+        </p>
+      
+        <div class="row">
+        <div class="col-md-6 col-lg-4 mb-4">
+          <h6 class="mb-3 text-primary"><i class="far fa-paper-plane text-primary pe-2"></i> Can i learn 
+            programming on kreeck?</h6>
+          <p>
+          <strong><u>Absolutely!</u></strong> Our courses are <strong>free</strong> and beginner friendly, meaning you dont need any prior
+          programming or computer experience to start learning.
+          </p>
+        </div>
+      
+        <div class="col-md-6 col-lg-4 mb-4">
+          <h6 class="mb-3 text-primary"><i class="fas fa-pen-alt text-primary pe-2"></i> Is kreeck free for everyone?</h6>
+          <p>
+          <strong><u>Yes, it is!</u></strong> with support from our <strong>Sponsores & NGO partners</strong> we are able to provide high quality courses 
+          for <Strong>free</Strong>.
+          </p>
+        </div>
+      
+        <div class="col-md-6 col-lg-4 mb-4">
+          <h6 class="mb-3 text-primary"><i class="fas fa-user text-primary pe-2"></i> How many coding courses does kreeck offer?
+          </h6>
+          <p>
+          Currently, we only offer 3 Beginner to Advanced courses: Development Operations(DevOps), UI UX Design and Fullstack Development with Python.
+          </p>
+        </div>
+      
+        <div class="col-md-6 col-lg-4 mb-4">
+          <h6 class="mb-3 text-primary"><i class="fas fa-rocket text-primary pe-2"></i> What is Kreeck?
+          </h6>
+          <p>
+          <strong>Kreeck</strong> is a software company based in Pretoria Gauteng it is a parent company of <strong><u>Kreeck Academy</u></strong> 
+          which is an online programming institution.
+          </p>
+        </div>
+      
+        <div class="col-md-6 col-lg-4 mb-4">
+          <h6 class="mb-3 text-primary"><i class="fas fa-home text-primary pe-2"></i> Is kreeck Accredited?
+          </h6>
+          <p><strong><u>Unfortunately no</u>.</strong> kreeck offers short introduction courses. </p>
+        </div>
+      
+        <div class="col-md-6 col-lg-4 mb-4">
+          <h6 class="mb-3 text-primary"><i class="fas fa-book-open text-primary pe-2"></i> Does kreeck have student support?</h6>
+          <p>
+          Of course! We're always happy to on any programming related queries, Our large Discord community allowes upcoming developers to have 
+          a foundation in networking.
+          </p>
+        </div>
+        </div>
+    </div>
+		
 	</div>
 	<!--Section: FAQ-->
 
@@ -777,8 +796,8 @@
 
             <div class="col-lg-6 text-center text-lg-end">
               <ul class="list-unstyled d-inline-flex ms-auto">
-                <li class="me-4"><a href="#" onclick="openTermsModal()">Terms &amp; Conditions</a></li>
-                <li><a href="#" onclick="openOopsModal()">Privacy Policy</a></li>
+                <li class="me-4"><a onclick="openTermsModal()">Terms &amp; Conditions</a></li>
+                <li><a  onclick="openOopsModal()">Privacy Policy</a></li>
               </ul>
             </div>
           </div>
