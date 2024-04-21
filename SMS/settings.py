@@ -71,6 +71,8 @@ PROJECT_APPS = [
     'search.apps.SearchConfig',
     'quiz.apps.QuizConfig',
     'blog.apps.BlogConfig',
+    'hackerthon'
+    
 ]
 
 
