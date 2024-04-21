@@ -8,7 +8,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', include('app.urls')),
     path('compiler/', include('compiler.urls')),
-    path('accounts/', include('accounts.urls')),
+    path('auth/', include('accounts.urls')),
     path('programs/', include('course.urls')),
     path('result/', include('result.urls')),
     path('search/', include('search.urls')),

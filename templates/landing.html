@@ -104,16 +104,23 @@
 
         <div class="collapse navbar-collapse" id="navbarskreeck">
           <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
-            {% if request.user.is_superuser %}
-            <li><a class="nav-link active"  onclick="openOopsModal()">Courses</a></li>
-			      <li><a class="nav-link"  onclick="openOopsModal()">Blog</a></li>
-            {% endif %}
-            <li><a class="nav-link" href="{% url 'home' %}">Dashboard</a></li>
+            <li><a class="nav-link active"  onclick="openOopsModal()">Hackerthons</a></li>
+            <li><a class="nav-link active"  onclick="openOopsModal()">Enterprise</a></li>
+            <li><a class="nav-link active"  onclick="openOopsModal()">About</a></li>
+            <li><a class="nav-link active" href="{% url 'home' %}">Login</a></li>
           </ul>
-
-          <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
-            <li><a class="btn btn-primary" href="{% url 'add_student' %}">Sign Up for Free!</a></li>
-          </ul>
+          
+          {% if request.user.is_authenticated %}
+              <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                  <li><a class="btn btn-primary" href="{% url 'home' %}">Dashboard</a></li>
+              </ul>
+          {% else %}
+              <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                  <li><a class="btn btn-primary" href="{% url 'add_student' %}">Sign Up for Free!</a></li>
+              </ul>
+          {% endif %}
+            
+          
         </div>
       </div>
     </nav>
