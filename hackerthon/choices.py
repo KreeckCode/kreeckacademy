@@ -1,25 +1,3 @@
-TOOL_CHOICES = [
-        ('XD', 'Adobe XD'),
-        ('FIG', 'Figma'),
-        ('PS', 'Adobe Photoshop'),
-        ('AI', 'Adobe illustrator'),
-        ('HTML', 'HTML'),
-        ('REACT', 'React'),
-        ('CSS', 'CSS'),
-        ('PY', 'Python'),
-        ('C#', 'C#'),
-        ('BOOT', 'Bootstrap'),
-        ('TAIL', 'Tailwind'),
-        ('ANG', 'Angular'),
-        ('AWS', 'AWS'),
-        ('DOC', 'Docker'),
-        ('GCP', 'Google Cloud Platform'),
-        ('AZURE', 'Microsoft Azure'),
-        ('API', 'API'),
-        ('GIT', 'Github & Git'),
-        ('PM', 'Postman'),
-    ]
-
 COUNTRY_CHOICES = [
     ('AF', 'Afghanistan'),
     ('AL', 'Albania'),

@@ -6,8 +6,29 @@ from accounts.models import User
 from hackerthon.utils import *
 from hackerthon.choices import *
 
-
+TOOL_CHOICES = [
+        ('XD', 'Adobe XD'),
+        ('FIG', 'Figma'),
+        ('PS', 'Adobe Photoshop'),
+        ('AI', 'Adobe illustrator'),
+        ('HTML', 'HTML'),
+        ('REACT', 'React'),
+        ('CSS', 'CSS'),
+        ('PY', 'Python'),
+        ('C#', 'C#'),
+        ('BOOT', 'Bootstrap'),
+        ('TAIL', 'Tailwind'),
+        ('ANG', 'Angular'),
+        ('AWS', 'AWS'),
+        ('DOC', 'Docker'),
+        ('GCP', 'Google Cloud Platform'),
+        ('AZURE', 'Microsoft Azure'),
+        ('API', 'API'),
+        ('GIT', 'Github & Git'),
+        ('PM', 'Postman'),
+    ]
 class Tool(models.Model):
+
     name = models.CharField(max_length=100, choices=TOOL_CHOICES)
 
     def __str__(self):
@@ -34,6 +55,12 @@ class Hackerthon(models.Model):
 
     def __str__(self):
         return self.title
+    
+def create_hackerthon_slug(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        instance.slug = slugify(instance.title)
+
+pre_save.connect(create_hackerthon_slug, sender=Hackerthon)
 
 class Participant(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -47,22 +74,16 @@ class Participant(models.Model):
     about = models.CharField(max_length=700)
     accepted = models.BooleanField(default=False)
     rejected = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"{self.hackerthon.title} - {self.country}"
-
-class UserRole(models.Model):
     ROLES = (
         ('Participant', 'Participant'),
         ('Master', 'Master'),
         ('Project Manager', 'Project Manager'),
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    hackerthon = models.ForeignKey(Hackerthon, on_delete=models.CASCADE)
-    role = models.CharField(max_length=20, choices=ROLES)
-
+    role = models.CharField(max_length=20, choices=ROLES, default="Participent")
+    
     def __str__(self):
-        return f"{self.user.username} - {self.hackerthon.title} - {self.role}"
+        return f"{self.first_name} {self.last_name} - {self.role} -  ({self.country})"
+
 
 class Upload(models.Model):
     title = models.CharField(max_length=100)
@@ -92,31 +113,3 @@ class Upload(models.Model):
     def delete(self, *args, **kwargs):
         self.file.delete()
         super().delete(*args, **kwargs)
-
-
-
-class UploadVideo(models.Model):
-    title = models.CharField(max_length=100)
-    slug = models.SlugField(blank=True, unique=True)
-    hackerthon = models.ForeignKey(Hackerthon, on_delete=models.CASCADE)
-    video = models.FileField(upload_to='hackerthon_videos/', validators=[FileExtensionValidator(['mp4', 'mkv', 'wmv', '3gp', 'f4v', 'avi', 'mp3'])])
-    summary = models.TextField(null=True, blank=True,)
-    duration = models.DurationField(null=True)
-    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
-
-    def __str__(self):
-        return str(self.title)
-
-    def get_absolute_url(self):
-        return reverse('video_single', kwargs={'slug': self.hackerthon.slug, 'video_slug': self.slug})
-
-    def delete(self, *args, **kwargs):
-        self.video.delete()
-        super().delete(*args, **kwargs)
-
-
-def video_pre_save_receiver(sender, instance, *args, **kwargs):
-    if not instance.slug:
-        instance.slug = unique_slug_generator(instance)
-
-pre_save.connect(video_pre_save_receiver, sender=UploadVideo)

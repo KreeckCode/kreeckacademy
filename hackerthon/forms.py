@@ -7,25 +7,23 @@ class HackerthonForm(forms.ModelForm):
         model = Hackerthon
         fields = ['title', 'description', 'tools', 'deadline', 'registration_deadline', 'price_description', 'location', 'price', 'sponsor', 'max_participants']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Retrieve all available tools from the database
+        available_tools = Tool.objects.all()
+        # Pass the actual objects of the tools as choices to the CheckboxSelectMultiple widget
+        self.fields['tools'].widget = forms.CheckboxSelectMultiple(choices=[(tool.id, tool.name) for tool in available_tools])
+
 class ParticipantForm(forms.ModelForm):
     class Meta:
         model = Participant
-        fields = ['first_name', 'last_name', 'phone', 'country', 'email', 'date_of_birth', 'about']
+        fields = ['first_name', 'last_name', 'phone', 'country', 'email', 'about', 'role']
 
 class UploadForm(forms.ModelForm):
     class Meta:
         model = Upload
         fields = ['title', 'file']
 
-class UploadVideoForm(forms.ModelForm):
-    class Meta:
-        model = UploadVideo
-        fields = ['title', 'video', 'summary', 'duration']
-
-class UserRoleForm(forms.ModelForm):
-    class Meta:
-        model = UserRole
-        fields = ['user', 'hackerthon', 'role']
 
 class ParticipantAcceptanceForm(forms.Form):
     ACCEPT_CHOICES = [(1, 'Accept'), (0, 'Reject')]
