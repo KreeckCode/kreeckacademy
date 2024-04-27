@@ -14,6 +14,7 @@ urlpatterns = [
     path('search/', include('search.urls')),
     path('quiz/', include('quiz.urls')),
     path('blog/', include('blog.urls')),
+    path('tinymce/', include('tinymce.urls')),
 
     #intergrading the restful APIS
     path('api/', include('accounts.api.urls', namespace='accounts-api')),  # Include the "accounts" app's URLs here

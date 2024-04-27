@@ -13,7 +13,18 @@
     <link rel="stylesheet" href="{% static 'css/video_style.css' %}">
     <link rel="shortcut icon" type="image/jpg" href="{% static 'img/kreeck_box_logo.svg' %}"/>
 
-    <style></style>
+    <!-- This is for syntax highlighting for my code -->
+    <link rel="stylesheet" href="{% static 'css/code.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/highlight.min.js"></script>
+
+    <style>
+        code {
+        font-family: 'Courier New', Courier, monospace;
+        background-color: #272727;
+        padding: 2px 4px;
+        border-radius: 4px;
+    }
+    </style>
 </head>
 
 <body>
@@ -69,6 +80,7 @@
                 <h5>Notes</h5>
             </div>
             <div class="notes">
+                
                 <p >{{ video.summary|safe }}</p>
             </div>
             
@@ -81,7 +93,7 @@
             <section class="document-playlist">
                 <h3 class="course-lessons-title">Course Documents</h3>
                 <div class="files">
-                    <!-- Document links will be added here dynamically -->
+                    
                 </div>
             </section>
         </section>
@@ -220,6 +232,11 @@
         createDocumentElement(doc, i);
     });
 
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            hljs.highlightAll();
+        });
     </script>
     
     </body>

@@ -38,7 +38,7 @@ body {
   padding: 0px;
   column-gap: 1%;
   margin: 0px 2% 0px 2%;
-  text-transform: capitalize;
+  /* text-transform: capitalize; */
 }
 
 
@@ -84,7 +84,6 @@ body {
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: #717171;
 }
 
 .document i {
@@ -268,14 +267,13 @@ a {
 }
 
 .notes-title {
-  color: #a0a0a0;
+  /* color: #a0a0a0; */
   padding: 15px 0px 5px 0px;
 }
 .notes {
   overflow: hidden;
   position: relative;
-  max-height: 5em;
-  color: #8d8d8d;
+  /* color: #8d8d8d; */
   padding-bottom: 15px;
 }
 input {
