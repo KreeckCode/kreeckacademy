@@ -277,7 +277,8 @@ class CourseAllocationFormView(CreateView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Assign Course | Kreeck Academy"
         return context
-#@cache_page(60 * 40 )
+
+
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required
 def course_allocation_view(request):

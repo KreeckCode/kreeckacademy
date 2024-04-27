@@ -59,6 +59,7 @@ THIRED_PARTY_APPS = [
     'rest_framework',
     'debug_toolbar',
     'crispy_forms',
+    "crispy_bootstrap4",
     'tinymce',
 ]
 
@@ -160,6 +161,8 @@ TINYMCE_DEFAULT_CONFIG = {
     'plugins': 'advlist autolink lists link image charmap print preview anchor',
     'toolbar': 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
 }
+
+
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -241,6 +244,7 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 # crispy config
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
