@@ -1,0 +1,553 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="author" content="kreeck.com" />
+    <link rel="shortcut icon" href="/static/img/kreeck_box_logo.svg" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap4" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Open Graph meta tags for social media sharing -->
+  <meta property="og:title" content="Kreeck Academy">
+  <meta property="og:description" content="Your Path to Knowledge and Skills">
+  <meta property="og:url" content="https://academy.kreeck.com">
+  <meta property="og:image" content="/static/img/kreeck_box_logo.svg">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter Card meta tags for Twitter sharing -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Kreeck Academy">
+  <meta name="twitter:description" content="Your Path to Knowledge and Skills">
+  <meta name="twitter:image" content="/static/img/kreeck_box_logo.svg">
+  <meta name="twitter:url" content="https://academy.kreeck.com">
+
+    <!-- Bootstrap CSS -->
+    <link href="/static/css/white.bootstrap.css" rel="stylesheet" />
+	<link rel="stylesheet" href="">
+    <link href="/static/css/white.theme.css" rel="stylesheet" />
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <title>Welcome | Kreeck Academy</title>
+    <style>
+      .instructor{
+        background-color: rgba(0,0,0,.125);
+        padding: 5% 0px 5% 0px;
+      }
+      .skills-logo {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 3.5vw; 
+      }
+
+      .skills-logo img {
+        max-width: 100%; /* Ensure images do not exceed container width */
+        height: auto; /* Maintain aspect ratio */
+      }
+      .course-summary-card{
+        background-color: #121B18;
+        border-radius: 20px;
+        padding: 3rem;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        align-items: flex-end;
+      }
+
+      .video{
+        border-radius: 20px;
+      }
+
+      .video img{
+        max-width: 100%; /* Ensure images do not exceed container width */
+        height: auto; /* Maintain aspect ratio */
+        border-radius: 20px;
+      }
+
+      .skill-card{
+        background-color: #121B18;
+        border-radius: 10px;
+        padding: 2rem;
+        color: white;
+        max-width: 26.33rem;
+        
+      }
+      
+      .skill-card .head{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .skill-cards{
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        
+      }
+
+      .why-choose-us{
+        padding: 3rem;
+        background-color: #EFEFEF;
+        color: #121B18;
+        border-radius: 20px;
+      }
+    </style>
+    <style>
+      .nav_logo_mobile{
+        display: none;
+      }
+      @media (max-width: 765px) {
+        .nav_logo_mobile{
+          display: block;
+        }
+        .nav_logo{
+          display: none;
+        }
+      }
+     </style>
+  </head>
+
+  <body>
+    <!-- This will show an announcement if there is any -->
+    
+    <!-- Start Header/Navigation -->
+    <nav
+      class="custom-navbar navbar navbar navbar-expand-md navbar-light"
+      arial-label="kreeck navigation bar"
+    >
+      <div class="container">
+        <a class="navbar-brand nav_logo" href="{% url 'landing_page' %}"
+          >Kreeck Academy<span>.</span></a>
+
+          <a class="navbar-brand nav_logo_mobile" href="{% url 'landing_page' %}"
+          >
+          <img src="/static/img/kreeck_dark_logo.svg" style="margin-left: 0.6rem;" alt="" height="auto" width="40px" >
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarskreeck"
+          aria-controls="navbarskreeck"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarskreeck">
+          <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+            <li><a class="nav-link active"  onclick="openOopsModal()">Hackerthons</a></li>
+            <li><a class="nav-link active"  onclick="openOopsModal()">Enterprise</a></li>
+            <li><a class="nav-link active"  onclick="openOopsModal()">About</a></li>
+            <li><a class="nav-link active" href="{% url 'home' %}">Login</a></li>
+          </ul>
+              <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                  <li><a class="btn btn-primary" href="{% url 'add_student' %}">Sign Up for Free!</a></li>
+              </ul>
+            
+          
+        </div>
+      </div>
+    </nav>
+    <!-- End Header/Navigation -->
+
+    <!-- Start Hero Section -->
+    <div class="hero mt-5 mb-4">
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="">
+            <div class="intro-excerpt">
+              <h1>
+                Development Operations
+              </h1>
+              <p class="mb-4 ">
+                Learn the dynamics of Software Development Transportation
+                by enrolling in this DevOps Course.
+              </p>
+
+              <div class="skills-logo mb-4">
+                <img src="/static/img/aws.svg" alt="">
+                <img src="/static/img/jenkins.svg" alt="">
+                <img src="/static/img/kubernetes.svg" alt="">
+                <img src="/static/img/git.svg" alt="">
+                <img src="/static/img/terraform.svg" alt="">
+                <img src="/static/img/docker.svg" alt="">
+            </div>
+            
+
+                <button class="btn btn-secondary me-2 hero-button" onclick="openOopsModal()">Enrol Now For Free</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      
+      <!-- Starting new section-->
+      <div class="course-summary-card">
+        <div class="col-md-4">
+          <img src="/static/img/product.svg" alt="" class="mb-2">
+          <h4 class="mb-3">Beginner to Intermediate</h4>
+          <p>This Course is Designed for people who have 
+            little to no experience as software Developers, 
+            you don't need any prior coding experience.</p>
+        </div>
+        <div class="col-md-4">
+          <img class="mb-2" src="/static/img/video-duration.svg" alt="">
+          <h4 class="mb-3">Beginner to Intermediate</h4>
+          <p>This Course is Designed for people who have 
+            little to no experience as software Developers, 
+            you don't need any prior coding experience.</p>
+        </div>
+        <div  class="col-md-4">
+          <img class="mb-2" src="/static/img/leadership-alt.svg" alt="">
+          <h4 class="mb-3">Beginner to Intermediate</h4>
+          <p>This Course is Designed for people who have 
+            little to no experience as software Developers, 
+            you don't need any prior coding experience.</p>
+        </div>
+      </div>
+
+
+      
+      <!-- Starting new section-->
+      <div class="video mt-5">
+        <img src="/static/img/DevOpsVideo.png" alt="">
+      </div>
+
+
+
+      <!-- Starting new section-->
+      <div class="header mt-5">
+        <div class="title text-center">
+          <h3>Course Curriculum</h3>
+        </div>
+        <div class="subtitle text-center">
+          <p>This Course will be composed of 6 Individual Modules</p>
+        </div>
+      </div>
+      
+      <!-- Starting new section-->
+      <div class="skill-cards">
+        <div class="skill-card">
+          <div class="head">
+            <img src="/static/img/aws_white.svg" alt="">
+            <h4>AWS</h4>
+          </div>
+          <div class="body">
+            <div class="tutorials mt-3">
+              <h4>7 Tutorials</h4>
+            </div>
+            <h6 class="mt-3">basics of Continuous deployment and 
+              integration with AWS.</h6>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="head">
+            <img src="/static/img/git_white.svg" alt="">
+            <h4>GIT</h4>
+          </div>
+          <div class="body">
+            <div class="tutorials mt-3">
+              <h4>7 Tutorials</h4>
+            </div>
+            <h6 class="mt-3">basics of Continuous deployment and 
+              integration with AWS.</h6>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="head">
+            <img src="/static/img/docker_white.svg" alt="">
+            <h4>Docker</h4>
+          </div>
+          <div class="body">
+            <div class="tutorials mt-3">
+              <h4>7 Tutorials</h4>
+            </div>
+            <h6 class="mt-3">basics of Continuous deployment and 
+              integration with AWS.</h6>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="head">
+            <img src="/static/img/jenkins_white.svg" alt="">
+            <h4>Jenkins</h4>
+          </div>
+          <div class="body">
+            <div class="tutorials mt-3">
+              <h4>7 Tutorials</h4>
+            </div>
+            <h6 class="mt-3">basics of Continuous deployment and 
+              integration with AWS.</h6>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="head">
+            <img src="/static/img/kubernetes_white.svg" alt="">
+            <h4>Kubernetes</h4>
+          </div>
+          <div class="body">
+            <div class="tutorials mt-3">
+              <h4>7 Tutorials</h4>
+            </div>
+            <h6 class="mt-3">basics of Continuous deployment and 
+              integration with AWS.</h6>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="head">
+            <img src="/static/img/terraform_white.svg" alt="">
+            <h4>Terraform</h4>
+          </div>
+          <div class="body">
+            <div class="tutorials mt-3">
+              <h4>7 Tutorials</h4>
+            </div>
+            <h6 class="mt-3">basics of Continuous deployment and 
+              integration with AWS.</h6>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- Starting a new section -->
+
+      <div class="why-choose-us mt-5">
+        <div class="header">
+          <div class="title text-center">
+            <h4>Why learn DevOps with us</h4>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+
+      </div>
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Start Footer Section -->
+    <footer class="footer-section">
+      <div class="container relative">
+
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="subscription-form" style="
+            display: flex;
+            flex-direction: column;
+            align-items: center; ">
+              <h3 class="d-flex align-items-center mb-4" >
+                <span class="me-1"
+                  ><img
+                    src="/static/img/envelope-outline.svg"
+                    alt="Image"
+                    class="img-fluid" /></span
+                ><span class="">Join our Family</span>
+              </h3>
+
+              <form action="#" class="row g-3">
+                <div class="col-auto">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter your name"
+                  />
+                </div>
+                <div class="col-auto">
+                  <input
+                    type="email"
+                    class="form-control"
+                    placeholder="Enter your email"
+                  />
+                </div>
+                <div class="col-auto">
+                  <button class="btn btn-primary">
+                    <span class="fa fa-paper-plane"></span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-5 mb-5">
+          <div class="col-lg-4">
+            <div class="mb-4 footer-logo-wrap">
+              <a href="#" class="footer-logo">Kreeck<span>.</span></a>
+            </div>
+            <p class="mb-4">
+              Kreeck Academy is a top learning institution that provides various programming courses with the best teaching style.
+              We urge to provide you with the best learning materials and the highest quality content. 
+            </p>
+
+            <ul class="list-unstyled custom-social">
+              <li>
+                <a href="https://facebook/kreeck"><span class="fa fa-brands fa-facebook-f"></span></a>
+              </li>
+              <li>
+                <a href="https://twitter/kreeck"><span class="fa fa-brands fa-twitter"></span></a>
+              </li>
+              <li>
+                <a href="https://instagram/kreeckcode"><span class="fa fa-brands fa-instagram"></span></a>
+              </li>
+              <li>
+                <a href="https://linkedin/kreeck"><span class="fa fa-brands fa-linkedin"></span></a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-lg-8">
+            <div class="row links-wrap">
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                  <li><a href="#">Contact</a></li>
+                  <li><a href="#">Blog</a></li>
+                  <li><a href="#">Invite a friend</a></li>
+                </ul>
+              </div>
+
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                  <li><a href="#">Support</a></li>
+                  <li><a href="#">Join Community</a></li>
+                  <li><a href="#">Live chat</a></li>
+                </ul>
+              </div>
+
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                  <li><a href="#">Jobs</a></li>
+                  <li><a href="#">Our team</a></li>
+                  <li><a href="#">Leadership</a></li>
+                  <li><a href="#">Privacy Policy</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-top copyright">
+          <div class="row pt-4">
+            <div class="col-lg-6">
+              <p class="mb-2 text-center text-lg-start">
+                Copyright &copy;
+                <script>
+                  document.write(new Date().getFullYear());
+                </script>
+                . All Rights Reserved. &mdash; Designed with love by
+                <a href="https://kreeck.com">kreeck</a>
+              </p>
+            </div>
+
+            <div class="col-lg-6 text-center text-lg-end">
+              <ul class="list-unstyled d-inline-flex ms-auto">
+                <li class="me-4"><a onclick="openTermsModal()">Terms &amp; Conditions</a></li>
+                <li><a  onclick="openOopsModal()">Privacy Policy</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- End Footer Section -->
+  
+    
+
+    <script src="{% static 'js/landing-bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/landing-tiny-slider.js' %}"></script>
+    <script src="{% static 'js/landing-custom.js' %}"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+    <script
+      src="https://cdpn.io/cpe/boomboom/pen.js?key=pen.js-4837e3b6-188c-d8d8-2802-063c2a140c52"
+      crossorigin=""
+    ></script>
+
+    <script>
+      var logotimeline = new TimelineMax({ repeat: -1 });
+      logotimeline.staggerTo(
+        ".logo-grid .column",
+        2,
+        { onComplete: tweenComplete, onCompleteParams: ["{self}"] },
+        0.1
+      );
+
+      function tweenComplete(tween) {
+        var column = tween.target;
+        var activeItem = $(column).find(".active");
+
+        var nextActiveItem = activeItem.next();
+        if (typeof nextActiveItem.html() === "undefined") {
+          nextActiveItem = $(column).find(".grid-logo:first");
+        }
+
+        activeItem.removeClass("active");
+        nextActiveItem.addClass("active");
+      }
+      function openOopsModal() {
+          const oopsDialog = document.getElementById('oopsDialog');
+          oopsDialog.showModal();
+      }
+
+      function closeOopsModal() {
+          const oopsDialog = document.getElementById('oopsDialog');
+          oopsDialog.close();
+      }
+
+      function openTermsModal() {
+          const termsDialog = document.getElementById('termsDialog');
+          termsDialog.showModal();
+      }
+
+      function closeTermsModal() {
+          const termsDialog = document.getElementById('termsDialog');
+          termsDialog.close();
+      }
+    </script>
+  </body>
+</html>
