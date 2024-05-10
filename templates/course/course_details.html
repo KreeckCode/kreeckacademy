@@ -334,7 +334,6 @@
         <div class="header">
           <div class="title text-center">
             <h4>Why learn DevOps with us</h4>
-            <canvas id="pdf-render"></canvas>
           </div>
         </div>
       </div>
@@ -342,8 +341,6 @@
       <div class="card">
 
       </div>
-
-      
 
 
 
@@ -499,36 +496,7 @@
     </footer>
     <!-- End Footer Section -->
   
-    <script>
-      // PDF.js worker source url
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
-  
-      // URL of the PDF document
-      var pdfUrl = '{% url "path_to_your_pdf_file" %}';
-  
-      // Asynchronously load the PDF
-      pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
-          // Fetch the first page
-          pdf.getPage(1).then(function(page) {
-              var scale = 1.5;
-              var viewport = page.getViewport({ scale: scale });
-  
-              // Prepare canvas using PDF page dimensions
-              var canvas = document.getElementById('pdf-render');
-              var context = canvas.getContext('2d');
-              canvas.height = viewport.height;
-              canvas.width = viewport.width;
-  
-              // Render PDF page into canvas context
-              var renderContext = {
-                  canvasContext: context,
-                  viewport: viewport
-              };
-              page.render(renderContext);
-          });
-      });
-  </script>
-  
+    
 
     <script src="{% static 'js/landing-bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/landing-tiny-slider.js' %}"></script>
@@ -581,7 +549,5 @@
           termsDialog.close();
       }
     </script>
-    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
-
   </body>
 </html>

@@ -342,3 +342,6 @@ class QuizTake(FormView):
             self.sitting.delete()
 
         return render(self.request, self.result_template_name, results)
+
+
+
