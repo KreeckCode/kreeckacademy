@@ -18,7 +18,6 @@ crispy-bootstrap5
 django-compressor
 django-redis
 django-tailwind
-pygame
 #django storage
 azure-storage-blob
 # Django REST Framework
@@ -27,7 +26,7 @@ django-cors-headers
 # DRF-spectacular for api documentation
 drf-spectacular
 
-
+crispy-bootstrap4
 sphinx
 sphinx-autobuild
 flake8

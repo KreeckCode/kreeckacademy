@@ -400,8 +400,8 @@ def course_registration_form(request):
 
         # Add registration details
         reg_details = [
-            f"<b>Registration Number:</b> {request.user.username.upper()}",
-            f"<b>Name:</b> {request.user.get_full_name().upper()}",
+            f"<b>Registration Number:</b> str({request.user.username.upper()})",
+            f"<b>Name:</b> str({request.user.get_full_name.upper()})",
             f"<b>Session:</b> {current_session.session.upper()}",
             f"<b>Level:</b> {Student.objects.get(student__pk=request.user.id).level}"
         ]
@@ -439,7 +439,7 @@ def course_registration_form(request):
 
         # Add student certification
         cert_text = ("CERTIFICATION OF REGISTRATION: I certify that "
-                     f"<b>{request.user.get_full_name().upper()}</b> "
+                     f"<b> str(request.user.get_full_name().upper())</b> "
                      f"has been duly registered for the "
                      f"<b>{Student.objects.get(student__pk=request.user.id).level} level</b> "
                      "of study in the department of COMPUTING & PROGRAMMING. "

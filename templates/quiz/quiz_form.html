@@ -15,11 +15,11 @@
             <div class="col-md-6">
                 <div class="card p-3">
                     <div class="form-group" hidden>
-                        {{ form.course }}
+                        <h3>{{ form.course }}</h3>
                         <span class="danger">{{ form.course.errors }}</span>
                     </div>
                     <div class="form-group">
-                        {{ form.category|as_crispy_field }}
+                        <p>{{ form.category|as_crispy_field }}</p>
                         <span class="danger">{{ form.category.errors }}</span>
                     </div>
                     <div class="form-group">
