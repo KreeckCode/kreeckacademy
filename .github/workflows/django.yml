@@ -1,61 +1,172 @@
-name: Django CI
+# Define the name of the workflow
+name: Django CI/CD
 
+# Specify the events that trigger the workflow
 on:
-  push:
-    branches: [ "main"]
+  #push:
+    #branches: [ "main" ]  # Trigger on push events to the main branch
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main" ]  # Trigger on pull requests to the main branch
 
+# Define the jobs in the workflow
 jobs:
+  # Build job
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
     strategy:
-      max-parallel: 4
+      max-parallel: 4  # Limit the maximum number of parallel jobs
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: [3.7, 3.8, 3.9]  # Test against multiple Python versions
 
     steps:
+    # Check out the repository
     - uses: actions/checkout@v4
+    
+    # Set up Python environment
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+    
+    # Cache pip dependencies
+    - name: Cache Dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    # Install dependencies
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Lint and Format Code
+    
+    # Lint the code with Flake8
+    - name: Lint with Flake8
       run: |
-        pip install flake8 black
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        black .
+        pip install flake8
+        flake8 .
+    
+    # Perform static code analysis with Bandit
+    - name: Static Code Analysis with Bandit
+      run: |
+        pip install bandit
+        bandit -r .
+    
+    # Run unit tests
     - name: Run Tests
       run: |
         python manage.py test
-    - name: Test Code Coverage
+    
+    # Generate test coverage report
+    - name: Generate Test Coverage Report
       run: |
         pip install coverage
-        coverage run --source='.' manage.py test
-        coverage report -m
-    - name: Security Scanning
-      run: |
-        pip install bandit safety
-        bandit -r ./
-        safety check --full-report
-    - name: Static Analysis
-      run: |
-        pip install pylint mypy
-        pylint ./*.py
-        mypy .
-    #- name: Deploy to Staging
-    #  if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    #  run: |
-    #    echo "Deploying to staging..."
-    #    # Add commands for deployment to staging environment (e.g., using Ansible, Fabric)
-    - name: Notification and Reporting
-      if: failure()
-      run: |
-        echo "Build failed. Sending notification..."
-        # Add commands for notifications or reporting on build failures (e.g., send email, Slack message)
+        coverage run manage.py test
+        coverage report
+        coverage xml
+    
+    # Upload test coverage report to Codecov
+    - name: Upload Test Coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        file: ./coverage.xml
 
+  # Integration tests job
+  integration_test:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    needs: build  # Run this job after the build job
+    steps:
+    # Check out the repository
+    - uses: actions/checkout@v4
+    
+    # Set up Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.9
+    
+    # Install dependencies
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    # Set up PostgreSQL database
+    - name: Set up PostgreSQL
+      uses: harmon758/postgresql-action@v1.2.0
+      with:
+        postgresql version: '12'
+    
+    # Run integration tests
+    - name: Run Integration Tests
+      run: |
+        python manage.py migrate
+        python manage.py test integration_tests/
+
+  # Docker build job
+  docker_build:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    needs: build  # Run this job after the build job
+    steps:
+    # Check out the repository
+    - uses: actions/checkout@v4
+    
+    # Set up Docker Buildx
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    
+    # Log in to Docker Hub
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    
+    # Build and push Docker image
+    - name: Build and Push Docker Image
+      run: |
+        docker buildx build --push --platform linux/amd64,linux/arm64 --tag ${{ secrets.DOCKER_USERNAME }}/my-django-app:latest .
+
+  # Deployment job
+  deploy:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    needs: docker_build  # Run this job after the docker_build job
+    steps:
+    # Deploy to Kubernetes
+    - name: Deploy to Kubernetes
+      uses: azure/k8s-deploy@v4
+      with:
+        manifests: |
+          manifests/deployment.yaml
+          manifests/service.yaml
+        images: ${{ secrets.DOCKER_USERNAME }}/my-django-app:latest
+        namespace: default
+        kubectl-version: 'latest'
+        cluster-type: 'AKS'
+      env:
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+    
+    # Run database migrations
+    - name: Run Database Migrations
+      run: |
+        kubectl exec -it $(kubectl get pods -l app=my-django-app -o jsonpath="{.items[0].metadata.name}") -- python manage.py migrate
+      env:
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+
+  # Notification job
+  notify:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    needs: [build, docker_build, deploy]  # Run this job after build, docker_build, and deploy jobs
+    steps:
+    # Send Slack notification
+    - name: Send Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+        SLACK_COLOR: good
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      with:
+        status: ${{ job.status }}
