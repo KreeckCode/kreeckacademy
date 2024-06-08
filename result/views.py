@@ -24,7 +24,7 @@ from .models import *
 from django.template.loader import render_to_string
 from SMS.settings import DEBUG
 cm = 2.54
-
+from reportlab.lib.pagesizes import A4
 
 @login_required
 @lecturer_required
@@ -229,7 +229,7 @@ def assessment_result(request):
     
     return render(request, 'result/assessment_results.html', context)
 
-
+import io
 @login_required
 @lecturer_required
 def result_sheet_pdf_view(request, id):
@@ -239,105 +239,91 @@ def result_sheet_pdf_view(request, id):
     course = get_object_or_404(Course, id=id)
     no_of_pass = TakenCourse.objects.filter(course__pk=id, comment="PASS").count()
     no_of_fail = TakenCourse.objects.filter(course__pk=id, comment="FAIL").count()
-    fname = str(current_semester) + '_semester_' + str(current_session) + '_' + str(course) + '_resultSheet.pdf'
-    fname = fname.replace("/", "-")
-    flocation = settings.MEDIA_ROOT + "/result_sheet/" + fname
+    fname = f"{current_semester}_semester_{current_session}_{course}_resultSheet.pdf".replace("/", "-")
 
-    doc = SimpleDocTemplate(flocation, rightMargin=0, leftMargin=6.5 * cm, topMargin=0.3 * cm, bottomMargin=0)
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=0, leftMargin=6.5 * cm, topMargin=0.3 * cm, bottomMargin=0)
     styles = getSampleStyleSheet()
-    styles.add(ParagraphStyle( name="ParagraphTitle", fontSize=11, fontName="FreeSansBold"))
-    Story = [Spacer(1,.2)]
+    styles.add(ParagraphStyle(name="ParagraphTitle", fontSize=11, fontName="FreeSansBold"))
+    Story = [Spacer(1, .2)]
     style = styles["Normal"]
 
-    print("\nsettings.MEDIA_ROOT", settings.MEDIA_ROOT)
-    print("\nsettings.STATICFILES_DIRS[0]", settings.STATICFILES_DIRS[0])
-    logo = settings.STATICFILES_DIRS[0] + "/img/logo.png"
-    im = Image(logo, 1*inch, 1*inch)
+    logo = os.path.join(settings.STATICFILES_DIRS[0], "img/logo.png")
+    im = Image(logo, 1 * inch, 1 * inch)
     im.__setattr__("_offs_x", -200)
     im.__setattr__("_offs_y", -45)
     Story.append(im)
-    
-    style = getSampleStyleSheet()
-    normal = style["Normal"]
+
+    normal = styles["Normal"]
     normal.alignment = TA_CENTER
     normal.fontName = "Helvetica"
     normal.fontSize = 12
     normal.leading = 15
-    title = "<b> "+str(current_semester) + " Semester " + str(current_session) + " Result Sheet</b>" 
-    title = Paragraph(title.upper(), normal)
-    Story.append(title)
-    Story.append(Spacer(1,0.1*inch))
-
-    style = getSampleStyleSheet()
-    normal = style["Normal"]
-    normal.alignment = TA_CENTER
-    normal.fontName = "Helvetica"
-    normal.fontSize = 10
-    normal.leading = 15
-    title = "<b>Course lecturer: " + request.user.get_full_name + "</b>"
-    title = Paragraph(title.upper(), normal)
-    Story.append(title)
-    Story.append(Spacer(1,0.1*inch))
-
-    normal = style["Normal"]
-    normal.alignment = TA_CENTER
-    normal.fontName = "Helvetica"
-    normal.fontSize = 10
-    normal.leading = 15
-    level = result.filter(course_id=id).first()
-    title = "<b>Level: </b>" + str(level.course.level)
-    title = Paragraph(title.upper(), normal)
-    Story.append(title)
-    Story.append(Spacer(1,.6*inch))
+    title = f"<b>{current_semester} Semester {current_session} Result Sheet</b>".upper()
+    Story.append(Paragraph(title, normal))
+    Story.append(Spacer(1, 0.1 * inch))
     
-    elements = []
-    count = 0
-    header = [('S/N', 'ID NO.', 'FULL NAME', 'TOTAL', 'GRADE', 'POINT', 'COMMENT')]
+    #this was for debug purposes
+    #print(request.user.get_full_name)
 
-    table_header = Table(header, [inch], [0.5*inch])
-    table_header.setStyle(
-        TableStyle([
-            ('BACKGROUND',(0,0),(-1,-1),colors.black),
-            ('TEXTCOLOR',(1,0),(-1,-1),colors.white),
-            ('TEXTCOLOR',(0,0),(0,0),colors.cyan),
-            ('ALIGN',(0,0),(-1,-1),'CENTER'),
-            ('VALIGN',(0,0),(-1,-1),'MIDDLE'),
-            ('BOX',(0,0),(-1,-1),1,colors.black),
-            ]))
+    title = f"<b>Course lecturer: request.user.get_full_name()</b>".upper()
+
+    Story.append(Paragraph(title, normal))
+    Story.append(Spacer(1, 0.1 * inch))
+
+    level = result.first()
+    title = f"<b>Level: </b>{level.course.level}".upper()
+    Story.append(Paragraph(title, normal))
+    Story.append(Spacer(1, .6 * inch))
+
+    header = [('S/N', 'ID NO.', 'FULL NAME', 'TOTAL', 'GRADE', 'POINT', 'COMMENT')]
+    table_header = Table(header, [inch], [0.5 * inch])
+    table_header.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, -1), colors.black),
+        ('TEXTCOLOR', (1, 0), (-1, -1), colors.white),
+        ('TEXTCOLOR', (0, 0), (0, 0), colors.cyan),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('BOX', (0, 0), (-1, -1), 1, colors.black),
+    ]))
     Story.append(table_header)
 
+    count = 0
     for student in result:
-
-        data = [(count+1, student.student.student.username.upper(), Paragraph(student.student.student.get_full_name.capitalize(), styles['Normal']),  
-        student.total, student.grade, student.point, student.comment)]
-        color = colors.black
-        if student.grade == 'F':
-            color = colors.red
+        user = student.student.student  # Store the user object
+        full_name = user.get_full_name  # Access the get_full_name property
+        username_upper = user.username.upper()  # Get the username in uppercase
+        
+        print(f"full_name: {full_name}")  # Debug statement to check the full name
+        print(f"username_upper: {username_upper}")  # Debug statement to check the username in uppercase
+        
+        data = [(count + 1, username_upper, Paragraph(full_name.capitalize(), styles['Normal']),
+                student.total, student.grade, student.point, student.comment)]
+                
+        t_body = Table(data, colWidths=[inch])
+        t_body.setStyle(TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.05, colors.black),
+            ('BOX', (0, 0), (-1, -1), 0.1, colors.black),
+        ]))
+        
+        Story.append(t_body)
         count += 1
 
-        t_body = Table(data, colWidths=[inch])
-        t_body.setStyle(
-            TableStyle([
-                ('INNERGRID', (0,0), (-1,-1), 0.05, colors.black),
-                ('BOX', (0,0), (-1,-1), 0.1, colors.black),
-                ]))
-        Story.append(t_body)
-
-    Story.append(Spacer(1,1*inch))
+    Story.append(Spacer(1, 1 * inch))
     style_right = ParagraphStyle(name='right', parent=styles['Normal'], alignment=TA_RIGHT)
     tbl_data = [
-    [Paragraph("<b>Date:</b>_____________________________", styles["Normal"]), Paragraph("<b>No. of PASS:</b> " + str(no_of_pass), style_right)],
-    [Paragraph("<b>Siganture / Stamp:</b> _____________________________", styles["Normal"]), Paragraph("<b>No. of FAIL: </b>" + str(no_of_fail), style_right)]]
+        [Paragraph("<b>Date:</b>_____________________________", styles["Normal"]),
+         Paragraph("<b>No. of PASS:</b> " + str(no_of_pass), style_right)],
+        [Paragraph("<b>Signature / Stamp:</b> _____________________________", styles["Normal"]),
+         Paragraph("<b>No. of FAIL: </b>" + str(no_of_fail), style_right)]]
     tbl = Table(tbl_data)
     Story.append(tbl)
 
     doc.build(Story)
+    buffer.seek(0)
 
-    fs = FileSystemStorage(settings.MEDIA_ROOT + "/result_sheet")
-    with fs.open(fname) as pdf:
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = 'inline; filename=' + fname + ''
-        return response
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{fname}"'
     return response
 
 

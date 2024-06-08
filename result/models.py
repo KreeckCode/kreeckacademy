@@ -116,80 +116,84 @@ class TakenCourse(models.Model):
     def __str__(self):
         return "{0} ({1})".format(self.course.title, self.course.code)
 
-    # @staticmethod
     def get_total(self, assignment, mid_exam, quiz, attendance, final_exam):
-        return float(assignment) + float(mid_exam) + float(quiz) + float(attendance) + float(final_exam) 
+        # Define weightage for each component
+        weight_assignment = 0.20
+        weight_mid_exam = 0.30
+        weight_quiz = 0.20
+        weight_final_exam = 0.30
 
-    # @staticmethod
+        # Calculate weighted scores
+        weighted_assignment = float(assignment) * weight_assignment
+        weighted_mid_exam = float(mid_exam) * weight_mid_exam
+        weighted_quiz = float(quiz) * weight_quiz
+        weighted_final_exam = float(final_exam) * weight_final_exam
+
+        # Extra points for attendance (if 100%)
+        extra_points = 5 if float(attendance) == 100 else 0
+
+        # Calculate total score
+        total_score = weighted_assignment + weighted_mid_exam + weighted_quiz + weighted_final_exam + extra_points
+
+        return total_score
+
     def get_grade(self, total):
-        # total = float(assignment) + float(mid_exam) + float(quiz) + float(attendance) + float(final_exam)
-        # total = self.get_total(assignment=assignment, mid_exam=mid_exam, quiz=quiz, attendance=attendance, final_exam=final_exam)
-        # total = total
         if total >= 90:
-            grade = A_plus
+            grade = 'A+'
         elif total >= 85:
-            grade = A
+            grade = 'A'
         elif total >= 80:
-            grade = A_minus
+            grade = 'A-'
         elif total >= 75:
-            grade = B_plus
+            grade = 'B+'
         elif total >= 70:
-            grade = B
+            grade = 'B'
         elif total >= 65:
-            grade = B_minus
+            grade = 'B-'
         elif total >= 60:
-            grade = C_plus
+            grade = 'C+'
         elif total >= 55:
-            grade = C
+            grade = 'C'
         elif total >= 50:
-            grade = C_minus
+            grade = 'C-'
         elif total >= 45:
-            grade = D
-        elif total < 45:
-            grade = F
+            grade = 'D'
         else:
-            grade = NG
+            grade = 'F'
         return grade
 
-    # @staticmethod
     def get_comment(self, grade):
-        if grade == F or grade == NG:
-            comment = FAIL
-        # elif grade == NG:
-        #     comment = FAIL
+        if grade == 'F':
+            comment = 'FAIL'
         else:
-            comment = PASS
+            comment = 'PASS'
         return comment
 
     def get_point(self, grade):
-        p = 0
-        # point = 0
-        # for i in student:
         credit = self.course.credit
-        if self.grade == A_plus:
+        if grade == 'A+':
             point = 4
-        elif self.grade == A:
+        elif grade == 'A':
             point = 4
-        elif self.grade == A_minus:
+        elif grade == 'A-':
             point = 3.75
-        elif self.grade == B_plus:
+        elif grade == 'B+':
             point = 3.5
-        elif self.grade == B:
+        elif grade == 'B':
             point = 3
-        elif self.grade == B_minus:
+        elif grade == 'B-':
             point = 2.75
-        elif self.grade == C_plus:
+        elif grade == 'C+':
             point = 2.5
-        elif self.grade == C:
+        elif grade == 'C':
             point = 2
-        elif self.grade == C_minus:
+        elif grade == 'C-':
             point = 1.75
-        elif self.grade == D:
+        elif grade == 'D':
             point = 1
         else:
             point = 0
-        p += int(credit) * point
-        return p
+        return int(credit) * point
 
     def calculate_gpa(self, total_credit_in_semester):
         current_semester = Semester.objects.get(is_current_semester=True)
@@ -198,28 +202,7 @@ class TakenCourse(models.Model):
         point = 0
         for i in student:
             credit = i.course.credit
-            if i.grade == A_plus:
-                point = 4
-            elif i.grade == A:
-                point = 4
-            elif i.grade == A_minus:
-                point = 3.75
-            elif i.grade == B_plus:
-                point = 3.5
-            elif i.grade == B:
-                point = 3
-            elif i.grade == B_minus:
-                point = 2.75
-            elif i.grade == C_plus:
-                point = 2.5
-            elif i.grade == C:
-                point = 2
-            elif i.grade == C_minus:
-                point = 1.75
-            elif i.grade == D:
-                point = 1
-            else:
-                point = 0
+            point = self.get_point(i.grade)
             p += int(credit) * point
         try:
             gpa = (p / total_credit_in_semester)
@@ -235,17 +218,17 @@ class TakenCourse(models.Model):
             if i.cgpa is not None:
                 previousCGPA += i.cgpa
         cgpa = 0
-        if str(current_semester) == SECOND:
+        if str(current_semester) == "SECOND":
             first_sem_gpa = 0.0
             sec_sem_gpa = 0.0
             try:
-                first_sem_result = Result.objects.get(student=self.student.id, semester=FIRST, level=self.student.level)
+                first_sem_result = Result.objects.get(student=self.student.id, semester="FIRST", level=self.student.level)
                 first_sem_gpa += first_sem_result.gpa
             except:
                 first_sem_gpa = 0
 
             try:
-                sec_sem_result = Result.objects.get(student=self.student.id, semester=SECOND, level=self.student.level)
+                sec_sem_result = Result.objects.get(student=self.student.id, semester="SECOND", level=self.student.level)
                 sec_sem_gpa += sec_sem_result.gpa
             except:
                 sec_sem_gpa = 0
@@ -257,21 +240,12 @@ class TakenCourse(models.Model):
                 TCP += float(i.point)
             for i in taken_courses:
                 TCC += int(i.course.credit)
-            # cgpa = (first_sem_gpa + sec_sem_gpa) / 2
-
-            print("TCP = ", TCP)
-            print("TCC = ", TCC)
-            print("first_sem_gpa = ", first_sem_gpa)
-            print("sec_sem_gpa = ", sec_sem_gpa)
-            print("cgpa = ", round(TCP / TCC, 2))
 
             try:
                 cgpa = TCP / TCC
                 return round(cgpa, 2)
             except ZeroDivisionError:
                 return 0
-
-            # return round(cgpa, 2)
 
 
 class Result(models.Model):
