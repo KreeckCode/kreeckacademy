@@ -4,6 +4,7 @@ name: Django CI/CD
 # Specify the events that trigger the workflow
 on:
   #push:
+  #ACTIVATE THIS
     #branches: [ "main" ]  # Trigger on push events to the main branch
   pull_request:
     branches: [ "main" ]  # Trigger on pull requests to the main branch
@@ -30,7 +31,7 @@ jobs:
     
     # Cache pip dependencies
     - name: Cache Dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4.0.2
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
