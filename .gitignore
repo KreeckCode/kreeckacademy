@@ -2,10 +2,18 @@
 SMS/.env/
 .env
 credentials
-
+.venv
 # Ignore local development directories (if needed)
 .static/
 .staticfiles/
 .media/
 .media_root/
 media_root/course_videos/videoplayback.mp4
+Contributions.md
+.coverage
+commit_frequency_chart.png
+coverage.xml
+Report.md
+historical_comparison_chart.png
+historical_contributions.json
+.coverage

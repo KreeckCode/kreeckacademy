@@ -18,7 +18,6 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = True
 
 
-
 # Allow the Debug Toolbar to appear for all IP addresses (only use this in development)
 INTERNAL_IPS = [
     '127.0.0.1',
