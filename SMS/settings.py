@@ -131,7 +131,6 @@ DEBUG_TOOLBAR_CONFIG = {
 
 if DEBUG:
 #the local db is the sql lite
-    
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -286,5 +285,5 @@ LOGGING = {
 }
 
 # Strip payment config
-#STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
-#STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY')
+# STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
+# STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY')

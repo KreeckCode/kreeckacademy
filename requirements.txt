@@ -25,7 +25,6 @@ djangorestframework
 django-cors-headers
 # DRF-spectacular for api documentation
 drf-spectacular
-
 crispy-bootstrap4
 sphinx
 sphinx-autobuild
