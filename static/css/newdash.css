@@ -1,0 +1,138 @@
+body{
+    background-color: #F8F8F8;
+    font-family: "Poppins";
+    color: #4B4B4B;
+}
+
+.custom-navbar, li, .sidenav-link{
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    padding: 0.25rem 3rem 0.25rem 1rem;
+    display: flex;
+    gap: 0.6rem;
+    width: 300px;
+    
+}
+.custom-navbar, ul, li, a {
+    margin: 0;
+    gap: 0.5rem;
+}
+.custom-navbar, ul, li, a:hover {
+    color: #65A98F;
+    border-radius: 10px;
+}
+.main-container{
+    display: flex;
+    flex-direction: column;
+}
+.sidenav{
+    display: flex;
+    left: 0;
+    height: 100vh;
+    width: auto;
+    position: fixed;
+}
+.fixed-sidenav-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    
+}
+.top-container{
+    display: flex;
+    flex-direction: column;
+}
+.bottom-container{
+    display: flex;
+}
+.navigation-bar{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0rem 2rem 0rem 0rem;
+}
+.left-top-navigation {
+    display: flex;
+}
+.right-top-navigation{
+    display: flex;
+    gap: 2rem;
+}
+.jumbo{
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+}
+.green-text {
+    color: #65A98F;
+}
+
+.text-bold{
+    font-weight: 600;
+}
+.profile{
+    display: flex;
+    gap: 1rem;
+    text-align: end;
+}
+h6{
+    margin: 0;
+}
+.search-input{
+    background-color: transparent;
+    height: 2.6rem;
+    border-radius: 8px;
+    border: 2px solid #D1D1D1;
+}
+
+.sidenav-margin{
+    margin-left: 300px;
+}
+.m-0{
+    margin: 0px;
+}
+.text-decoration{
+    text-decoration: none;
+}
+.main-content{
+
+}
+.split-container{
+    display: flex;
+}
+.course-content{
+    flex: 70;
+}
+
+.right-sidenav{
+    flex: 30;
+}
+.video-container{
+    display: flex;
+    max-width: 100%;
+    height: auto;
+    
+}
+/* Uncomment this to make the image resizable with the window
+.preview-video img{
+    width: 100%;
+    height: auto;
+    display: block; 
+    max-width: 100%;
+    min-width: 400px;
+}
+*/
+
+.normal-text{
+    color: #4B4B4B;
+}
+.buy-btn .btn {
+    width: 100%;
+    font-size: small;
+    border-radius: 6px;
+    font-weight: 500;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
