@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><script type="text/javascript" src="/___vscode_livepreview_injected_script"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="kreeck.com" />
@@ -17,62 +17,188 @@
         crossorigin="anonymous"></script>
     <title>Dashboard | Kreeck Academy</title>
 
-    <style></style>
+    <style>
+        body{
+            background-color: #F8F8F8;
+            font-family: "Poppins";
+        }
+
+        .custom-navbar, li, .sidenav-link{
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 0.25rem 3rem 0.25rem 1rem;
+            display: flex;
+            gap: 0.6rem;
+            width: 300px;
+            
+        }
+        .custom-navbar, ul, li, a {
+            margin: 0;
+            gap: 0.5rem;
+        }
+        .custom-navbar, ul, li, a:hover {
+            color: #65A98F;
+            border-radius: 10px;
+        }
+        .main-container{
+            display: flex;
+            flex-direction: column;
+        }
+        .sidenav{
+            display: flex;
+            left: 0;
+            height: 100vh;
+            width: auto;
+            position: fixed;
+        }
+        .fixed-sidenav-container{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            
+        }
+        .top-container{
+            display: flex;
+            flex-direction: column;
+        }
+        .bottom-container{
+            display: flex;
+        }
+        .navigation-bar{
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0rem 2rem 0rem 0rem;
+        }
+        .left-top-navigation {
+            display: flex;
+        }
+        .right-top-navigation{
+            display: flex;
+            gap: 2rem;
+        }
+        .jumbo{
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+        }
+        .green-text {
+            color: #65A98F;
+        }
+        
+        .text-bold{
+            font-weight: 600;
+        }
+        .profile{
+            display: flex;
+            gap: 1rem;
+            text-align: end;
+        }
+        h6{
+            margin: 0;
+        }
+        .search-input{
+            background-color: transparent;
+            height: 2.6rem;
+            border-radius: 8px;
+            border: 2px solid #D1D1D1;
+        }
+
+        .sidenav-margin{
+            margin-left: 300px;
+        }
+        .m-0{
+            margin: 0px;
+        }
+        .text-decoration{
+            text-decoration: none;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="main-container">
+    <div class="main-container sidenav-margin">
         <div class="sidenav">
-            <div class="sidenav-container">
-                <div class="top-container">
+            <div class="fixed-sidenav-container">
+                <div class="top-container mt-5 mb-5">
                     <div class="logo">
                         <img src="/static/img/icons/full_logo_icon.svg" alt="">
                     </div>
-                    <div class="nav-btns">
+                    <div class="nav-btns mt-5">
                         <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
-                            <li><a class="sidenav-link active" onclick="openOopsModal()"><i><img src="/static/img/icons/dashboard_icon.svg" alt=""></i> Dashboard</a></li>
-                            <li><a class="sidenav-link active" onclick="openOopsModal()"><i><img src="/static/img/icons/my_courses_icon.svg" alt=""></i> My Courses</a></li>
-                            <li><a class="sidenav-link active" onclick="openOopsModal()"><i><img src="/static/img/icons/programs_icon.svg" alt=""></i> Programs</a></li>
-                            <li><a class="sidenav-link active"><i><img src="/static/img/icons/manage_course_icon.svg" alt=""></i>Manage Courses</a></li>
-                            <li><a class="sidenav-link active"><i><img src="/static/img/icons/certificate_icon.svg" alt=""></i> Certificate</a></li>
-                            <li><a class="sidenav-link active"><i><img src="/static/img/icons/schedule_icon.svg" alt=""></i>Schedule</a></li>
-                            <li><a class="sidenav-link active"><i><img src="/static/img/icons/course_builder_icon.svg" alt=""></i>Course builder</a></li>
+                            <li><a class="sidenav-link "><i><img src="/static/img/icons/dashboard_icon.svg" alt=""></i>  Dashboard</a></li>
+                            <li><a class="sidenav-link"><i><img src="/static/img/icons/my_courses_icon.svg" alt=""></i> My Courses</a></li>
+                            <li><a class="sidenav-link"><i><img src="/static/img/icons/programs_icon.svg" alt=""></i> Programs</a></li>
+                            <li><a class="sidenav-link"><i><img src="/static/img/icons/manage_course_icon.svg" alt=""></i> Manage Courses</a></li>
+                            <li><a class="sidenav-link"><i><img src="/static/img/icons/certificate_icon.svg" alt=""></i> Certificate</a></li>
+                            <li><a class="sidenav-link"><i><img src="/static/img/icons/schedule_icon.svg" alt=""></i> Schedule</a></li>
+                            <li><a class="sidenav-link"><i><img src="/static/img/icons/course_builder_icon.svg" alt=""></i> Course builder</a></li>
                           </ul>
                     </div>
                 </div>
 
-                <div class="bottom-container">
+                <div class="bottom-container mb-3">
                     <div class="nav-btns">
                         <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0"> 
-                            <li><a class="sidenav-link active-green" onclick="openOopsModal()"><i><img src="/static/img/icons/compiler_icon.svg" alt=""></i> Code Compiler</a></li>
-                            <li><a class="sidenav-link active" onclick="openOopsModal()"><i><img src="/static/img/icons/need_help_icon.svg" alt=""></i> Need Help?</a></li>
-                            <li><a class="sidenav-link active" onclick="openOopsModal()"><i><img src="/static/img/icons/settings_icon.svg" alt=""></i> Settings</a></li>
-                            <li><a class="sidenav-link active"><i><img src="/static/img/icons/logout_icon.svg" alt=""></i> Log Out</a></li>
+                            <li><a class="sidenav-link"><i><img src="/static/img/icons/compiler_icon.svg" alt=""></i> Code Compiler</a></li>
+                            <li><a class="sidenav-link"><i><img src="/static/img/icons/need_help_icon.svg" alt=""></i> Need Help?</a></li>
+                            <li><a class="sidenav-link"><i><img src="/static/img/icons/settings_icon.svg" alt=""></i> Settings</a></li>
+                            <li><a class="sidenav-link"><i><img src="/static/img/icons/logout_icon.svg" alt=""></i> Log Out</a></li>
                           </ul>
                     </div>
                 </div>
             </div>
         </div>
-
-        <nav class="navigation-bar">
-            <div class="left-top-navigation">
-                <div class="notificaition"></div>
-                <div class="jumbo"></div>
-            </div>
-            <div class="right-top-navigation">
-                <div class="search"></div>
-                <div class="profile">
-                    <div class="info"></div>
-                    <div class="logo">
-                        
+        <div class="main-navigation-container">
+            <nav class="navigation-bar mt-5">
+                <div class="left-top-navigation">
+                    
+                    <div class="jumbo">
+                        <div class="notification">
+                            <img src="/static/img/icons/notification_icon.svg" alt="">
+                        </div>
+                        <h6 class="jumbotron text-bold green-text">My Courses</h6>
                     </div>
                 </div>
-                <div class="menu-toggle">
-                    <a href=""><img src="/static/img/icons/toggle_menu_icon.svg" alt=""></a>
+                <div class="right-top-navigation">
+                    <div class="search">
+                        <input type="search" class="form-control search-input" placeholder="Search Kreeck">
+                    </div>
+                    <div class="profile">
+                        <div class="info">
+                            <h6>Dave Monama</h6>
+                            <p class="green-text text-bold">lecture</p>
+                        </div>
+                        <div class="profilePicture">
+                            <img src="/static/img/icons/default_profile_icon.svg" alt="">
+                        </div>
+                    </div>
+                    <div class="menu-toggle">
+                        <a href=""><img src="/static/img/icons/toggle_menu_icon.svg" alt=""></a>
+                    </div>
+                </div>
+    
+            </nav>
+            
+            <div class="title-section mt-3">
+                <div class="section-button ">
+                    <a href="" class="text-decoration">< back</a>
+                </div>
+                <div class="page">
+                    <h4 class="text-bold mt-3">Course: <span class="page-title green-text"> Mathematical Literacy</span></h4>
                 </div>
             </div>
-
-        </nav>
+        </div>
+        
+        <div class="main-content">
+            <div class="split-container">
+                <div class="content">
+                    <p>this is the right content </p>
+                </div>
+                <div class="right-sidenav"> this is the side nac</div>
+            </div>
+        </div>
     </div>
 </body>
 
