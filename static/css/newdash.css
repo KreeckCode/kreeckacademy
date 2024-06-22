@@ -222,8 +222,8 @@ h6{
 
 .active-green{
     background-color: #d3d3d3;
-    border-radius: 10px;
-
+    border-radius: 6px;
+    padding-right: 2rem;
 }
 .main-navigation-container {
     position: fixed;
