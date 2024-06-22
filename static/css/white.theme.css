@@ -232,10 +232,10 @@ a.more {
 .btn {
   font-weight: 600;
   padding: 10px 30px;
-  border-radius: 30px;
+  /* border-radius: 30px; */
   /* color: #121b18; */
-  background: #1bae70;
-  border-color: #1bae70;
+  /* background: #1bae70; */
+  /* border-color: #1bae70; */
 }
 
 .btn:hover {

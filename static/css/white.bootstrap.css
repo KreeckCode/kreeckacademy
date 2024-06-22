@@ -285,19 +285,19 @@ figure {
 }
 
 img,svg {
-    vertical-align: middle
+    vertical-align: middle;
 }
 
 table {
     caption-side: bottom;
-    border-collapse: collapse
+    border-collapse: collapse;
 }
 
 caption {
     padding-top: .5rem;
     padding-bottom: .5rem;
     color: #6c757d;
-    text-align: left
+    text-align: left;
 }
 
 th {
@@ -308,7 +308,7 @@ th {
 tbody,td,tfoot,th,thead,tr {
     border-color: inherit;
     border-style: solid;
-    border-width: 0
+    border-width: 0;
 }
 
 label {
@@ -316,7 +316,9 @@ label {
 }
 
 button {
-    border-radius: 0
+    border-radius: 0;
+    text-decoration: none;
+
 }
 
 button:focus:not(:focus-visible) {
@@ -620,19 +622,19 @@ progress {
 
 @media (min-width: 992px) {
     .container,.container-lg,.container-md,.container-sm {
-        max-width:960px
+        max-width:960px;
     }
 }
 
 @media (min-width: 1200px) {
     .container,.container-lg,.container-md,.container-sm,.container-xl {
-        max-width:1140px
+        max-width:1140px;
     }
 }
 
 @media (min-width: 1400px) {
     .container,.container-lg,.container-md,.container-sm,.container-xl,.container-xxl {
-        max-width:1320px
+        max-width: 2000px;
     }
 }
 

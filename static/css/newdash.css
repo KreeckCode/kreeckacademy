@@ -11,8 +11,7 @@ body{
     padding: 0.25rem 3rem 0.25rem 1rem;
     display: flex;
     gap: 0.6rem;
-    width: 300px;
-    
+    width: max-content;
 }
 .custom-navbar, ul, li, a {
     margin: 0;
@@ -20,18 +19,19 @@ body{
 }
 .custom-navbar, ul, li, a:hover {
     color: #65A98F;
-    border-radius: 10px;
+    /* border-radius: 10px; */
 }
 .main-container{
     display: flex;
     flex-direction: column;
+    width: -webkit-fill-available;
 }
 .sidenav{
     display: flex;
     left: 0;
     height: 100vh;
     width: auto;
-    position: fixed;
+    /* position: fixed; */
 }
 .fixed-sidenav-container{
     display: flex;
@@ -86,43 +86,37 @@ h6{
     border: 2px solid #D1D1D1;
 }
 
-.sidenav-margin{
-    margin-left: 300px;
-}
+
 .m-0{
     margin: 0px;
 }
 .text-decoration{
     text-decoration: none;
 }
-.main-content{
-
+.stats{
+    padding: 0rem 1rem 0rem 1rem;
 }
 .split-container{
     display: flex;
-}
-.course-content{
-    flex: 70;
+    justify-content: space-between;
+    gap: 2rem;
 }
 
-.right-sidenav{
-    flex: 30;
+.main-content{
+    padding: 0rem 2rem 0rem 0rem;
 }
 .video-container{
-    display: flex;
     max-width: 100%;
     height: auto;
     
 }
-/* Uncomment this to make the image resizable with the window
+
 .preview-video img{
     width: 100%;
     height: auto;
-    display: block; 
+    display: block; /* Ensures no extra space below the image */
     max-width: 100%;
-    min-width: 400px;
 }
-*/
 
 .normal-text{
     color: #4B4B4B;
@@ -135,4 +129,71 @@ h6{
     display: flex;
     gap: 0.5rem;
     justify-content: center;
+}
+
+.performance-container{
+    display: flex;
+}
+.performance .watched-lessons p{
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.body-container{
+    display: flex;
+    width: 100%;
+}
+
+.module-title{
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+}
+.course-stats-container {
+    max-width: 1200px;
+    /* margin: 0 auto; */
+    /* padding: 20px; */
+}
+.stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.stats li {
+    flex: 1 1 30%; /* Adjust the basis for the desired width */
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
+}
+
+.stats li i {
+    margin-right: 10px;
+}
+
+.module {
+    position: relative;
+}
+.module-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.module-info h6 {
+    margin: 0;
+}
+.dropdown-icon {
+    margin-left: auto;
+}
+.icon img {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.icon.rotate img {
+    transform: rotate(180deg);
 }
