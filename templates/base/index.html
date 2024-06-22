@@ -19,12 +19,33 @@
     <title>Dashboard | Kreeck Academy</title>
     <link href="/static/css/newdash.css" rel="stylesheet" />
     <style>
+        .sidenav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px; 
+            height: 100%;
+            overflow-y: auto;
+            background-color: #f8f9fa; 
+            z-index: 1000; 
+            padding-top: 20px;
+        }
 
+        .sidenav-margin {
+            margin-left: 300px; 
+            margin-right: 300px;
+            padding-top: 100px;
+        }
+
+        .body-container {
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="custom-container">
         <div class="body-container">
             <div class="sidenav">
                 <div class="fixed-sidenav-container">
@@ -62,7 +83,7 @@
                     <div class="bottom-container mb-3">
                         <div class="nav-btns">
                             <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
-                                <li><a href="" class="sidenav-link"><i><img src="/static/img/icons/compiler_icon.svg"
+                                <li class="active-green"><a href="" class="sidenav-link"><i><img src="/static/img/icons/compiler_icon.svg"
                                                 alt=""></i>
                                         Code Compiler</a></li>
                                 <li><a href="" class="sidenav-link"><i><img src="/static/img/icons/need_help_icon.svg"
@@ -185,26 +206,364 @@
                             <h5 class="text-bold mt-5">Course Modules & Timeline</h5>
                             <p class="grey-text">0 / 10 Completed</p>
                             <div class="timeline">
-                                <div class="modules">
+                                <div class="modules"  id="accordion"></div>>
+
+                                    <!-- Start Module -->
                                     <div class="module">
                                         <div class="module-info">
                                             <h6 class="d-flex align-items-center">
-                                                <i><img src="/static/img/icons/a_icon.svg" alt=""></i> Financial Mathematics
+                                                <i class="mr-1"><img src="/static/img/icons/a_icon.svg" alt=""></i>
+                                                The Theory of Programming
                                             </h6>
                                             <div class="dropdown-icon">
-                                                <a href="#lessonDropdown" data-toggle="collapse" class="icon">
+                                                <a href="#lessonDropdown1" data-toggle="collapse" data-parent="#accordion" class="icon">
                                                     <i><img src="/static/img/icons/dropdown_icon.svg" alt=""></i>
                                                 </a>
                                             </div>
                                         </div>
-                                        <div id="lessonDropdown" class="collapse">
-                                            <div class="lessons">
-                                                <div class="lesson">
-                                                    Lessons to be revealed when the dropdown is clicked
-                                                </div>
+
+                                        <div id="lessonDropdown1" class="collapse">
+                                            <div class="lessons mt-4">
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/one_icon.svg" alt=""></i>
+                                                            What is Financial Mathematics</p>
+                                                    </div>
+                                                    <div class="lesson-time">
+                                                        <p class="grey-text text-small">14:34</p>
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/two.svg" alt=""></i>
+                                                            What is Django</p>
+                                                    </div>
+                                                    <div class="lesson-time">
+                                                        <p class="grey-text text-small">7:34</p>
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/three_icon.svg" alt=""></i>
+                                                            What is an MVT structure</p>
+                                                    </div>
+                                                    <div class="lesson-time">
+                                                        <p class="grey-text text-small">8:34</p>
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/four_icon.svg" alt=""></i>
+                                                            What are Architectures</p>
+                                                    </div>
+                                                    <div class="lesson-lock">
+                                                        <img src="/static/img/icons/lock_icon.svg" alt="">
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href=""  class="lesson">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/five_icon.svg" alt=""></i>
+                                                            What are APIs</p>
+                                                    </div>
+                                                    <div class="lesson-lock">
+                                                        <img src="/static/img/icons/lock_icon.svg" alt="">
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- End Module -->
+
+
+                                    <!-- Start Module -->
+                                    <div class="module">
+                                        <div class="module-info">
+                                            <h6 class="d-flex align-items-center">
+                                                <i class="mr-1"><img src="/static/img/icons/a_icon.svg" alt=""></i>
+                                                Introduction to Python
+                                            </h6>
+                                            <div class="dropdown-icon">
+                                                <a href="#lessonDropdown2" data-toggle="collapse" data-parent="#accordion" class="icon">
+                                                    <i><img src="/static/img/icons/dropdown_icon.svg" alt=""></i>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div id="lessonDropdown2" class="collapse">
+                                            <div class="lessons mt-4">
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/one_icon.svg" alt=""></i>
+                                                            What is Financial Mathematics</p>
+                                                    </div>
+                                                    <div class="lesson-time">
+                                                        <p class="grey-text text-small">14:34</p>
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/two.svg" alt=""></i>
+                                                            What is Django</p>
+                                                    </div>
+                                                    <div class="lesson-time">
+                                                        <p class="grey-text text-small">7:34</p>
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/three_icon.svg" alt=""></i>
+                                                            What is an MVT structure</p>
+                                                    </div>
+                                                    <div class="lesson-time">
+                                                        <p class="grey-text text-small">8:34</p>
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/four_icon.svg" alt=""></i>
+                                                            What are Architectures</p>
+                                                    </div>
+                                                    <div class="lesson-lock">
+                                                        <img src="/static/img/icons/lock_icon.svg" alt="">
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href=""  class="lesson">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/five_icon.svg" alt=""></i>
+                                                            What are APIs</p>
+                                                    </div>
+                                                    <div class="lesson-lock">
+                                                        <img src="/static/img/icons/lock_icon.svg" alt="">
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End Module -->
+
+
+                                    <!-- Start Module -->
+                                    <div class="module">
+                                        <div class="module-info">
+                                            <h6 class="d-flex align-items-center">
+                                                <i class="mr-1"><img src="/static/img/icons/a_icon.svg" alt=""></i>
+                                                HTML & CSS
+                                            </h6>
+                                            <div class="dropdown-icon">
+                                                <a href="#lessonDropdown3" data-toggle="collapse" data-parent="#accordion" class="icon">
+                                                    <i><img src="/static/img/icons/dropdown_icon.svg" alt=""></i>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div id="lessonDropdown3" class="collapse">
+                                            <div class="lessons mt-4">
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/one_icon.svg" alt=""></i>
+                                                            What is Financial Mathematics</p>
+                                                    </div>
+                                                    <div class="lesson-time">
+                                                        <p class="grey-text text-small">14:34</p>
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/two.svg" alt=""></i>
+                                                            What is Django</p>
+                                                    </div>
+                                                    <div class="lesson-time">
+                                                        <p class="grey-text text-small">7:34</p>
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/three_icon.svg" alt=""></i>
+                                                            What is an MVT structure</p>
+                                                    </div>
+                                                    <div class="lesson-time">
+                                                        <p class="grey-text text-small">8:34</p>
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/four_icon.svg" alt=""></i>
+                                                            What are Architectures</p>
+                                                    </div>
+                                                    <div class="lesson-lock">
+                                                        <img src="/static/img/icons/lock_icon.svg" alt="">
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/five_icon.svg" alt=""></i>
+                                                            What are APIs</p>
+                                                    </div>
+                                                    <div class="lesson-lock">
+                                                        <img src="/static/img/icons/lock_icon.svg" alt="">
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End Module -->
+
+                                    
+
+                                    <!-- Start Module -->
+                                    <div class="module">
+                                        <div class="module-info">
+                                            <h6 class="d-flex align-items-center">
+                                                <i class="mr-1"><img src="/static/img/icons/a_icon.svg" alt=""></i>
+                                                Introduction to Django
+                                            </h6>
+                                            <div class="dropdown-icon">
+                                                <a href="#lessonDropdown4" data-toggle="collapse" data-parent="#accordion" class="icon">
+                                                    <i><img src="/static/img/icons/dropdown_icon.svg" alt=""></i>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div id="lessonDropdown4" class="collapse">
+                                            <div class="lessons mt-4">
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/one_icon.svg" alt=""></i>
+                                                            What is Financial Mathematics</p>
+                                                    </div>
+                                                    <div class="lesson-time">
+                                                        <p class="grey-text text-small">14:34</p>
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/two.svg" alt=""></i>
+                                                            What is Django</p>
+                                                    </div>
+                                                    <div class="lesson-time">
+                                                        <p class="grey-text text-small">7:34</p>
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/three_icon.svg" alt=""></i>
+                                                            What is an MVT structure</p>
+                                                    </div>
+                                                    <div class="lesson-time">
+                                                        <p class="grey-text text-small">8:34</p>
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson mt-2">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/four_icon.svg" alt=""></i>
+                                                            What are Architectures</p>
+                                                    </div>
+                                                    <div class="lesson-lock">
+                                                        <img src="/static/img/icons/lock_icon.svg" alt="">
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                <!-- Lesson start -->
+                                                <a href="" class="lesson">
+                                                    <div class="lesson-title">
+                                                        <p><i class="mr-1 grey-text"><img
+                                                                    src="/static/img/icons/five_icon.svg" alt=""></i>
+                                                            What are APIs</p>
+                                                    </div>
+                                                    <div class="lesson-lock">
+                                                        <img src="/static/img/icons/lock_icon.svg" alt="">
+                                                    </div>
+                                                </a>
+                                                <!-- Lesson End -->
+
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End Module -->
+                        
                                 </div>
                             </div>
                         </div>
@@ -226,6 +585,14 @@
             toggles.forEach(function(toggle) {
                 toggle.addEventListener('click', function() {
                     var target = document.querySelector(this.getAttribute('href'));
+
+                    toggles.forEach(function(otherToggle) {
+                        if (otherToggle !== toggle) {
+                            var otherTarget = document.querySelector(otherToggle.getAttribute('href'));
+                            otherToggle.classList.remove('rotate');
+                            otherTarget.classList.remove('show');
+                        }
+                    });
 
                     if (target.classList.contains('show')) {
                         this.classList.remove('rotate');

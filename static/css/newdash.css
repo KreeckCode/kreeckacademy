@@ -105,6 +105,10 @@ h6{
 .main-content{
     padding: 0rem 2rem 0rem 0rem;
 }
+
+.main-content {
+    margin-top: 9rem;
+}
 .video-container{
     max-width: 100%;
     height: auto;
@@ -177,6 +181,7 @@ h6{
 }
 
 .module {
+    margin-bottom: 1rem;
     position: relative;
 }
 .module-info {
@@ -196,4 +201,48 @@ h6{
 }
 .icon.rotate img {
     transform: rotate(180deg);
+}
+.mr-1{
+    margin-right: 0.6rem;
+}
+
+.lesson{
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    color: #929292;
+    font-weight: 500;
+    font-size: 15px;
+    transition: transform 0.3s ease;
+    text-decoration: none;
+}
+.lesson:hover{
+    color: rgb(70, 70, 70);
+}
+
+.active-green{
+    background-color: #d3d3d3;
+    border-radius: 10px;
+
+}
+.main-navigation-container {
+    position: fixed;
+    top: 0;
+    left: 300px;
+    width: calc(100% - 300px);
+    background-color: #f8f9fa;
+    z-index: 1001;
+}
+
+
+.right-sidenav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px; /* Adjust this value as needed */
+    height: 100%;
+    overflow-y: auto;
+    z-index: 1000; 
+    padding-top: 16rem;
+    padding-right: 2rem;
 }
