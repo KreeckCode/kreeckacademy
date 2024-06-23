@@ -75,6 +75,7 @@ body{
     display: flex;
     gap: 1rem;
     text-align: end;
+    flex-direction: row;
 }
 h6{
     margin: 0;
@@ -112,14 +113,15 @@ h6{
 .video-container{
     max-width: 100%;
     height: auto;
-    
+    /* border-radius: 10px; */
 }
 
 .preview-video img{
     width: 100%;
     height: auto;
-    display: block; /* Ensures no extra space below the image */
+    display: block;
     max-width: 100%;
+    border-radius: 20px;
 }
 
 .normal-text{
@@ -155,7 +157,7 @@ h6{
     align-items: center;
 }
 .course-stats-container {
-    max-width: 1200px;
+    /* max-width: 1200px; */
     /* margin: 0 auto; */
     /* padding: 20px; */
 }
@@ -239,10 +241,52 @@ h6{
     position: fixed;
     top: 0;
     right: 0;
-    width: 300px; /* Adjust this value as needed */
+    width: 400px;
     height: 100%;
     overflow-y: auto;
-    z-index: 1000; 
-    padding-top: 16rem;
+    z-index: 1000;
+    padding-top: 13rem;
     padding-right: 2rem;
+}
+
+.about-course{
+    display: flex;
+    gap: 2rem;
+    background: #000;
+    padding: 2rem;
+    border-radius: 10px;
+    flex-direction: row;
+}
+
+.about-lecture{
+    /* display: flex; */
+    background-color: #000000;
+    padding: 1rem;
+    border-radius: 10px;
+    color: white;
+    align-items: center;
+}
+
+.grey-text{
+    color: #4B4B4B;
+}
+
+.lecture-profile .profile .info{
+    text-align: center;
+}
+
+.white-text{
+    color: white;
+}
+
+.text-xx{
+    font-size: large;
+}
+
+.about-profile{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
 }
