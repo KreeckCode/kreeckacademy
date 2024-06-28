@@ -154,6 +154,8 @@ class Upload(models.Model):
 
 
 class UploadVideo(models.Model):
+    """ This is the video upload class
+    """
     title = models.CharField(max_length=100)
     slug = models.SlugField(blank=True, unique=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
