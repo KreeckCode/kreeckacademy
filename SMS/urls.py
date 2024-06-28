@@ -24,6 +24,9 @@ urlpatterns = [
     #admin functionality
     path('kreeckdevsadmin/doc/', include('django.contrib.admindocs.urls')), #this will show the docs in the admin pan
     path('kreeckdevsadmin/', admin.site.urls),
+
+    #payments
+    path('payments/', include('payments.urls')),
     
 ]
 
@@ -31,6 +34,7 @@ if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+#handles the error pages
 handler404 = 'app.views.handler404'
 handler500 = 'app.views.handler500'
 handler400 = 'app.views.handler400'

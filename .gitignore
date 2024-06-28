@@ -17,3 +17,6 @@ Report.md
 historical_comparison_chart.png
 historical_contributions.json
 .coverage
+migrations/
+__pycache__/
+.vscode

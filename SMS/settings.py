@@ -60,6 +60,7 @@ THIRED_PARTY_APPS = [
     'crispy_forms',
     "crispy_bootstrap4",
     'tinymce',
+    'djstripe',
 ]
 
 # Custom apps
@@ -71,7 +72,8 @@ PROJECT_APPS = [
     'search.apps.SearchConfig',
     'quiz.apps.QuizConfig',
     'blog.apps.BlogConfig',
-    'hackathon'
+    'hackathon',
+    'payments'
     
 ]
 
@@ -287,3 +289,15 @@ LOGGING = {
 # Strip payment config
 # STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 # STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY')
+
+# Add Stripe configuration
+STRIPE_LIVE_PUBLISHABLE_KEY = config('STRIPE_LIVE_PUBLISHABLE_KEY')
+STRIPE_LIVE_SECRET_KEY = config('STRIPE_LIVE_SECRET_KEY')
+STRIPE_TEST_SECRET_KEY = config('STRIPE_TEST_SECRET_KEY')
+STRIPE_TEST_PUBLISHABLE_KEY = config('STRIPE_TEST_PUBLISHABLE_KEY')
+
+STRIPE_LIVE_MODE = False  # Change to True in production
+
+DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id"
+STRIPE_SECRET_KEY = STRIPE_TEST_SECRET_KEY
+STRIPE_PUBLISHABLE_KEY = STRIPE_TEST_PUBLISHABLE_KEY

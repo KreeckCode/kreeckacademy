@@ -7,23 +7,20 @@ from django.db.models import Q
 # project import
 from .utils import *
 
-
 YEARS = (
-        (1, '1'),
-        (2, '2'),
-        (3, '3'),
-        (4, '4'),
-        (4, '5'),
-        (4, '6'),
-    )
+    (1, '1'),
+    (2, '2'),
+    (3, '3'),
+    (4, '4'),
+    (5, '5'),
+    (6, '6'),
+)
 
-# LEVEL_COURSE = "Level course"
-BACHLOAR_DEGREE = "Bachloar"
+BACHELOR_DEGREE = "Bachelor"
 MASTER_DEGREE = "Master"
 
 LEVEL = (
-    # (LEVEL_COURSE, "Level course"),
-    (BACHLOAR_DEGREE, "Bachloar Degree"),
+    (BACHELOR_DEGREE, "Bachelor Degree"),
     (MASTER_DEGREE, "Master Degree"),
 )
 
@@ -42,10 +39,10 @@ class ProgramManager(models.Manager):
     def search(self, query=None):
         qs = self.get_queryset()
         if query is not None:
-            or_lookup = (Q(title__icontains=query) | 
+            or_lookup = (Q(title__icontains=query) |
                          Q(summary__icontains=query)
-                        )
-            qs = qs.filter(or_lookup).distinct() # distinct() is often necessary with Q lookups
+                         )
+            qs = qs.filter(or_lookup).distinct()  # distinct() is often necessary with Q lookups
         return qs
 
 
@@ -66,12 +63,12 @@ class CourseManager(models.Manager):
     def search(self, query=None):
         qs = self.get_queryset()
         if query is not None:
-            or_lookup = (Q(title__icontains=query) | 
-                         Q(summary__icontains=query)| 
-                         Q(code__icontains=query)| 
+            or_lookup = (Q(title__icontains=query) |
+                         Q(summary__icontains=query) |
+                         Q(code__icontains=query) |
                          Q(slug__icontains=query)
-                        )
-            qs = qs.filter(or_lookup).distinct() # distinct() is often necessary with Q lookups
+                         )
+            qs = qs.filter(or_lookup).distinct()  # distinct() is often necessary with Q lookups
         return qs
 
 
@@ -86,6 +83,7 @@ class Course(models.Model):
     year = models.IntegerField(choices=YEARS, default=0)
     semester = models.CharField(choices=SEMESTER, max_length=200)
     is_elective = models.BooleanField(default=False, blank=True, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     objects = CourseManager()
 
@@ -94,7 +92,7 @@ class Course(models.Model):
 
     def get_absolute_url(self):
         return reverse('course_detail', kwargs={'slug': self.slug})
-    
+
     @property
     def is_current_semester(self):
         from app.models import Semester
@@ -139,21 +137,20 @@ class Upload(models.Model):
         ext = str(self.file).split(".")
         ext = ext[len(ext)-1]
 
-        if ext == 'doc' or ext == 'docx':
+        if ext in ['doc', 'docx']:
             return 'word'
         elif ext == 'pdf':
             return 'pdf'
-        elif ext == 'xls' or ext == 'xlsx':
+        elif ext in ['xls', 'xlsx']:
             return 'excel'
-        elif ext == 'ppt' or ext == 'pptx':
+        elif ext in ['ppt', 'pptx']:
             return 'powerpoint'
-        elif ext == 'zip' or ext == 'rar' or ext == '7zip':
+        elif ext in ['zip', 'rar', '7zip']:
             return 'archive'
 
     def delete(self, *args, **kwargs):
         self.file.delete()
         super().delete(*args, **kwargs)
-
 
 
 class UploadVideo(models.Model):
@@ -184,8 +181,8 @@ pre_save.connect(video_pre_save_receiver, sender=UploadVideo)
 
 
 class CourseOffer(models.Model):
-	"""NOTE: Only department head can offer semester courses"""
-	dep_head = models.ForeignKey("accounts.DepartmentHead", on_delete=models.CASCADE)
+    """NOTE: Only department head can offer semester courses"""
+    dep_head = models.ForeignKey("accounts.DepartmentHead", on_delete=models.CASCADE)
 
-	def __str__(self):
-		return "{}".format(self.dep_head)
+    def __str__(self):
+        return "{}".format(self.dep_head)
