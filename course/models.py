@@ -88,7 +88,7 @@ class Course(models.Model):
     objects = CourseManager()
 
     def __str__(self):
-        return "{0} ({1})".format(self.title, self.code)
+        return "{0} ({1})".format(self.title, self.code, self.price)
 
     def get_absolute_url(self):
         return reverse('course_detail', kwargs={'slug': self.slug})
