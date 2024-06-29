@@ -53,14 +53,18 @@ DJANGO_APPS = [
     'django_cleanup',
 ]
 
-# Thired party apps
+""" Adding cross domain authentication the initial functionality of this is to have a centralized authentication application that is deployed on 
+    www.auth.kreeck.com, this will allow all the users to have one profile for all the kreeck applications
+"""
 THIRED_PARTY_APPS = [
+    
     'rest_framework',
     'debug_toolbar',
     'crispy_forms',
     "crispy_bootstrap4",
     'tinymce',
     'djstripe',
+    'corsheaders' # This will handle the central login application that is yet to be implemented, as of yet i want to set the functionalities
 ]
 
 # Custom apps
@@ -91,7 +95,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'app.middleware.RedirectMiddleware',
+    'app.middleware.RedirectMiddleware', 
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 
@@ -152,6 +157,17 @@ else:
             'PORT': config('DB_PORT'),  
         }
     }
+
+
+
+"""The Kreeck central authentication will handle the remote authentication once the external authentication application is set us"""
+KREECK_CENTRAL_AUTH = False
+if KREECK_CENTRAL_AUTH:
+    AUTHENTICATION_BACKENDS = [
+        'django.contrib.auth.backends.RemoteUserBackend',
+    ]
+else:
+    pass
 
 
 TINYMCE_DEFAULT_CONFIG = {
@@ -298,6 +314,6 @@ STRIPE_TEST_PUBLISHABLE_KEY = config('STRIPE_TEST_PUBLISHABLE_KEY')
 
 STRIPE_LIVE_MODE = False  # Change to True in production
 
-DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id"
+DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id"    
 STRIPE_SECRET_KEY = STRIPE_TEST_SECRET_KEY
 STRIPE_PUBLISHABLE_KEY = STRIPE_TEST_PUBLISHABLE_KEY
