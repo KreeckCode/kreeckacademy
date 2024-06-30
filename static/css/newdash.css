@@ -3,7 +3,9 @@ body{
     font-family: "Poppins";
     color: #4B4B4B;
 }
-
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
+@import url('https://fonts.cdnfonts.com/css/inter');
+@import url('https://fonts.cdnfonts.com/css/poppins');
 .custom-navbar, li, .sidenav-link{
     text-decoration: none;
     font-weight: 500;

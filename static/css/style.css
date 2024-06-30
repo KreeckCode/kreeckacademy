@@ -8,7 +8,9 @@
   src: local(""), url("../fonts/rubik-v14-latin/rubik-v14-latin-300.eot?#iefix") format("embedded-opentype"), url("../fonts/rubik-v14-latin/rubik-v14-latin-300.woff2") format("woff2"), url("../fonts/rubik-v14-latin/rubik-v14-latin-300.woff") format("woff"), url("../fonts/rubik-v14-latin/rubik-v14-latin-300.ttf") format("truetype"), url("../fonts/rubik-v14-latin/rubik-v14-latin-300.svg#Rubik") format("svg");
   /* Legacy iOS */
 }
-
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
+@import url('https://fonts.cdnfonts.com/css/inter');
+@import url('https://fonts.cdnfonts.com/css/poppins');
 *,
 body {
   font-family: "Inter", sans-serif;

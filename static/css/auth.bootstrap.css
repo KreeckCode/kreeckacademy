@@ -4,6 +4,9 @@
  * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
+ @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
+ @import url('https://fonts.cdnfonts.com/css/inter');
+ @import url('https://fonts.cdnfonts.com/css/poppins');
  :root {
   --blue: #007bff;
   --indigo: #6610f2;

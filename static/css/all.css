@@ -2,6 +2,9 @@
  * Font Awesome Free 5.12.1 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
+ @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
+ @import url('https://fonts.cdnfonts.com/css/inter');
+ @import url('https://fonts.cdnfonts.com/css/poppins');
  .fa,
  .fas,
  .far,
