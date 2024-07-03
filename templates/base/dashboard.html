@@ -144,13 +144,67 @@
                         </div>
                         <div class="page">
                             <h4 class="text-bold mt-3">Admin Dashboard</h4>
-                            
+
                         </div>
                     </div>
                 </div>
 
                 <div class="main-content">
+                    <section class="chart-section">
+                        <div class="chart-container">
+                            <div class="charts">
+                                <div class="welcome-card">
+                                    <div class="card">
+                                        <div class="title">
+                                            <h5>Welcome back Kreeck!</h5>
+                                        </div>
+                                        <div class="body">
+                                            <img src="/static/img/icons/welcome_icon.svg" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="normal-card green-bg text-white ">
+                                    <div class="header">
+                                        <div class="left"><h6>Number of students</h6></div>
+                                        <div class="right">
+                                            <p> <i><img src="/static/img/icons/dropdown_icon.svg" alt=""></i>Yearly</p>
+                                        </div>
                     
+                                    </div>
+                                    
+                                    <div class="bottom">
+                                        <div class="body">
+                                            <h1 class="text-bold">1,427</h1>
+                                            <div class="img-container">
+                                                <img src="/static/img/icons/studeent_icon.svg" alt="">
+                                                <img src="/static/img/icons/studeent_icon.svg" alt="">
+                                                <img src="/static/img/icons/studeent_icon.svg" alt="">
+                                                <img src="/static/img/icons/studeent_icon.svg" alt="">
+                                                <img src="/static/img/icons/studeent_icon.svg" alt="">
+                                                <img src="/static/img/icons/studeent_icon.svg" alt="">
+                                                <img src="/static/img/icons/more_students_icon.svg" alt="">
+                                            </div>
+                                        </div>
+                                        <h6>New Students</h6>
+                                    </div>
+                                </div>
+
+                                <div class="card ">
+                                    <div class="header"></div>
+                                    <div class="body"></div>
+                                    <div class="chart">
+                                        <canvas id="myChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="revenue-chart">
+
+                        </div>
+                    </section>
+                    <section class="table-section">
+
+                    </section>
                 </div>
             </div>
         </div>
@@ -160,6 +214,53 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Including Charts.js configuration CDNs-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.js.map"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx = document.getElementById('myChart');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+            datasets: [{
+                label: 'Number of learners',
+                data: [65, 59, 80, 81, 56, 55],
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    display: false
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    enabled: false
+                }
+            },
+            elements: {
+                point: {
+                    radius: 0
+                }
+            }
+        }
+    });
+</script>
+
+
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

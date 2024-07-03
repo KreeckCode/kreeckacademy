@@ -294,3 +294,65 @@ h6{
     text-align: center;
     gap: 1rem;
 }
+
+.green-bg{
+    background-color: #65A98F;
+}
+
+.card{
+    padding: 1rem;
+}
+
+#charts-section{
+    display: flex;
+}
+
+.chart-container .charts{
+    display: flex;
+    flex: 70%;
+    gap: 1rem;
+}
+
+.welcome-card .card{
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    height: 100%;
+    max-height: 200px;
+    align-items: center;
+}
+.normal-card {
+    padding: 1rem;
+    border-radius: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 300px;
+
+    height: 100%;
+    max-height: 200px;
+}
+
+.img-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-left: 16px;
+}
+
+.img-container img {
+    margin-left: -16px; 
+    height: auto;
+}
+
+.normal-card .header{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.bottom .body{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
