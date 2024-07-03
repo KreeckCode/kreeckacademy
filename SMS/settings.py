@@ -17,6 +17,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+USE_X_FORWARDED_HOST = True
 
 # Allow the Debug Toolbar to appear for all IP addresses (only use this in development)
 INTERNAL_IPS = [
@@ -24,11 +25,29 @@ INTERNAL_IPS = [
 ]
 
 if DEBUG:
-    ALLOWED_HOSTS = ['*','kreeckacademy.s3.amazonaws.com', 'http://django-env.eba-gmw2zn2q.ap-south-1.elasticbeanstalk.com/']
-    
+    ALLOWED_HOSTS = [
+        '*',
+        'localhost',
+        '127.0.0.1',
+        'compiler',
+        'kreeckacademy.s3.amazonaws.com',
+        'http://django-env.eba-gmw2zn2q.ap-south-1.elasticbeanstalk.com/',
+    ]
 else:
-    ALLOWED_HOSTS = ['*','http://django-env.eba-gmw2zn2q.ap-south-1.elasticbeanstalk.com/','kreeckacademy.s3.amazonaws.com','https://academykreeck.azurewebsites.net','http://kreeckacadeny.azurewebsites.net','https://academy.kreeck.com','http://academy.kreeck.com','https://kreeck.com','http://kreeck.com']
-
+    ALLOWED_HOSTS = [
+        '*',
+        'localhost',
+        '127.0.0.1',
+        'compiler',
+        'http://django-env.eba-gmw2zn2q.ap-south-1.elasticbeanstalk.com/',
+        'kreeckacademy.s3.amazonaws.com',
+        'https://academykreeck.azurewebsites.net',
+        'http://kreeckacadeny.azurewebsites.net',
+        'https://academy.kreeck.com',
+        'http://academy.kreeck.com',
+        'https://kreeck.com',
+        'http://kreeck.com'
+    ]
 # change the default user models to our custom model
 AUTH_USER_MODEL = 'accounts.User' 
 
@@ -96,6 +115,7 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'app.middleware.RedirectMiddleware', 
     'corsheaders.middleware.CorsMiddleware',
+    
 ]
 
 

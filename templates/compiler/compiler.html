@@ -45,6 +45,11 @@
     </div>
 
     <div class="content">
+        {% if not compiler_service_status %}
+        <div class="alert alert-danger" role="alert">
+            The compiler service is currently unavailable. Code execution will not work.
+        </div>
+        {% endif %}
         <h1>Online Compiler</h1>
         <form id="compiler-form" method="post">
             {% csrf_token %}
@@ -91,7 +96,7 @@
                         {% csrf_token %}
                         <div class="form-group">
                             <label for="project_name">Project Name</label>
-                            <input type="text" id="project_name" name="project_name" class="form-control">
+                            <input type="text" id="project_name" name="project_name" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="language">Select Language</label>
@@ -222,7 +227,7 @@
                 link.addEventListener("click", function(e) {
                     e.preventDefault();
                     var projectId = this.getAttribute("data-id");
-                    fetch("{% url 'compiler' %}?project_id=" + projectId)
+                    fetch("{% url 'get_project_code' %}?project_id=" + projectId)
                         .then(response => response.json())
                         .then(data => {
                             document.getElementById("project_id").value = projectId;

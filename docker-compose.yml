@@ -9,11 +9,16 @@ services:
     image: app:kreeckacademy
     container_name: kreeckacademy_container
     command: bash -c "python manage.py migrate && python manage.py makemigrations && python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DEBUG=True
+      - ALLOWED_HOSTS=*,localhost,127.0.0.1,compiler_container,kreeckacademy.s3.amazonaws.com,django-env.eba-gmw2zn2q.ap-south-1.elasticbeanstalk.com
+    networks:
+      - kreeck_net
 
   compiler:
     build:
       context: .
-      dockerfile: dockerfile.compiler
+      dockerfile: Dockerfile.compiler
     volumes:
       - .:/compiler
     ports:
@@ -21,3 +26,11 @@ services:
     image: app:compiler
     container_name: compiler_container
     command: bash -c "python manage.py migrate && python manage.py makemigrations && python manage.py runserver 0.0.0.0:8001"
+    environment:
+      - DEBUG=True
+      - ALLOWED_HOSTS=*,localhost,127.0.0.1,compiler_container,kreeckacademy.s3.amazonaws.com,django-env.eba-gmw2zn2q.ap-south-1.elasticbeanstalk.com
+    networks:
+      - kreeck_net
+
+networks:
+  kreeck_net:

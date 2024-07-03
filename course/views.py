@@ -30,6 +30,7 @@ from django.http import JsonResponse
 import subprocess
 import requests
 from django.views.decorators.csrf import csrf_exempt
+import json
 
 # ########################################################
 # Program views
@@ -628,11 +629,34 @@ def user_course_list(request):
         return render(request, 'course/user_course_list.html')
 
 
+
+
+######################################################################################################
+# Compiler FUnctionalities
+######################################################################################################
+import logging
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
+def check_compiler_service():
+    """
+    Function to check if the compiler service is running.
+    """
+    try:
+        response = requests.get('http://compiler:8001/health/')
+        if response.status_code == 200:
+            return True
+    except requests.RequestException as e:
+        logger.error(f"Compiler service check failed: {e}")
+    return False
+
 @login_required
 def compiler(request, lesson_id=None):
     """
     View to handle code execution and rendering of the compiler interface.
     """
+    compiler_service_status = check_compiler_service()
     projects = UserProject.objects.filter(user=request.user)
     
     if lesson_id:
@@ -646,14 +670,65 @@ def compiler(request, lesson_id=None):
         template_code = ""
         instructions = ""
 
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        language = data.get('language')
+        code_main = data.get('code_main')
+        code_test = data.get('code_test')
+        project_id = data.get('project_id')
+
+        if lesson:
+            user_code.code_main = code_main
+            user_code.code_test = code_test
+            user_code.save()
+        elif project_id:
+            project = get_object_or_404(UserProject, id=project_id, user=request.user)
+            project.code_main = code_main
+            project.code_test = code_test
+            project.language = language
+            project.save()
+
+        if not compiler_service_status:
+            return JsonResponse({'error': 'Compiler service is not running.'})
+
+        output = execute_code(language, code_main)
+        return JsonResponse({'output': output})
+    
     context = {
         'lesson': lesson,
         'user_code': user_code,
         'template_code': template_code,
         'instructions': instructions,
-        'projects': projects
+        'projects': projects,
+        'compiler_service_status': compiler_service_status
     }
     return render(request, 'compiler/compiler.html', context)
+
+def execute_code(language, code):
+    """
+    Function to execute user code by sending it to the compiler service.
+    """
+    url = 'http://compiler:8001/run_code/'
+    data = {'language': language, 'code': code}
+    headers = {'Host': 'localhost:8001'}  # Ensure Host header is correctly set
+
+    response = requests.post(url, data=data, headers=headers)
+    
+    try:
+        response = requests.post(url, data=data)
+        response.raise_for_status()  # Raise an error for bad HTTP status codes
+        logger.info(f"Compiler service response: {response.text}")
+
+        try:
+            response_json = response.json()
+            return response_json.get('output', response_json.get('error', 'Error in compilation.'))
+        except ValueError:  # Includes simplejson.decoder.JSONDecodeError
+            logger.error("Response from compiler service is not valid JSON")
+            return 'Error: Response from compiler service is not valid JSON'
+    
+    except requests.RequestException as e:
+        logger.error(f"Request to compiler service failed: {e}")
+        return f'Error: Request to compiler service failed: {e}'
 
 @login_required
 @csrf_exempt
@@ -662,15 +737,17 @@ def create_project(request):
     View to create a new project.
     """
     if request.method == 'POST':
-        project_name = request.POST.get('project_name')
-        language = request.POST.get('language')
-        project = UserProject.objects.create(
-            user=request.user,
-            name=project_name,
-            language=language
-        )
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
+        data = json.loads(request.body)
+        project_name = data.get('project_name')
+        language = data.get('language')
+        if project_name and language:
+            project = UserProject.objects.create(
+                user=request.user,
+                name=project_name,
+                language=language
+            )
+            return JsonResponse({'success': True})
+        return JsonResponse({'success': False})
 
 @login_required
 @csrf_exempt
@@ -686,19 +763,6 @@ def get_project_code(request):
         'code_test': project.code_test
     }
     return JsonResponse(data)
-
-def execute_code(language, code):
-    """
-    Function to execute user code by sending it to the compiler service.
-    """
-    url = 'http://compiler_container:8001/run_code/'  # The compiler container URL
-    data = {'language': language, 'code': code}
-    response = requests.post(url, data=data)
-
-    if response.status_code == 200:
-        return response.json().get('output', '')
-    else:
-        return response.json().get('error', 'Error in compilation.')
 
 
 @login_required
