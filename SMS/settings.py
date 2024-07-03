@@ -63,7 +63,6 @@ THIRED_PARTY_APPS = [
     'crispy_forms',
     "crispy_bootstrap4",
     'tinymce',
-    'djstripe',
     'corsheaders' # This will handle the central login application that is yet to be implemented, as of yet i want to set the functionalities
 ]
 
@@ -311,9 +310,4 @@ STRIPE_LIVE_PUBLISHABLE_KEY = config('STRIPE_LIVE_PUBLISHABLE_KEY')
 STRIPE_LIVE_SECRET_KEY = config('STRIPE_LIVE_SECRET_KEY')
 STRIPE_TEST_SECRET_KEY = config('STRIPE_TEST_SECRET_KEY')
 STRIPE_TEST_PUBLISHABLE_KEY = config('STRIPE_TEST_PUBLISHABLE_KEY')
-
 STRIPE_LIVE_MODE = False  # Change to True in production
-
-DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id"    
-STRIPE_SECRET_KEY = STRIPE_TEST_SECRET_KEY
-STRIPE_PUBLISHABLE_KEY = STRIPE_TEST_PUBLISHABLE_KEY

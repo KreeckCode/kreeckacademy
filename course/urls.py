@@ -1,7 +1,6 @@
 from django.urls import path
 from .views import *
 
-
 urlpatterns = [
     # Program urls
     path('', program_view, name='programs'),
@@ -33,9 +32,15 @@ urlpatterns = [
     path('course/<slug>/video/<video_slug>/edit/', handle_video_edit, name='upload_video_edit'),
     path('course/<slug>/video/<video_slug>/delete/', handle_video_delete, name='upload_video_delete'),
 
-    # course registration
+    # Course registration
     path('course/registration/', course_registration, name='course_registration'),
     path('course/drop/', course_drop, name='course_drop'),
     
     path('my_courses/', user_course_list, name="user_course_list"),
+
+    # Compiler view
+    path('compiler/', compiler, name='compiler'),
+    path('compiler/<int:lesson_id>/', compiler, name='compiler_with_lesson'),
+    path('projects/create/', create_project, name='create_project'),
+    path('projects/get_code/', get_project_code, name='get_project_code'),
 ]

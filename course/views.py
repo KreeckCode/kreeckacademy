@@ -20,12 +20,16 @@ from .forms import (
     ProgramForm, CourseAddForm, CourseAllocationForm, 
     EditCourseAllocationForm, UploadFormFile, UploadFormVideo
 )
-from .models import Program, Course, CourseAllocation, Upload, UploadVideo
+from .models import Program, Course, CourseAllocation, Upload, UploadVideo, UserCode, UserProgress, UserProject
 from django.template.loader import render_to_string
 from django.views.decorators.cache import cache_page
 import os
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.http import JsonResponse
+import subprocess
+import requests
+from django.views.decorators.csrf import csrf_exempt
 
 # ########################################################
 # Program views
@@ -622,3 +626,102 @@ def user_course_list(request):
 
     else:
         return render(request, 'course/user_course_list.html')
+
+
+@login_required
+def compiler(request, lesson_id=None):
+    """
+    View to handle code execution and rendering of the compiler interface.
+    """
+    projects = UserProject.objects.filter(user=request.user)
+    
+    if lesson_id:
+        lesson = get_object_or_404(UploadVideo, id=lesson_id)
+        user_code, created = UserCode.objects.get_or_create(user=request.user, lesson=lesson)
+        template_code = lesson.template_code
+        instructions = lesson.instructions
+    else:
+        lesson = None
+        user_code = None
+        template_code = ""
+        instructions = ""
+
+    context = {
+        'lesson': lesson,
+        'user_code': user_code,
+        'template_code': template_code,
+        'instructions': instructions,
+        'projects': projects
+    }
+    return render(request, 'compiler/compiler.html', context)
+
+@login_required
+@csrf_exempt
+def create_project(request):
+    """
+    View to create a new project.
+    """
+    if request.method == 'POST':
+        project_name = request.POST.get('project_name')
+        language = request.POST.get('language')
+        project = UserProject.objects.create(
+            user=request.user,
+            name=project_name,
+            language=language
+        )
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+@login_required
+@csrf_exempt
+def get_project_code(request):
+    """
+    View to get the code for a specific project.
+    """
+    project_id = request.GET.get('project_id')
+    project = get_object_or_404(UserProject, id=project_id, user=request.user)
+    data = {
+        'language': project.language,
+        'code_main': project.code_main,
+        'code_test': project.code_test
+    }
+    return JsonResponse(data)
+
+def execute_code(language, code):
+    """
+    Function to execute user code by sending it to the compiler service.
+    """
+    url = 'http://compiler_container:8001/run_code/'  # The compiler container URL
+    data = {'language': language, 'code': code}
+    response = requests.post(url, data=data)
+
+    if response.status_code == 200:
+        return response.json().get('output', '')
+    else:
+        return response.json().get('error', 'Error in compilation.')
+
+
+@login_required
+def update_progress(request, course_id, lesson_id):
+    """
+    View to update the user's progress for a lesson within a course.
+    """
+    user = request.user
+    course = get_object_or_404(Course, id=course_id)
+    lesson = get_object_or_404(UploadVideo, id=lesson_id)
+
+    # Check if the user progress already exists
+    progress, created = UserProgress.objects.get_or_create(user=user, course=course, lesson=lesson)
+    
+    # Mark the lesson as completed
+    progress.completed = True
+    progress.save()
+
+    # Optionally, check if the user has completed all lessons in the course
+    course_lessons = UploadVideo.objects.filter(course=course)
+    completed_lessons = UserProgress.objects.filter(user=user, course=course, completed=True).count()
+    
+    if completed_lessons == course_lessons.count():
+        messages.success(request, "Congratulations! You have completed all lessons in this course.")
+    
+    return redirect('course_detail', slug=course.slug)

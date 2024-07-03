@@ -9,4 +9,15 @@ services:
     image: app:kreeckacademy
     container_name: kreeckacademy_container
     command: bash -c "python manage.py migrate && python manage.py makemigrations && python manage.py runserver 0.0.0.0:8000"
-    
+
+  compiler:
+    build:
+      context: .
+      dockerfile: dockerfile.compiler
+    volumes:
+      - .:/compiler
+    ports:
+      - 8001:8001
+    image: app:compiler
+    container_name: compiler_container
+    command: bash -c "python manage.py migrate && python manage.py makemigrations && python manage.py runserver 0.0.0.0:8001"

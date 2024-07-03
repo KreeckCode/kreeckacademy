@@ -1,17 +1,29 @@
-from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import subprocess
 
-#@cache_page(60 * 60 )
-def compiler(request):
+@csrf_exempt
+def run_code_view(request):
     """
-    this should be ona different environment because someone can easily break the software
-    
+    View to handle code execution requests.
+    This view executes the code in an isolated environment.
     """
-    return render(request, 'compiler/compiler.html')
+    if request.method == 'POST':
+        language = request.POST.get('language')
+        code = request.POST.get('code')
+        try:
+            output = execute_code(language, code)
+            return JsonResponse({'output': output})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+
+    return JsonResponse({'error': 'Invalid request method.'})
 
 def execute_code(language, code):
+    """
+    Function to execute user code based on the specified language.
+    This function runs the code in an isolated environment.
+    """
     if language == 'python':
         command = ['python', '-c', code]
     elif language == 'html':
@@ -42,15 +54,3 @@ def execute_code(language, code):
         return result.stdout
     else:
         return result.stderr
-
-def run_code_view(request):
-    if request.method == 'POST':
-        language = request.POST.get('language')
-        code = request.POST.get('code')
-        try:
-            output = execute_code(language, code)
-            return JsonResponse({'output': output})
-        except Exception as e:
-            return JsonResponse({'error': str(e)})
-
-    return JsonResponse({'error': 'Invalid request method.'})
