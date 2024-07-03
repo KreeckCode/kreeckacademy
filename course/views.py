@@ -644,7 +644,7 @@ def check_compiler_service():
     Function to check if the compiler service is running.
     """
     try:
-        response = requests.get('http://compiler:8001/health/')
+        response = requests.get('http://compiler:8001/compiler/health/')
         if response.status_code == 200:
             return True
     except requests.RequestException as e:
@@ -708,11 +708,8 @@ def execute_code(language, code):
     """
     Function to execute user code by sending it to the compiler service.
     """
-    url = 'http://compiler:8001/run_code/'
+    url = 'http://compiler:8001/compiler/run_code/'  # The compiler container URL
     data = {'language': language, 'code': code}
-    headers = {'Host': 'localhost:8001'}  # Ensure Host header is correctly set
-
-    response = requests.post(url, data=data, headers=headers)
     
     try:
         response = requests.post(url, data=data)
