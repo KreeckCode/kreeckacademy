@@ -95,8 +95,8 @@ PROJECT_APPS = [
     'quiz.apps.QuizConfig',
     'blog.apps.BlogConfig',
     'hackathon',
-    'payments'
-    
+    'payments',
+    'support',
 ]
 
 
