@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,13 +10,15 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- CodeMirror CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material-darker.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material-darker.min.css">
     <!-- Custom CSS -->
     <style>
         .CodeMirror {
             border: 1px solid #eee;
             height: auto;
         }
+
         .sidebar {
             height: 100%;
             width: 250px;
@@ -25,12 +28,14 @@
             background-color: #f8f9fa;
             padding-top: 20px;
         }
+
         .content {
             margin-left: 260px;
             padding: 20px;
         }
     </style>
 </head>
+
 <body>
     <div class="sidebar">
         <h4 class="text-center">My Projects</h4>
@@ -41,7 +46,8 @@
             </li>
             {% endfor %}
         </ul>
-        <button class="btn btn-primary btn-block mt-3" data-toggle="modal" data-target="#createProjectModal">Create New Project</button>
+        <button class="btn btn-primary btn-block mt-3" data-toggle="modal" data-target="#createProjectModal">Create New
+            Project</button>
     </div>
 
     <div class="content">
@@ -82,7 +88,8 @@
     </div>
 
     <!-- Create Project Modal -->
-    <div class="modal fade" id="createProjectModal" tabindex="-1" aria-labelledby="createProjectModalLabel" aria-hidden="true">
+    <div class="modal fade" id="createProjectModal" tabindex="-1" aria-labelledby="createProjectModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -118,6 +125,50 @@
         </div>
     </div>
 
+    <!-- Modal for input prompts -->
+    <div class="modal fade" id="inputModal" tabindex="-1" aria-labelledby="inputModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="inputModalLabel">Input Required</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label id="inputPrompt"></label>
+                    <input type="text" id="userInput" class="form-control">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="submitInput">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for delete confirmation -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this project?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
@@ -133,111 +184,166 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    
+
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var codeMirrorOptions = {
-                lineNumbers: true,
-                theme: "material-darker",
-                autoCloseBrackets: true,
-                matchBrackets: true
-            };
+        document.addEventListener("DOMContentLoaded", function () {
+    var codeMirrorOptions = {
+        lineNumbers: true,
+        theme: "material-darker",
+        autoCloseBrackets: true,
+        matchBrackets: true
+    };
 
-            var editorMain = CodeMirror.fromTextArea(document.getElementById("code_main"), {
-                ...codeMirrorOptions,
-                mode: "python"
-            });
+    var editorMain = CodeMirror.fromTextArea(document.getElementById("code_main"), {
+        ...codeMirrorOptions,
+        mode: "python"
+    });
 
-            var editorTest = CodeMirror.fromTextArea(document.getElementById("code_test"), {
-                ...codeMirrorOptions,
-                mode: "python"
-            });
+    var editorTest = CodeMirror.fromTextArea(document.getElementById("code_test"), {
+        ...codeMirrorOptions,
+        mode: "python"
+    });
 
-            document.getElementById("language").addEventListener("change", function(e) {
-                var mode = "python";
-                if (e.target.value === "javascript") {
-                    mode = "javascript";
-                } else if (e.target.value === "cpp") {
-                    mode = "text/x-c++src";
-                } else if (e.target.value === "html") {
-                    mode = "xml";
-                } else if (e.target.value === "css") {
-                    mode = "css";
-                }
-                editorMain.setOption("mode", mode);
-                editorTest.setOption("mode", mode);
-            });
+    document.getElementById("language").addEventListener("change", function (e) {
+        var mode = "python";
+        if (e.target.value === "javascript") {
+            mode = "javascript";
+        } else if (e.target.value === "cpp") {
+            mode = "text/x-c++src";
+        } else if (e.target.value === "html") {
+            mode = "xml";
+        } else if (e.target.value === "css") {
+            mode = "css";
+        }
+        editorMain.setOption("mode", mode);
+        editorTest.setOption("mode", mode);
+    });
 
-            document.getElementById("compiler-form").addEventListener("submit", function(e) {
-                e.preventDefault();
-                var language = document.getElementById("language").value;
-                var codeMain = editorMain.getValue();
-                var codeTest = editorTest.getValue();
-                var csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-                var projectId = document.getElementById("project_id").value;
+    var inputs = [];
+    var inputPrompts = [];
+    var currentInputIndex = 0;
 
-                fetch("{% url 'compiler' %}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": csrfToken
-                    },
-                    body: JSON.stringify({
-                        language: language,
-                        code_main: codeMain,
-                        code_test: codeTest,
-                        project_id: projectId
-                    })
-                }).then(response => response.json()).then(data => {
-                    document.getElementById("output").innerText = data.output || data.error;
-                });
-            });
+    function showInputModal(prompt) {
+        document.getElementById("inputPrompt").innerText = prompt;
+        document.getElementById("userInput").value = ''; // Clear previous input
+        $("#inputModal").modal('show');
+    }
 
-            document.getElementById("save-code").addEventListener("click", function() {
-                // Handle save functionality
-                alert("Code saved successfully!");
-            });
+    document.getElementById("submitInput").addEventListener("click", function () {
+        var userInput = document.getElementById("userInput").value;
+        inputs.push(userInput);
+        $("#inputModal").modal('hide');
+        currentInputIndex++;
+        if (currentInputIndex < inputPrompts.length) {
+            showInputModal(inputPrompts[currentInputIndex]);
+        } else {
+            submitCodeWithInputs();
+        }
+    });
 
-            document.getElementById("create-project-form").addEventListener("submit", function(e) {
-                e.preventDefault();
-                var projectName = document.getElementById("project_name").value;
-                var language = document.getElementById("modal_language").value;
-                var csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    function submitCodeWithInputs() {
+        // Retrieve necessary values from the DOM
+        var language = document.getElementById("language").value;
+        var codeMain = editorMain.getValue();
+        var csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 
-                fetch("{% url 'create_project' %}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": csrfToken
-                    },
-                    body: JSON.stringify({
-                        project_name: projectName,
-                        language: language
-                    })
-                }).then(response => response.json()).then(data => {
-                    if (data.success) {
-                        // Reload the page or update the project list dynamically
-                        location.reload();
-                    } else {
-                        alert("Error creating project.");
-                    }
-                });
-            });
+        // Log the inputs to the console for debugging
+        console.log("Submitting code with inputs:", inputs);
 
-            document.querySelectorAll(".project-link").forEach(function(link) {
-                link.addEventListener("click", function(e) {
-                    e.preventDefault();
-                    var projectId = this.getAttribute("data-id");
-                    fetch("{% url 'get_project_code' %}?project_id=" + projectId)
-                        .then(response => response.json())
-                        .then(data => {
-                            document.getElementById("project_id").value = projectId;
-                            document.getElementById("language").value = data.language;
-                            editorMain.setValue(data.code_main);
-                            editorTest.setValue(data.code_test);
-                        });
-                });
-            });
+        // Fetch request to send the code and inputs to the backend
+        fetch("{% url 'compiler' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify({
+                language: language,
+                code: codeMain,
+                inputs: inputs
+            })
+        }).then(response => {
+            // Check if the response is ok (status in the range 200-299)
+            if (!response.ok) {
+                throw new Error("Network response was not ok " + response.statusText);
+            }
+            return response.json();
+        }).then(data => {
+            // Display the output or error from the response
+            document.getElementById("output").innerText = data.output || data.error;
+        }).catch(error => {
+            // Log any errors that occur during the fetch operation
+            console.error("There was a problem with the fetch operation:", error);
+            document.getElementById("output").innerText = 'Error: ' + error.message;
         });
+    }
+
+    document.getElementById("compiler-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        inputs = [];
+        currentInputIndex = 0;
+        inputPrompts = [];
+        var codeMain = editorMain.getValue();
+
+        var inputRegex = /input\(["']([^"']+)["']\)/g;
+        var match;
+        while ((match = inputRegex.exec(codeMain)) !== null) {
+            inputPrompts.push(match[1]);
+        }
+
+        if (inputPrompts.length > 0) {
+            showInputModal(inputPrompts[0]);
+        } else {
+            submitCodeWithInputs();
+        }
+    });
+
+    document.getElementById("save-code").addEventListener("click", function () {
+        alert("Code saved successfully!");
+    });
+
+    document.getElementById("create-project-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var projectName = document.getElementById("project_name").value;
+        var language = document.getElementById("modal_language").value;
+        var csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+        fetch("{% url 'create_project' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify({
+                project_name: projectName,
+                language: language
+            })
+        }).then(response => response.json()).then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert("Error creating project.");
+            }
+        });
+    });
+
+    document.querySelectorAll(".project-link").forEach(function (link) {
+        link.addEventListener("click", function (e) {
+            e.preventDefault();
+            var projectId = this.getAttribute("data-id");
+            fetch("{% url 'get_project_code' %}?project_id=" + projectId)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("project_id").value = projectId;
+                    document.getElementById("language").value = data.language;
+                    editorMain.setValue(data.code_main);
+                    editorTest.setValue(data.code_test);
+                });
+        });
+    });
+});
     </script>
 </body>
+
 </html>

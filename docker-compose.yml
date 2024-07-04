@@ -17,7 +17,7 @@ services:
       context: .
       dockerfile: Dockerfile.compiler
     volumes:
-      - .:/compiler
+      - compiler_user_code:/home/compiler/user_code
     ports:
       - "8001:8001"
     environment:
@@ -38,3 +38,6 @@ services:
 networks:
   kreeck_network:
     driver: bridge
+
+volumes:
+  compiler_user_code:

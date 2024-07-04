@@ -43,4 +43,6 @@ urlpatterns = [
     path('compiler/<int:lesson_id>/', compiler, name='compiler_with_lesson'),
     path('projects/create/', create_project, name='create_project'),
     path('projects/get_code/', get_project_code, name='get_project_code'),
+    path('delete_project/', delete_project, name='delete_project'),
+    
 ]
