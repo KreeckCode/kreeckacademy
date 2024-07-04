@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Support Team</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Manage Support Team</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="text-danger">{{ form.username.errors }}</div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Add User to Support Team</button>
+    </form>
+    <h2 class="mt-4">Support Team Members</h2>
+    <ul class="list-group">
+        {% for user in support_users %}
+            <li class="list-group-item">{{ user.username }}</li>
+        {% endfor %}
+    </ul>
+</div>
+</body>
+</html>

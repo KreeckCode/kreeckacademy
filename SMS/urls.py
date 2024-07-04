@@ -27,6 +27,9 @@ urlpatterns = [
 
     #payments
     path('payments/', include('payments.urls')),
+
+    # Support
+    path('support/', include('support.urls')),
     
 ]
 
