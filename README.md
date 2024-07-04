@@ -18,6 +18,8 @@ Kreeck Academy is an online learning management system built with Django, featur
 - [Docker Setup](#docker-setup)
 - [Models](#models)
 - [Admin Interface](#admin-interface)
+- [Contributions](#contributions)
+- [Pending Issues](#pending-issues)
 - [License](#license)
 
 ## Installation
@@ -154,6 +156,34 @@ Kreeck Academy is an online learning management system built with Django, featur
 
 The Django admin interface has been enhanced to provide better usability and management of the models. Custom admin classes have been added to display relevant fields, search capabilities, and filtering options.
 
-## License
+## Contributions
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+### Updated JavaScript for the Compiler
+- Added support for multiple inputs in sequential order.
+- Managed state using `executionId` to handle code execution in parts.
+
+### Backend Changes
+- Modified the backend to handle multiple inputs sequentially.
+- Added state management to maintain the current execution state using an `execution_id`.
+- Handled execution and input prompts dynamically.
+
+### Docker
+- Updated Docker setup to include the compiler service.
+- Ensured communication between the Django app and the compiler service.
+
+## Pending Issues
+
+- [ ] Input handling for multiple inputs in the compiler.
+- [ ] Error handling and logging improvements.
+- [ ] Execution ID management for stateful execution of code.
+- [ ] Compiler service returning EOFError when reading input lines.
+- [ ] Implementing continuous code execution line by line.
+- [ ] Ensuring the code executes correctly for different languages.
+- [ ] Adding more comprehensive tests for the compiler integration.
+- [ ] Improving user interface for input prompts and code execution feedback.
+- [ ] Fixing issues related to the compiler service endpoint returning 400 Bad Request.
+- [ ] General code review and optimization.
+
+---
+
+**Note**: This README includes recent changes and updates to the application based on ongoing development and improvements. For any issues or further contributions, please refer to the issues section on the GitHub repository.
