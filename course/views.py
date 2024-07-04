@@ -644,7 +644,7 @@ def check_compiler_service():
     Function to check if the compiler service is running.
     """
     try:
-        response = requests.get('http://compiler:8001/health/')
+        response = requests.get('http://compiler:8001/compiler/health/')
         if response.status_code == 200:
             return True
     except requests.RequestException as e:
@@ -656,42 +656,56 @@ def compiler(request, lesson_id=None):
     """
     View to handle code execution and rendering of the compiler interface.
     """
+    print("Entering compiler view")
     compiler_service_status = check_compiler_service()
+    print(f"Compiler service status: {compiler_service_status}")
     projects = UserProject.objects.filter(user=request.user)
+    print(f"Projects for user: {projects}")
     
     if lesson_id:
         lesson = get_object_or_404(UploadVideo, id=lesson_id)
         user_code, created = UserCode.objects.get_or_create(user=request.user, lesson=lesson)
         template_code = lesson.template_code
         instructions = lesson.instructions
+        print(f"Lesson found: {lesson}")
     else:
         lesson = None
         user_code = None
         template_code = ""
         instructions = ""
+        print("No lesson provided")
 
     if request.method == 'POST':
         data = json.loads(request.body)
+        print(f"Received POST data: {data}")
         language = data.get('language')
-        code_main = data.get('code_main')
+        code_main = data.get('code')  # Corrected key to fetch the code
         code_test = data.get('code_test')
+        inputs = data.get('inputs', [])
         project_id = data.get('project_id')
+
+        print(f"Language: {language}, Code: {code_main}, Inputs: {inputs}, Project ID: {project_id}")
 
         if lesson:
             user_code.code_main = code_main
             user_code.code_test = code_test
             user_code.save()
+            print(f"User code saved for lesson: {user_code}")
         elif project_id:
             project = get_object_or_404(UserProject, id=project_id, user=request.user)
             project.code_main = code_main
             project.code_test = code_test
             project.language = language
             project.save()
+            print(f"Project updated: {project}")
 
         if not compiler_service_status:
+            print("Compiler service is not running")
             return JsonResponse({'error': 'Compiler service is not running.'})
 
-        output = execute_code(language, code_main)
+        print(f"Executing code: {code_main} with inputs: {inputs}")
+        output = execute_code(language, code_main, inputs)
+        print(f"Execution output: {output}")
         return JsonResponse({'output': output})
     
     context = {
@@ -704,30 +718,30 @@ def compiler(request, lesson_id=None):
     }
     return render(request, 'compiler/compiler.html', context)
 
-def execute_code(language, code):
+
+def execute_code(language, code, inputs):
     """
     Function to execute user code by sending it to the compiler service.
     """
-    url = 'http://compiler:8001/run_code/'
-    data = {'language': language, 'code': code}
-    headers = {'Host': 'localhost:8001'}  # Ensure Host header is correctly set
-
-    response = requests.post(url, data=data, headers=headers)
+    url = 'http://compiler:8001/compiler/run_code/'  # The compiler container URL
+    data = {'language': language, 'code': code, 'inputs': inputs}
+    
+    print(f"Sending request to compiler service with data: {data}")
     
     try:
-        response = requests.post(url, data=data)
+        response = requests.post(url, json=data)
         response.raise_for_status()  # Raise an error for bad HTTP status codes
-        logger.info(f"Compiler service response: {response.text}")
+        print(f"Compiler service response: {response.text}")
 
         try:
             response_json = response.json()
             return response_json.get('output', response_json.get('error', 'Error in compilation.'))
         except ValueError:  # Includes simplejson.decoder.JSONDecodeError
-            logger.error("Response from compiler service is not valid JSON")
+            print("Response from compiler service is not valid JSON")
             return 'Error: Response from compiler service is not valid JSON'
     
     except requests.RequestException as e:
-        logger.error(f"Request to compiler service failed: {e}")
+        print(f"Request to compiler service failed: {e}")
         return f'Error: Request to compiler service failed: {e}'
 
 @login_required
@@ -764,6 +778,19 @@ def get_project_code(request):
     }
     return JsonResponse(data)
 
+@login_required
+@csrf_exempt
+def delete_project(request):
+    """
+    View to delete a project.
+    """
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        project_id = data.get('project_id')
+        project = get_object_or_404(UserProject, id=project_id, user=request.user)
+        project.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False}, status=400)
 
 @login_required
 def update_progress(request, course_id, lesson_id):

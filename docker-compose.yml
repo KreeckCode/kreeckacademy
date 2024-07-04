@@ -5,32 +5,39 @@ services:
     volumes:
       - .:/kreeckacademy
     ports:
-      - 8000:8000
-    image: app:kreeckacademy
-    container_name: kreeckacademy_container
-    command: bash -c "python manage.py migrate && python manage.py makemigrations && python manage.py runserver 0.0.0.0:8000"
+      - "8000:8000"
     environment:
       - DEBUG=True
-      - ALLOWED_HOSTS=*,localhost,127.0.0.1,compiler_container,kreeckacademy.s3.amazonaws.com,django-env.eba-gmw2zn2q.ap-south-1.elasticbeanstalk.com
+      - ALLOWED_HOSTS=*,localhost,127.0.0.1,nginx,app
     networks:
-      - kreeck_net
+      - kreeck_network
 
   compiler:
     build:
       context: .
       dockerfile: Dockerfile.compiler
     volumes:
-      - .:/compiler
+      - compiler_user_code:/home/compiler/user_code
     ports:
-      - 8001:8001
-    image: app:compiler
-    container_name: compiler_container
-    command: bash -c "python manage.py migrate && python manage.py makemigrations && python manage.py runserver 0.0.0.0:8001"
+      - "8001:8001"
     environment:
       - DEBUG=True
-      - ALLOWED_HOSTS=*,localhost,127.0.0.1,compiler_container,kreeckacademy.s3.amazonaws.com,django-env.eba-gmw2zn2q.ap-south-1.elasticbeanstalk.com
+      - ALLOWED_HOSTS=*,localhost,127.0.0.1,nginx,app
     networks:
-      - kreeck_net
+      - kreeck_network
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - kreeck_network
 
 networks:
-  kreeck_net:
+  kreeck_network:
+    driver: bridge
+
+volumes:
+  compiler_user_code:
