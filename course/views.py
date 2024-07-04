@@ -735,7 +735,25 @@ def execute_code(language, code, inputs):
 
         try:
             response_json = response.json()
-            return response_json.get('output', response_json.get('error', 'Error in compilation.'))
+            output = response_json.get('output', response_json.get('error', 'Error in compilation.'))
+            
+            # If there are inputs, strip the input prompts from the output
+            if inputs:
+                # Split the output by lines
+                output_lines = output.split('\n')
+                processed_output = []
+                input_index = 0
+                
+                for line in output_lines:
+                    # Skip the lines containing input prompts
+                    if input_index < len(inputs) and line.startswith(inputs[input_index]):
+                        input_index += 1
+                        continue
+                    processed_output.append(line)
+                
+                output = '\n'.join(processed_output).strip()
+
+            return output
         except ValueError:  # Includes simplejson.decoder.JSONDecodeError
             print("Response from compiler service is not valid JSON")
             return 'Error: Response from compiler service is not valid JSON'
@@ -743,6 +761,8 @@ def execute_code(language, code, inputs):
     except requests.RequestException as e:
         print(f"Request to compiler service failed: {e}")
         return f'Error: Request to compiler service failed: {e}'
+
+
 
 @login_required
 @csrf_exempt

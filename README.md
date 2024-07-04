@@ -10,6 +10,7 @@ Kreeck Academy is an online learning management system built with Django, featur
 - **User Projects**: Allow users to create, save, and manage their own coding projects.
 - **Admin Interface**: Enhanced Django admin interface for better usability and management of the new models.
 - **Dockerized Deployment**: Easy setup and deployment using Docker and Docker Compose.
+- **Support Ticket System**: Automatic error reporting and support ticket creation for technical issues.
 
 ## Table of Contents
 
@@ -19,6 +20,7 @@ Kreeck Academy is an online learning management system built with Django, featur
 - [Models](#models)
 - [Admin Interface](#admin-interface)
 - [Contributions](#contributions)
+- [Support System](#support-system)
 - [Pending Issues](#pending-issues)
 - [License](#license)
 
@@ -152,6 +154,24 @@ Kreeck Academy is an online learning management system built with Django, featur
 - Created At
 - Updated At
 
+### Ticket
+- User
+- Error Code
+- Error Message
+- Status
+- Created At
+- Last Updated At
+- Last Updated By
+
+### SupportTicket
+- Ticket
+- Assigned To
+- Resolved At
+- Resolution Notes
+- Active
+- Last Active
+- Tickets Resolved
+
 ## Admin Interface
 
 The Django admin interface has been enhanced to provide better usability and management of the models. Custom admin classes have been added to display relevant fields, search capabilities, and filtering options.
@@ -171,6 +191,12 @@ The Django admin interface has been enhanced to provide better usability and man
 - Updated Docker setup to include the compiler service.
 - Ensured communication between the Django app and the compiler service.
 
+### Support System
+- Implemented automatic error reporting and support ticket creation for technical issues.
+- Added middleware for logging errors and creating tickets automatically.
+- Created custom views and templates for managing support tickets.
+- Enhanced admin interface to manage support team and tickets.
+
 ## Pending Issues
 
 - [ ] Input handling for multiple inputs in the compiler.
@@ -183,6 +209,10 @@ The Django admin interface has been enhanced to provide better usability and man
 - [ ] Improving user interface for input prompts and code execution feedback.
 - [ ] Fixing issues related to the compiler service endpoint returning 400 Bad Request.
 - [ ] General code review and optimization.
+
+## Fixed Issues
+- Automatic error reporting now creates support tickets.
+- Dynamic handling of input prompts and removal from the output.
 
 ---
 

@@ -184,165 +184,167 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
-    
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-    var codeMirrorOptions = {
-        lineNumbers: true,
-        theme: "material-darker",
-        autoCloseBrackets: true,
-        matchBrackets: true
-    };
+            var codeMirrorOptions = {
+                lineNumbers: true,
+                theme: "material-darker",
+                autoCloseBrackets: true,
+                matchBrackets: true
+            };
 
-    var editorMain = CodeMirror.fromTextArea(document.getElementById("code_main"), {
-        ...codeMirrorOptions,
-        mode: "python"
-    });
+            var editorMain = CodeMirror.fromTextArea(document.getElementById("code_main"), {
+                ...codeMirrorOptions,
+                mode: "python"
+            });
 
-    var editorTest = CodeMirror.fromTextArea(document.getElementById("code_test"), {
-        ...codeMirrorOptions,
-        mode: "python"
-    });
+            var editorTest = CodeMirror.fromTextArea(document.getElementById("code_test"), {
+                ...codeMirrorOptions,
+                mode: "python"
+            });
 
-    document.getElementById("language").addEventListener("change", function (e) {
-        var mode = "python";
-        if (e.target.value === "javascript") {
-            mode = "javascript";
-        } else if (e.target.value === "cpp") {
-            mode = "text/x-c++src";
-        } else if (e.target.value === "html") {
-            mode = "xml";
-        } else if (e.target.value === "css") {
-            mode = "css";
-        }
-        editorMain.setOption("mode", mode);
-        editorTest.setOption("mode", mode);
-    });
+            document.getElementById("language").addEventListener("change", function (e) {
+                var mode = "python";
+                if (e.target.value === "javascript") {
+                    mode = "javascript";
+                } else if (e.target.value === "cpp") {
+                    mode = "text/x-c++src";
+                } else if (e.target.value === "html") {
+                    mode = "xml";
+                } else if (e.target.value === "css") {
+                    mode = "css";
+                }
+                editorMain.setOption("mode", mode);
+                editorTest.setOption("mode", mode);
+            });
 
-    var inputs = [];
-    var inputPrompts = [];
-    var currentInputIndex = 0;
+            var inputs = [];
+            var inputPrompts = [];
+            var currentInputIndex = 0;
 
-    function showInputModal(prompt) {
-        document.getElementById("inputPrompt").innerText = prompt;
-        document.getElementById("userInput").value = ''; // Clear previous input
-        $("#inputModal").modal('show');
-    }
-
-    document.getElementById("submitInput").addEventListener("click", function () {
-        var userInput = document.getElementById("userInput").value;
-        inputs.push(userInput);
-        $("#inputModal").modal('hide');
-        currentInputIndex++;
-        if (currentInputIndex < inputPrompts.length) {
-            showInputModal(inputPrompts[currentInputIndex]);
-        } else {
-            submitCodeWithInputs();
-        }
-    });
-
-    function submitCodeWithInputs() {
-        // Retrieve necessary values from the DOM
-        var language = document.getElementById("language").value;
-        var codeMain = editorMain.getValue();
-        var csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-
-        // Log the inputs to the console for debugging
-        console.log("Submitting code with inputs:", inputs);
-
-        // Fetch request to send the code and inputs to the backend
-        fetch("{% url 'compiler' %}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrfToken
-            },
-            body: JSON.stringify({
-                language: language,
-                code: codeMain,
-                inputs: inputs
-            })
-        }).then(response => {
-            // Check if the response is ok (status in the range 200-299)
-            if (!response.ok) {
-                throw new Error("Network response was not ok " + response.statusText);
+            function showInputModal(prompt) {
+                document.getElementById("inputPrompt").innerText = prompt;
+                document.getElementById("userInput").value = ''; // Clear previous input
+                $("#inputModal").modal('show');
             }
-            return response.json();
-        }).then(data => {
-            // Display the output or error from the response
-            document.getElementById("output").innerText = data.output || data.error;
-        }).catch(error => {
-            // Log any errors that occur during the fetch operation
-            console.error("There was a problem with the fetch operation:", error);
-            document.getElementById("output").innerText = 'Error: ' + error.message;
-        });
-    }
 
-    document.getElementById("compiler-form").addEventListener("submit", function (e) {
-        e.preventDefault();
-        inputs = [];
-        currentInputIndex = 0;
-        inputPrompts = [];
-        var codeMain = editorMain.getValue();
+            document.getElementById("submitInput").addEventListener("click", function () {
+                var userInput = document.getElementById("userInput").value;
+                inputs.push(userInput);
+                $("#inputModal").modal('hide');
+                currentInputIndex++;
+                if (currentInputIndex < inputPrompts.length) {
+                    showInputModal(inputPrompts[currentInputIndex]);
+                } else {
+                    submitCodeWithInputs();
+                }
+            });
 
-        var inputRegex = /input\(["']([^"']+)["']\)/g;
-        var match;
-        while ((match = inputRegex.exec(codeMain)) !== null) {
-            inputPrompts.push(match[1]);
-        }
+            function submitCodeWithInputs() {
+                // Retrieve necessary values from the DOM
+                var language = document.getElementById("language").value;
+                var codeMain = editorMain.getValue();
+                var csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 
-        if (inputPrompts.length > 0) {
-            showInputModal(inputPrompts[0]);
-        } else {
-            submitCodeWithInputs();
-        }
-    });
+                // Log the inputs to the console for debugging
+                console.log("Submitting code with inputs:", inputs);
 
-    document.getElementById("save-code").addEventListener("click", function () {
-        alert("Code saved successfully!");
-    });
-
-    document.getElementById("create-project-form").addEventListener("submit", function (e) {
-        e.preventDefault();
-        var projectName = document.getElementById("project_name").value;
-        var language = document.getElementById("modal_language").value;
-        var csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-
-        fetch("{% url 'create_project' %}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrfToken
-            },
-            body: JSON.stringify({
-                project_name: projectName,
-                language: language
-            })
-        }).then(response => response.json()).then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert("Error creating project.");
-            }
-        });
-    });
-
-    document.querySelectorAll(".project-link").forEach(function (link) {
-        link.addEventListener("click", function (e) {
-            e.preventDefault();
-            var projectId = this.getAttribute("data-id");
-            fetch("{% url 'get_project_code' %}?project_id=" + projectId)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("project_id").value = projectId;
-                    document.getElementById("language").value = data.language;
-                    editorMain.setValue(data.code_main);
-                    editorTest.setValue(data.code_test);
+                // Fetch request to send the code and inputs to the backend
+                fetch("{% url 'compiler' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken
+                    },
+                    body: JSON.stringify({
+                        language: language,
+                        code: codeMain,
+                        inputs: inputs
+                    })
+                }).then(response => {
+                    // Check if the response is ok (status in the range 200-299)
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok " + response.statusText);
+                    }
+                    return response.json();
+                }).then(data => {
+                    // Display the output or error from the response
+                    document.getElementById("output").innerText = data.output || data.error;
+                }).catch(error => {
+                    // Log any errors that occur during the fetch operation
+                    console.error("There was a problem with the fetch operation:", error);
+                    document.getElementById("output").innerText = 'Error: ' + error.message;
                 });
+            }
+
+            document.getElementById("compiler-form").addEventListener("submit", function (e) {
+                e.preventDefault();
+                inputs = [];
+                currentInputIndex = 0;
+                inputPrompts = [];
+                var codeMain = editorMain.getValue();
+
+                var inputRegex = /input\(["']([^"']+)["']\)/g;
+                var match;
+                while ((match = inputRegex.exec(codeMain)) !== null) {
+                    inputPrompts.push(match[1]);
+                }
+
+                if (inputPrompts.length > 0) {
+                    showInputModal(inputPrompts[0]);
+                } else {
+                    submitCodeWithInputs();
+                }
+            });
+
+            document.getElementById("save-code").addEventListener("click", function () {
+                alert("Code saved successfully!");
+            });
+
+            document.getElementById("create-project-form").addEventListener("submit", function (e) {
+                e.preventDefault();
+                var projectName = document.getElementById("project_name").value;
+                var language = document.getElementById("modal_language").value;
+                var csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+                fetch("{% url 'create_project' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken
+                    },
+                    body: JSON.stringify({
+                        project_name: projectName,
+                        language: language
+                    })
+                }).then(response => response.json()).then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert("Error creating project.");
+                    }
+                });
+            });
+
+            document.querySelectorAll(".project-link").forEach(function (link) {
+                link.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    var projectId = this.getAttribute("data-id");
+                    fetch("{% url 'get_project_code' %}?project_id=" + projectId)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById("project_id").value = projectId;
+                            document.getElementById("language").value = data.language;
+                            editorMain.setValue(data.code_main);
+                            editorTest.setValue(data.code_test);
+                        });
+                });
+            });
         });
-    });
-});
+
+
     </script>
 </body>
 

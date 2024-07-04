@@ -1,9 +1,8 @@
 from django.db import models
 from accounts.models import User
-from django.utils import timezone
 
 class Ticket(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     error_code = models.CharField(max_length=100)
     error_message = models.TextField()
     status = models.CharField(max_length=20, default='open')
@@ -19,6 +18,9 @@ class SupportTicket(models.Model):
     assigned_to = models.ForeignKey(User, related_name='assigned_tickets', on_delete=models.SET_NULL, null=True)
     resolved_at = models.DateTimeField(null=True, blank=True)
     resolution_notes = models.TextField(null=True, blank=True)
+    active = models.BooleanField(default=True)
+    last_active = models.DateTimeField(auto_now=True)
+    tickets_resolved = models.IntegerField(default=0)
 
     def __str__(self):
         return f"SupportTicket #{self.ticket.id} - {self.ticket.error_code}"

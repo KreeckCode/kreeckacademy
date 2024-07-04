@@ -1,32 +1,45 @@
-{% extends "base.html" %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Support Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
 <div class="container mt-5">
     <h1>Support Dashboard</h1>
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Ticket ID</th>
-                <th>Title</th>
-                <th>User</th>
+                <th>ID</th>
+                <th>Error Code</th>
                 <th>Status</th>
+                <th>Assigned To</th>
                 <th>Created At</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for ticket in tickets %}
-            <tr>
-                <td>{{ ticket.id }}</td>
-                <td>{{ ticket.title }}</td>
-                <td>{{ ticket.user.username }}</td>
-                <td>{{ ticket.status }}</td>
-                <td>{{ ticket.created_at }}</td>
-                <td>
-                    <a href="{% url 'support:ticket_detail' ticket.id %}" class="btn btn-primary btn-sm">View</a>
-                </td>
-            </tr>
+                <tr>
+                    <td>{{ ticket.ticket.id }}</td>
+                    <td>{{ ticket.ticket.error_code }}</td>
+                    <td>{{ ticket.ticket.status }}</td>
+                    <td>
+                        {% if ticket.assigned_to %}
+                            {{ ticket.assigned_to.username }}
+                        {% else %}
+                            Unassigned
+                        {% endif %}
+                    </td>
+                    <td>{{ ticket.ticket.created_at }}</td>
+                    <td>
+                        <a href="{% url 'support_ticket_detail' ticket_id=ticket.ticket.id %}" class="btn btn-primary">View</a>
+                    </td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
-{% endblock %}
+</body>
+</html>

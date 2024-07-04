@@ -30,6 +30,7 @@ COPY quiz /home/compiler/restricted/quiz
 COPY blog /home/compiler/restricted/blog
 COPY hackathon /home/compiler/restricted/hackathon
 COPY payments /home/compiler/restricted/payments
+COPY support /home/compiler/restricted/support
 COPY static /home/compiler/restricted/static
 COPY templates /home/compiler/restricted/templates
 COPY requirements.txt /home/compiler/restricted/requirements.txt

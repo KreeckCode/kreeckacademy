@@ -6,23 +6,19 @@ services:
       - .:/kreeckacademy
     ports:
       - "8000:8000"
-    environment:
-      - DEBUG=True
-      - ALLOWED_HOSTS=*,localhost,127.0.0.1,nginx,app
+    command: >
+      sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     networks:
       - kreeck_network
 
   compiler:
     build:
       context: .
-      dockerfile: Dockerfile.compiler
+      dockerfile: dockerfile.compiler
     volumes:
       - compiler_user_code:/home/compiler/user_code
     ports:
       - "8001:8001"
-    environment:
-      - DEBUG=True
-      - ALLOWED_HOSTS=*,localhost,127.0.0.1,nginx,app
     networks:
       - kreeck_network
 

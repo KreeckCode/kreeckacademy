@@ -113,10 +113,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'app.middleware.RedirectMiddleware', 
     'corsheaders.middleware.CorsMiddleware',
     'support.middleware.ErrorLoggingMiddleware',
-    
 ]
 
 
@@ -304,7 +302,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication'
-    ]
+    ],
+    'EXCEPTION_HANDLER': 'support.exception_handler.custom_exception_handler',
 }
 
 
