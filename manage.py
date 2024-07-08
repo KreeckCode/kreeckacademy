@@ -1,11 +1,16 @@
 #!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
 import os
 import sys
 import environ
 
 def main():
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'SMS.settings')
+    # Load environment variables
+    environ.Env.read_env()
+
+    # Set the appropriate settings module
+    settings_module = 'SMS.settings_prod' if 'DJANGO_SETTINGS_MODULE' in os.environ else 'SMS.settings_dev'
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -16,8 +21,5 @@ def main():
         ) from exc
     execute_from_command_line(sys.argv)
 
-
 if __name__ == '__main__':
-    # OS environment variables take precedence over variables from .env
-    environ.Env.read_env()
     main()

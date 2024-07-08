@@ -20,3 +20,4 @@ historical_contributions.json
 migrations/
 __pycache__/
 .vscode
+SECURITY_CERTIFICATES
