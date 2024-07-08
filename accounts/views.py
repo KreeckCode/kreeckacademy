@@ -359,3 +359,11 @@ class ParentAdd(CreateView):
 #             return redirect('student_list')
 #     else:
 #         form = ParentAddForm(request.POST)
+
+
+from django.contrib.auth import logout
+from django.urls import reverse
+
+def logout_view(request):
+    logout(request)
+    return redirect(reverse('landing_page'))

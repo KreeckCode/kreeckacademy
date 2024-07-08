@@ -35,7 +35,7 @@ black
 pylint-django
 pre-commit
 factory-boy
-
+python-decouple
 django-debug-toolbar
 django-extensions
 django-coverage-plugin
