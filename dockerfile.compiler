@@ -7,48 +7,42 @@ RUN groupadd -r compiler && useradd -r -g compiler compiler
 
 WORKDIR /usr/src/compiler
 
-# Install dependencies and set up environment in one layer
 COPY requirements.txt /usr/src/compiler/
+
+# Install dependencies, create a restricted directory, and set permissions
 RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc libc-dev && \
     pip3 install -r requirements.txt && \
     apt-get remove -y gcc libc-dev && \
     apt-get autoremove -y && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /home/compiler/restricted /home/compiler/user_code && \
+    chown -R compiler:compiler /home/compiler/restricted /home/compiler/user_code && \
+    chmod -R 700 /home/compiler/restricted
 
-# Copy all necessary project files to restricted directory
-COPY manage.py /home/compiler/restricted/manage.py
-COPY compiler /home/compiler/restricted/compiler
-COPY SMS /home/compiler/restricted/SMS
-COPY course /home/compiler/restricted/course
-COPY app /home/compiler/restricted/app
-COPY accounts /home/compiler/restricted/accounts
-COPY result /home/compiler/restricted/result
-COPY search /home/compiler/restricted/search
-COPY quiz /home/compiler/restricted/quiz
-COPY blog /home/compiler/restricted/blog
-COPY hackathon /home/compiler/restricted/hackathon
-COPY payments /home/compiler/restricted/payments
-COPY support /home/compiler/restricted/support
-COPY static /home/compiler/restricted/static
-COPY templates /home/compiler/restricted/templates
-COPY requirements.txt /home/compiler/restricted/requirements.txt
-
-# Set permissions for the restricted directory
-RUN chown -R compiler:compiler /home/compiler/restricted && \
-    chmod -R 700 /home/compiler/restricted && \
-    mkdir -p /home/compiler/user_code && \
-    chown -R compiler:compiler /home/compiler/user_code
+COPY manage.py /home/compiler/restricted/
+COPY compiler /home/compiler/restricted/
+COPY SMS /home/compiler/restricted/
+COPY course /home/compiler/restricted/
+COPY app /home/compiler/restricted/
+COPY accounts /home/compiler/restricted/
+COPY result /home/compiler/restricted/
+COPY search /home/compiler/restricted/
+COPY quiz /home/compiler/restricted/
+COPY blog /home/compiler/restricted/
+COPY hackathon /home/compiler/restricted/
+COPY payments /home/compiler/restricted/
+COPY support /home/compiler/restricted/
+COPY static /home/compiler/restricted/
+COPY templates /home/compiler/restricted/
+COPY requirements.txt /home/compiler/restricted/
 
 USER compiler
 
-# Set working directory to the empty user code directory
 WORKDIR /home/compiler/user_code
 
-# Run makemigrations and migrate before starting the server
 RUN python /home/compiler/restricted/manage.py makemigrations && \
     python /home/compiler/restricted/manage.py migrate
 
-# Command to run the server
 CMD ["python", "/home/compiler/restricted/manage.py", "runserver", "0.0.0.0:8001"]
