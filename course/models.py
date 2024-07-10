@@ -5,6 +5,7 @@ from django.core.validators import FileExtensionValidator
 from django.db.models.signals import pre_save
 from django.db.models import Q
 from .utils import *
+import moviepy.editor as mp
 
 # Constants for choices
 YEARS = (
@@ -36,22 +37,15 @@ SEMESTER = (
 
 class ProgramManager(models.Manager):
     def search(self, query=None):
-        """
-        Custom search method for Program model.
-        Filters programs based on the query provided.
-        """
         qs = self.get_queryset()
         if query is not None:
             or_lookup = (Q(title__icontains=query) |
                          Q(summary__icontains=query)
                          )
-            qs = qs.filter(or_lookup).distinct()  # distinct() is often necessary with Q lookups
+            qs = qs.filter(or_lookup).distinct()
         return qs
 
 class Program(models.Model):
-    """
-    Model representing an educational program.
-    """
     title = models.CharField(max_length=150, unique=True)
     summary = models.TextField(null=True, blank=True)
 
@@ -65,10 +59,6 @@ class Program(models.Model):
 
 class CourseManager(models.Manager):
     def search(self, query=None):
-        """
-        Custom search method for Course model.
-        Filters courses based on the query provided.
-        """
         qs = self.get_queryset()
         if query is not None:
             or_lookup = (Q(title__icontains=query) |
@@ -76,13 +66,10 @@ class CourseManager(models.Manager):
                          Q(code__icontains=query) |
                          Q(slug__icontains=query)
                          )
-            qs = qs.filter(or_lookup).distinct()  # distinct() is often necessary with Q lookups
+            qs = qs.filter(or_lookup).distinct()
         return qs
 
 class Course(models.Model):
-    """
-    Model representing a course within a program.
-    """
     slug = models.SlugField(blank=True, unique=True)
     title = models.CharField(max_length=200, null=True)
     code = models.CharField(max_length=200, unique=True, null=True)
@@ -105,27 +92,17 @@ class Course(models.Model):
 
     @property
     def is_current_semester(self):
-        """
-        Checks if the course is in the current semester.
-        """
         from app.models import Semester
         current_semester = Semester.objects.get(is_current_semester=True)
-
         return self.semester == current_semester.semester
 
 def course_pre_save_receiver(sender, instance, *args, **kwargs):
-    """
-    Pre-save signal to generate a unique slug for the course if not provided.
-    """
     if not instance.slug:
         instance.slug = unique_slug_generator(instance)
 
 pre_save.connect(course_pre_save_receiver, sender=Course)
 
 class CourseAllocation(models.Model):
-    """
-    Model representing the allocation of courses to a lecturer.
-    """
     lecturer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='allocated_lecturer')
     courses = models.ManyToManyField(Course, related_name='allocated_course')
     session = models.ForeignKey("app.Session", on_delete=models.CASCADE, blank=True, null=True)
@@ -137,9 +114,6 @@ class CourseAllocation(models.Model):
         return reverse('edit_allocated_course', kwargs={'pk': self.pk})
 
 class Upload(models.Model):
-    """
-    Model representing a file upload for a course.
-    """
     title = models.CharField(max_length=100)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     file = models.FileField(upload_to='course_files/', validators=[FileExtensionValidator(['pdf', 'docx', 'doc', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'rar', '7zip'])])
@@ -150,11 +124,7 @@ class Upload(models.Model):
         return str(self.file)[6:]
 
     def get_extension_short(self):
-        """
-        Returns a short form of the file extension for display purposes.
-        """
         ext = str(self.file).split(".")[-1]
-
         if ext in ['doc', 'docx']:
             return 'word'
         elif ext == 'pdf':
@@ -167,17 +137,10 @@ class Upload(models.Model):
             return 'archive'
 
     def delete(self, *args, **kwargs):
-        """
-        Overrides the delete method to also delete the file from the storage.
-        """
         self.file.delete()
         super().delete(*args, **kwargs)
 
 class UploadVideo(models.Model):
-    """
-    Model representing a video upload for a course.
-    Includes additional fields for practical assessments and related data.
-    """
     title = models.CharField(max_length=100)
     slug = models.SlugField(blank=True, unique=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -185,11 +148,6 @@ class UploadVideo(models.Model):
     summary = models.TextField(null=True, blank=True)
     duration = models.DurationField(null=True)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
-    practical_assessment = models.BooleanField(default=False)
-    template_code = models.TextField(null=True, blank=True)
-    solution_code = models.TextField(null=True, blank=True)
-    instructions = models.TextField(null=True, blank=True)
-    timer = models.DurationField(null=True, blank=True)
 
     def __str__(self):
         return str(self.title)
@@ -198,25 +156,63 @@ class UploadVideo(models.Model):
         return reverse('video_single', kwargs={'slug': self.course.slug, 'video_slug': self.slug})
 
     def delete(self, *args, **kwargs):
-        """
-        Overrides the delete method to also delete the video file from the storage.
-        """
         self.video.delete()
         super().delete(*args, **kwargs)
 
 def video_pre_save_receiver(sender, instance, *args, **kwargs):
-    """
-    Pre-save signal to generate a unique slug for the video if not provided.
-    """
     if not instance.slug:
         instance.slug = unique_slug_generator(instance)
+    if instance.video:
+        video_path = instance.video.path
+        clip = mp.VideoFileClip(video_path)
+        duration = int(clip.duration)
+        instance.duration = duration
 
 pre_save.connect(video_pre_save_receiver, sender=UploadVideo)
 
+class Lesson(models.Model):
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(blank=True, unique=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    video = models.OneToOneField(UploadVideo, on_delete=models.CASCADE)
+    summary = models.TextField(null=True, blank=True)
+    duration = models.DurationField(null=True)
+    documents = models.ManyToManyField(Upload, related_name='lesson_documents')
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('lesson_detail', kwargs={'slug': self.slug})
+
+def lesson_pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        instance.slug = unique_slug_generator(instance)
+
+pre_save.connect(lesson_pre_save_receiver, sender=Lesson)
+
+class PracticalAssessment(models.Model):
+    title = models.CharField(max_length=200, null=True, blank=True)
+    slug = models.SlugField(blank=True, unique=True)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    template_code = models.TextField(null=True, blank=True)
+    solution_code = models.TextField(null=True, blank=True)
+    instructions = models.TextField(null=True, blank=True)
+    timer = models.DurationField(null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('practical_assessment_detail', kwargs={'slug': self.slug})
+
+def practical_assessment_pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        instance.slug = unique_slug_generator(instance)
+
+pre_save.connect(practical_assessment_pre_save_receiver, sender=PracticalAssessment)
+
 class UserCode(models.Model):
-    """
-    Model to store user code, notes, and submission status for a lesson.
-    """
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     lesson = models.ForeignKey(UploadVideo, on_delete=models.CASCADE)
     code_main = models.TextField(null=True, blank=True)
@@ -228,9 +224,6 @@ class UserCode(models.Model):
         return f"{self.user.username} - {self.lesson.title}"
 
 class UserProgress(models.Model):
-    """
-    Model to track user progress through lessons.
-    """
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     lesson = models.ForeignKey(UploadVideo, on_delete=models.CASCADE)
@@ -238,46 +231,19 @@ class UserProgress(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.course.title} - {self.lesson.title}"
-    
+
 class UserProject(models.Model):
-    """
-    Model to store user projects.
-    """
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     language = models.CharField(max_length=20)
     code_main = models.TextField(null=True, blank=True)
     code_test = models.TextField(null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
     def __str__(self):
-        return f"{self.name} ({self.language}) - {self.user.username}"
+        return f"{self.user.username} - {self.name}"
 
-class CourseOffer(models.Model):
-    """
-    Model representing the offering of a course by a department head.
-    """
-    dep_head = models.ForeignKey("accounts.DepartmentHead", on_delete=models.CASCADE)
-
-    def __str__(self):
-        return "{}".format(self.dep_head)
-
-
-import moviepy.editor as mp
-
-# Update the video_pre_save_receiver to calculate video duration
-def video_pre_save_receiver(sender, instance, *args, **kwargs):
-    """
-    Pre-save signal to generate a unique slug for the video if not provided and calculate the video duration.
-    """
-    if not instance.slug:
-        instance.slug = unique_slug_generator(instance)
-    
-    if instance.video:
-        video_path = instance.video.path
-        clip = mp.VideoFileClip(video_path)
-        duration = int(clip.duration)  # duration in seconds
-        instance.duration = duration
-
-pre_save.connect(video_pre_save_receiver, sender=UploadVideo)
+    class Meta:
+        unique_together = ('user', 'name')

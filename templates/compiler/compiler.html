@@ -10,8 +10,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- CodeMirror CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material-darker.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material-darker.min.css">
     <!-- Custom CSS -->
     <style>
         .CodeMirror {
@@ -32,6 +31,11 @@
         .content {
             margin-left: 260px;
             padding: 20px;
+        }
+
+        .timer {
+            font-size: 1.2em;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -57,6 +61,7 @@
         </div>
         {% endif %}
         <h1>Online Compiler</h1>
+        <div id="timer" class="timer"></div>
         <form id="compiler-form" method="post">
             {% csrf_token %}
             <input type="hidden" id="project_id" name="project_id">
@@ -88,8 +93,7 @@
     </div>
 
     <!-- Create Project Modal -->
-    <div class="modal fade" id="createProjectModal" tabindex="-1" aria-labelledby="createProjectModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="createProjectModal" tabindex="-1" aria-labelledby="createProjectModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -148,8 +152,7 @@
     </div>
 
     <!-- Modal for delete confirmation -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -183,169 +186,157 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
-
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/display/autorefresh.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material-darker.min.js"></script>
+    <!-- Custom JS -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            var codeMirrorOptions = {
+            var practicalAssessmentDuration = '{{ practical_assessment_duration }}';
+    
+            // Convert to integer if needed
+            practicalAssessmentDuration = parseInt(practicalAssessmentDuration);
+    
+            if (practicalAssessmentDuration > 0) {
+                startTimer(practicalAssessmentDuration * 60);
+            }
+    
+            var codeMainEditor = CodeMirror.fromTextArea(document.getElementById('code_main'), {
                 lineNumbers: true,
-                theme: "material-darker",
+                mode: 'python',
+                theme: 'material-darker',
                 autoCloseBrackets: true,
-                matchBrackets: true
+                extraKeys: { 'Ctrl-/': 'toggleComment' },
+                gutters: ['CodeMirror-lint-markers']
+            });
+    
+            var codeTestEditor = CodeMirror.fromTextArea(document.getElementById('code_test'), {
+                lineNumbers: true,
+                mode: 'python',
+                theme: 'material-darker',
+                autoCloseBrackets: true,
+                extraKeys: { 'Ctrl-/': 'toggleComment' },
+                gutters: ['CodeMirror-lint-markers']
+            });
+    
+            $('#language').on('change', function () {
+                var language = $(this).val();
+                var mode = {
+                    'python': 'python',
+                    'javascript': 'javascript',
+                    'cpp': 'text/x-c++src',
+                    'html': 'xml',
+                    'css': 'css'
+                }[language];
+    
+                codeMainEditor.setOption('mode', mode);
+                codeTestEditor.setOption('mode', mode);
+            });
+    
+            $('#save-code').on('click', function () {
+                var codeMain = codeMainEditor.getValue();
+                var codeTest = codeTestEditor.getValue();
+                var projectId = $('#project_id').val();
+                var csrfToken = $('[name="csrfmiddlewaretoken"]').val();
+    
+                $.ajax({
+                    url: "{% url 'save_code' %}",
+                    method: "POST",
+                    data: {
+                        'project_id': projectId,
+                        'code_main': codeMain,
+                        'code_test': codeTest,
+                        'csrfmiddlewaretoken': csrfToken
+                    },
+                    success: function (response) {
+                        alert('Code saved successfully!');
+                    },
+                    error: function (response) {
+                        alert('Error saving code.');
+                    }
+                });
+            });
+    
+            var loadProjectCode = function (projectId) {
+                $.ajax({
+                    url: "{% url 'get_project_code' %}",
+                    method: "GET",
+                    data: {
+                        'project_id': projectId
+                    },
+                    success: function (response) {
+                        $('#project_id').val(projectId);
+                        codeMainEditor.setValue(response.code_main);
+                        codeTestEditor.setValue(response.code_test);
+                        $('#language').val(response.language).trigger('change');
+                    },
+                    error: function (response) {
+                        alert('Error loading project code.');
+                    }
+                });
             };
-
-            var editorMain = CodeMirror.fromTextArea(document.getElementById("code_main"), {
-                ...codeMirrorOptions,
-                mode: "python"
+    
+            $('.project-link').on('click', function () {
+                var projectId = $(this).data('id');
+                loadProjectCode(projectId);
             });
-
-            var editorTest = CodeMirror.fromTextArea(document.getElementById("code_test"), {
-                ...codeMirrorOptions,
-                mode: "python"
-            });
-
-            document.getElementById("language").addEventListener("change", function (e) {
-                var mode = "python";
-                if (e.target.value === "javascript") {
-                    mode = "javascript";
-                } else if (e.target.value === "cpp") {
-                    mode = "text/x-c++src";
-                } else if (e.target.value === "html") {
-                    mode = "xml";
-                } else if (e.target.value === "css") {
-                    mode = "css";
-                }
-                editorMain.setOption("mode", mode);
-                editorTest.setOption("mode", mode);
-            });
-
-            var inputs = [];
-            var inputPrompts = [];
-            var currentInputIndex = 0;
-
-            function showInputModal(prompt) {
-                document.getElementById("inputPrompt").innerText = prompt;
-                document.getElementById("userInput").value = ''; // Clear previous input
-                $("#inputModal").modal('show');
-            }
-
-            document.getElementById("submitInput").addEventListener("click", function () {
-                var userInput = document.getElementById("userInput").value;
-                inputs.push(userInput);
-                $("#inputModal").modal('hide');
-                currentInputIndex++;
-                if (currentInputIndex < inputPrompts.length) {
-                    showInputModal(inputPrompts[currentInputIndex]);
-                } else {
-                    submitCodeWithInputs();
-                }
-            });
-
-            function submitCodeWithInputs() {
-                // Retrieve necessary values from the DOM
-                var language = document.getElementById("language").value;
-                var codeMain = editorMain.getValue();
-                var csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-
-                // Log the inputs to the console for debugging
-                console.log("Submitting code with inputs:", inputs);
-
-                // Fetch request to send the code and inputs to the backend
-                fetch("{% url 'compiler' %}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": csrfToken
-                    },
-                    body: JSON.stringify({
-                        language: language,
-                        code: codeMain,
-                        inputs: inputs
-                    })
-                }).then(response => {
-                    // Check if the response is ok (status in the range 200-299)
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok " + response.statusText);
-                    }
-                    return response.json();
-                }).then(data => {
-                    // Display the output or error from the response
-                    document.getElementById("output").innerText = data.output || data.error;
-                }).catch(error => {
-                    // Log any errors that occur during the fetch operation
-                    console.error("There was a problem with the fetch operation:", error);
-                    document.getElementById("output").innerText = 'Error: ' + error.message;
-                });
-            }
-
-            document.getElementById("compiler-form").addEventListener("submit", function (e) {
+    
+            $('#create-project-form').on('submit', function (e) {
                 e.preventDefault();
-                inputs = [];
-                currentInputIndex = 0;
-                inputPrompts = [];
-                var codeMain = editorMain.getValue();
-
-                var inputRegex = /input\(["']([^"']+)["']\)/g;
-                var match;
-                while ((match = inputRegex.exec(codeMain)) !== null) {
-                    inputPrompts.push(match[1]);
-                }
-
-                if (inputPrompts.length > 0) {
-                    showInputModal(inputPrompts[0]);
-                } else {
-                    submitCodeWithInputs();
-                }
-            });
-
-            document.getElementById("save-code").addEventListener("click", function () {
-                alert("Code saved successfully!");
-            });
-
-            document.getElementById("create-project-form").addEventListener("submit", function (e) {
-                e.preventDefault();
-                var projectName = document.getElementById("project_name").value;
-                var language = document.getElementById("modal_language").value;
-                var csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-
-                fetch("{% url 'create_project' %}", {
+                var projectName = $('#project_name').val();
+                var language = $('#modal_language').val();
+                var csrfToken = $('[name="csrfmiddlewaretoken"]').val();
+    
+                $.ajax({
+                    url: "{% url 'create_project' %}",
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": csrfToken
+                    data: {
+                        'project_name': projectName,
+                        'language': language,
+                        'csrfmiddlewaretoken': csrfToken
                     },
-                    body: JSON.stringify({
-                        project_name: projectName,
-                        language: language
-                    })
-                }).then(response => response.json()).then(data => {
-                    if (data.success) {
+                    success: function (response) {
+                        $('#createProjectModal').modal('hide');
                         location.reload();
-                    } else {
-                        alert("Error creating project.");
+                    },
+                    error: function (response) {
+                        alert('Error creating project.');
                     }
                 });
             });
-
-            document.querySelectorAll(".project-link").forEach(function (link) {
-                link.addEventListener("click", function (e) {
-                    e.preventDefault();
-                    var projectId = this.getAttribute("data-id");
-                    fetch("{% url 'get_project_code' %}?project_id=" + projectId)
-                        .then(response => response.json())
-                        .then(data => {
-                            document.getElementById("project_id").value = projectId;
-                            document.getElementById("language").value = data.language;
-                            editorMain.setValue(data.code_main);
-                            editorTest.setValue(data.code_test);
-                        });
-                });
-            });
+    
+            var startTimer = function (duration) {
+                var start = Date.now(),
+                    diff,
+                    minutes,
+                    seconds;
+    
+                function timer() {
+                    diff = duration - (((Date.now() - start) / 1000) | 0);
+    
+                    minutes = (diff / 60) | 0;
+                    seconds = (diff % 60) | 0;
+    
+                    minutes = minutes < 10 ? "0" + minutes : minutes;
+                    seconds = seconds < 10 ? "0" + seconds : seconds;
+    
+                    $('#timer').text(minutes + ":" + seconds);
+    
+                    if (diff <= 0) {
+                        clearInterval(timerInterval);
+                        $('#compiler-form :input').prop('disabled', true);
+                        alert('Time is up! You can no longer submit your code.');
+                    }
+                };
+    
+                timer();
+                var timerInterval = setInterval(timer, 1000);
+            };
         });
-
-
     </script>
+    
+    
+    
 </body>
 
 </html>

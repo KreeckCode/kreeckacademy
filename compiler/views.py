@@ -5,6 +5,22 @@ import json
 from django.conf import settings
 from queue import Queue
 import logging
+from accounts.models import*
+from compiler.forms import UserCodeForm
+from course.models import *
+from .models import *
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404
+
+
+@login_required
+def get_practical_assessment(request, assessment_id):
+    assessment = get_object_or_404(PracticalAssessment, id=assessment_id)
+    context = {
+        'assessment': assessment,
+    }
+    return render(request, 'compiler/practical_assessment.html', context)
+
 
 def diagnostic_view(request):
     """
@@ -114,3 +130,51 @@ def execute_code(language, code):
         return result.stdout
     else:
         return result.stderr
+
+
+from datetime import datetime, timedelta
+
+@login_required
+def submit_code(request):
+    if request.method == 'POST':
+        code = request.POST.get('code')
+        assessment_id = request.POST.get('assessment_id')
+        elapsed_time = request.POST.get('elapsed_time')  # New field from the front end
+        user = request.user
+
+        if assessment_id:
+            assessment = PracticalAssessment.objects.get(id=assessment_id)
+            if elapsed_time:
+                # Convert elapsed time to timedelta object
+                elapsed_time = timedelta(seconds=int(elapsed_time))
+            else:
+                elapsed_time = None
+            
+            # Create a new CodeSubmission with elapsed time
+            CodeSubmission.objects.create(
+                user=user,
+                assessment=assessment,
+                code=code,
+                elapsed_time=elapsed_time,
+            )
+        else:
+            CodeSubmission.objects.create(
+                user=user,
+                code=code,
+            )
+
+        # Redirect or return a response as needed
+        return JsonResponse({'status': 'success'})
+    else:
+        return JsonResponse({'status': 'GET request not allowed'}, status=405)
+
+
+# Add a view for displaying the compiler with practical assessment
+@login_required
+def compiler_with_assessment(request, assessment_id):
+    assessment = get_object_or_404(PracticalAssessment, id=assessment_id)
+    context = {
+        'assessment': assessment,
+        'form': UserCodeForm(),
+    }
+    return render(request, 'compiler/compiler.html', context)
