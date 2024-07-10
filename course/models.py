@@ -262,3 +262,22 @@ class CourseOffer(models.Model):
 
     def __str__(self):
         return "{}".format(self.dep_head)
+
+
+import moviepy.editor as mp
+
+# Update the video_pre_save_receiver to calculate video duration
+def video_pre_save_receiver(sender, instance, *args, **kwargs):
+    """
+    Pre-save signal to generate a unique slug for the video if not provided and calculate the video duration.
+    """
+    if not instance.slug:
+        instance.slug = unique_slug_generator(instance)
+    
+    if instance.video:
+        video_path = instance.video.path
+        clip = mp.VideoFileClip(video_path)
+        duration = int(clip.duration)  # duration in seconds
+        instance.duration = duration
+
+pre_save.connect(video_pre_save_receiver, sender=UploadVideo)

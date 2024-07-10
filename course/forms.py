@@ -104,7 +104,5 @@ class UploadFormVideo(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'class': 'form-control'})
         self.fields['video'].widget.attrs.update({'class': 'form-control'})
-
-        # Update the "summary" field to use TinyMCE
         self.fields['summary'].widget = TinyMCE(attrs={'cols': 80, 'rows': 30})
-        self.fields['summary'].widget.attrs.update({'class': 'form-control'})
+

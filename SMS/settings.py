@@ -97,6 +97,7 @@ PROJECT_APPS = [
     'hackathon',
     'payments',
     'support',
+    'compiler',
 ]
 
 

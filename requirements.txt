@@ -45,14 +45,9 @@ psycopg2-binary
 boto3
 django-storages[boto3]==1.13.1  # https://github.com/jschneier/django-storages
 django-anymail[amazon_ses]==9.0  # https://github.com/anymail/django-anymail
-
-
+moviepy
 #caching system using memcache, we will store the caching data in the memory of the users device
 pymemcache
-
 #this willl add the rich text editor to everything i wanna do
 django-tinymce
-
-stripe                                      
-dj-stripe
-
+stripe
