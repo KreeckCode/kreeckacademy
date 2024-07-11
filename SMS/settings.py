@@ -98,6 +98,7 @@ PROJECT_APPS = [
     'payments',
     'support',
     'compiler',
+    'common',
 ]
 
 
@@ -303,7 +304,8 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication'
+        'rest_framework.authentication.BasicAuthentication',
+        'common.authentication.APIKeyAuthentication', 
     ],
     'EXCEPTION_HANDLER': 'support.exception_handler.custom_exception_handler',
 }

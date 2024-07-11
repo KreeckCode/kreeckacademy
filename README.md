@@ -1,4 +1,3 @@
-
 # Kreeck Academy
 
 Kreeck Academy is an online learning management system built with Django, featuring an integrated online compiler that allows learners to create, save, and manage their own coding projects. The project is containerized using Docker for easy deployment and scalability.
@@ -27,64 +26,64 @@ Kreeck Academy is an online learning management system built with Django, featur
 ## Installation
 
 1. Clone the repository:
-   ```sh
-   git clone https://github.com/yourusername/kreeckacademy.git
+   \`\`\`sh
+   git clone https://github.com/kreeckcode/kreeckacademy.git
    cd kreeckacademy
-   ```
+   \`\`\`
 
 2. Create a virtual environment and activate it:
-   ```sh
+   \`\`\`sh
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+   source venv/bin/activate  # On Windows: venv\\Scripts\\activate
+   \`\`\`
 
 3. Install dependencies:
-   ```sh
+   \`\`\`sh
    pip install -r requirements.txt
-   ```
+   \`\`\`
 
 4. Run migrations:
-   ```sh
+   \`\`\`sh
    python manage.py migrate
-   ```
+   \`\`\`
 
 5. Create a superuser:
-   ```sh
+   \`\`\`sh
    python manage.py createsuperuser
-   ```
+   \`\`\`
 
 6. Run the development server:
-   ```sh
+   \`\`\`sh
    python manage.py runserver
-   ```
+   \`\`\`
 
 ## Usage
 
-- Access the application at `http://localhost:8000`.
-- Log in with your superuser account to access the admin interface at `http://localhost:8000/admin`.
+- Access the application at \`http://localhost:8000\`.
+- Log in with your superuser account to access the admin interface at \`http://localhost:8000/admin\`.
 - Create programs, courses, and upload course content using the admin interface.
-- Use the integrated online compiler at `http://localhost:8000/compiler/` to create, save, and manage your coding projects.
+- Use the integrated online compiler at \`http://localhost:8000/compiler/\` to create, save, and manage your coding projects.
 
 ## Docker Setup
 
 1. Build the Docker images:
-   ```sh
+   \`\`\`sh
    docker-compose build
-   ```
+   \`\`\`
 
 2. Run the Docker containers:
-   ```sh
+   \`\`\`sh
    docker-compose up
-   ```
+   \`\`\`
 
 3. Access the application:
-   - Main app: `http://localhost:8000`
-   - Compiler service: `http://localhost:8001`
+   - Main app: \`http://localhost:8000\`
+   - Compiler service: \`http://localhost:8001\`
 
-4. To stop the containers, press `Ctrl+C` in the terminal or run:
-   ```sh
+4. To stop the containers, press \`Ctrl+C\` in the terminal or run:
+   \`\`\`sh
    docker-compose down
-   ```
+   \`\`\`
 
 ## Models
 
@@ -180,11 +179,11 @@ The Django admin interface has been enhanced to provide better usability and man
 
 ### Updated JavaScript for the Compiler
 - Added support for multiple inputs in sequential order.
-- Managed state using `executionId` to handle code execution in parts.
+- Managed state using \`executionId\` to handle code execution in parts.
 
 ### Backend Changes
 - Modified the backend to handle multiple inputs sequentially.
-- Added state management to maintain the current execution state using an `execution_id`.
+- Added state management to maintain the current execution state using an \`execution_id\`.
 - Handled execution and input prompts dynamically.
 
 ### Docker
@@ -196,6 +195,23 @@ The Django admin interface has been enhanced to provide better usability and man
 - Added middleware for logging errors and creating tickets automatically.
 - Created custom views and templates for managing support tickets.
 - Enhanced admin interface to manage support team and tickets.
+
+## Recent Changes
+
+### Middleware Adjustment
+- Modified the middleware to handle requests even when the user is not authenticated by ensuring \`request.user\` is checked for existence before accessing its attributes.
+
+### APIKeyAuthentication
+- Added support for API key authentication, allowing access to endpoints without requiring user authentication.
+- Updated \`ProgramList\` view to use \`APIKeyAuthentication\` and \`AllowAny\` permission class.
+
+### DRF Settings
+- Added \`common.authentication.APIKeyAuthentication\` to the list of default authentication classes in DRF settings.
+
+### Testing with Postman
+- Ensure the API key header is correctly set:
+  - Key: \`Authorization\`
+  - Value: \`Api-Key your_generated_api_key\`
 
 ## Pending Issues
 

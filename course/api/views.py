@@ -1,21 +1,18 @@
-# course/api_views.py
-
+from common.authentication import APIKeyAuthentication
 from rest_framework import generics
 from course.models import Program, Course, CourseAllocation
 from .serializers import ProgramSerializer, CourseSerializer, CourseAllocationSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from SMS.settings import DEBUG
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 class ProgramList(generics.ListCreateAPIView):
     queryset = Program.objects.all()
     serializer_class = ProgramSerializer
     
-    if DEBUG == False:
-        permission_classes = [IsAuthenticated]
-    else:
-        permission_classes = [AllowAny]
-    
+    authentication_classes = [APIKeyAuthentication]
+    permission_classes = [AllowAny]
 
 
 class ProgramDetail(generics.RetrieveUpdateDestroyAPIView):
