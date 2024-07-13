@@ -19,7 +19,8 @@ class ProgramDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Program.objects.all()
     serializer_class = ProgramSerializer
     if DEBUG == False:
-        permission_classes = [IsAuthenticated]
+        authentication_classes = [APIKeyAuthentication]
+        permission_classes = [AllowAny]
     else:
         authentication_classes = []
         permission_classes = [AllowAny] 
@@ -29,7 +30,8 @@ class CourseList(generics.ListCreateAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     if DEBUG == False:
-        permission_classes = [IsAuthenticated]
+        authentication_classes = [APIKeyAuthentication]
+        permission_classes = [AllowAny]
     else:
         authentication_classes = [] 
         permission_classes = [AllowAny] 
@@ -39,7 +41,8 @@ class CourseDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     if DEBUG == False:
-        permission_classes = [IsAuthenticated]
+        authentication_classes = [APIKeyAuthentication]
+        permission_classes = [AllowAny]
     else:
         authentication_classes = [] 
         permission_classes = [AllowAny]
@@ -49,7 +52,8 @@ class CourseAllocationList(generics.ListCreateAPIView):
     queryset = CourseAllocation.objects.all()
     serializer_class = CourseAllocationSerializer
     if DEBUG == False:
-        permission_classes = [IsAuthenticated]
+        authentication_classes = [APIKeyAuthentication]
+        permission_classes = [AllowAny]
     else:
         authentication_classes = []
         permission_classes = [AllowAny] 
@@ -59,7 +63,8 @@ class CourseAllocationDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = CourseAllocation.objects.all()
     serializer_class = CourseAllocationSerializer
     if DEBUG == False:
-        permission_classes = [IsAuthenticated]
+        authentication_classes = [APIKeyAuthentication]
+        permission_classes = [AllowAny]
     else:
         authentication_classes = []
         permission_classes = [AllowAny]
