@@ -43,17 +43,17 @@ def run_code(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            print(f"Received data: {data}")
+            #print(f"Received data: {data}")
             
             language = data.get('language')
             code = data.get('code')
             inputs = data.get('inputs', [])
 
             if not language or not code:
-                print("Language or code missing")
+                #print("Language or code missing")
                 return JsonResponse({'error': 'Language and code are required.'}, status=400)
 
-            print(f"Language: {language}, Code: {code}, Inputs: {inputs}")
+            #print(f"Language: {language}, Code: {code}, Inputs: {inputs}")
 
             command = []
             if language == 'python':
@@ -70,12 +70,12 @@ def run_code(request):
                 command = ['./temp']
 
             try:
-                print(f"Running command: {command}")
+                #print(f"Running command: {command}")
                 process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                 stdout, stderr = process.communicate(input="\n".join(inputs))
 
                 if process.returncode == 0:
-                    print(f"Execution successful, output: {stdout}")
+                    #print(f"Execution successful, output: {stdout}")
                     return JsonResponse({'output': stdout})
                 else:
                     print(f"Execution error, stderr: {stderr}")
