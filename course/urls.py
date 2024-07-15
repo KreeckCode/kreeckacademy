@@ -32,6 +32,13 @@ urlpatterns = [
     path('course/<slug>/video/<video_slug>/edit/', handle_video_edit, name='upload_video_edit'),
     path('course/<slug>/video/<video_slug>/delete/', handle_video_delete, name='upload_video_delete'),
 
+    # Module creation
+    path('course/<slug:course_slug>/create_module/', create_module, name='create_module'),
+    path('<slug:course_slug>/module/<uuid:module_id>/update/', update_module, name='update_module'),
+    path('<slug:course_slug>/module/<uuid:module_id>/delete/', delete_module, name='delete_module'),
+
+    
+
     # Course registration
     path('course/registration/', course_registration, name='course_registration'),
     path('course/drop/', course_drop, name='course_drop'),
@@ -44,5 +51,4 @@ urlpatterns = [
     path('projects/create/', create_project, name='create_project'),
     path('projects/get_code/', get_project_code, name='get_project_code'),
     path('delete_project/', delete_project, name='delete_project'),
-    
 ]

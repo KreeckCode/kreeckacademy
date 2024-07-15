@@ -2,9 +2,9 @@ from django import forms
 from django.db import transaction
 from django.conf import settings
 from django.contrib.auth.models import User
-
+from tinymce.widgets import TinyMCE
 from accounts.models import User
-from .models import Program, Course, CourseAllocation, Upload, UploadVideo, Lesson, PracticalAssessment
+from .models import *
 
 # User = settings.AUTH_USER_MODEL
 
@@ -90,40 +90,37 @@ class UploadFormFile(forms.ModelForm):
         fields = ('title', 'file', 'course',)
 
     def __init__(self, *args, **kwargs):
-        """Initialise form with custom widget attributes."""
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'class': 'form-control'})
         self.fields['file'].widget.attrs.update({'class': 'form-control'})
-
-from tinymce.widgets import TinyMCE
 
 class UploadFormVideo(forms.ModelForm):
     """Form for uploading videos to a specific course."""
     class Meta:
         model = UploadVideo
-        fields = ('title', 'video', 'course', 'summary')
+        fields = ('title', 'video', 'course', 'module', 'summary', 'documents')
 
     def __init__(self, *args, **kwargs):
-        """Initialise form with custom widget attributes and TinyMCE for summary."""
+        course = kwargs.pop('course', None)
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'class': 'form-control'})
         self.fields['video'].widget.attrs.update({'class': 'form-control'})
         self.fields['summary'].widget = TinyMCE(attrs={'cols': 80, 'rows': 30})
-
-class LessonForm(forms.ModelForm):
-    """Form for creating and updating Lesson instances."""
-    class Meta:
-        model = Lesson
-        fields = ('title', 'course', 'video', 'summary', 'documents')
-
-    def __init__(self, *args, **kwargs):
-        """Initialise form with custom widget attributes."""
-        super().__init__(*args, **kwargs)
-        self.fields['title'].widget.attrs.update({'class': 'form-control'})
         self.fields['course'].widget.attrs.update({'class': 'form-control'})
-        self.fields['video'].widget.attrs.update({'class': 'form-control'})
-        self.fields['summary'].widget.attrs.update({'class': 'form-control'})
+        if course:
+            self.fields['module'].queryset = course.modules.all()
+        self.fields['module'].required = False
+        self.fields['module'].widget = forms.Select(attrs={'id': 'module-select'})
         self.fields['documents'].widget.attrs.update({'class': 'form-control'})
+
+class ModuleForm(forms.ModelForm):
+    class Meta:
+        model = Module
+        fields = ['title']
+
+class CombinedUploadVideoForm(forms.Form):
+    upload_video_form = UploadFormVideo()
+    module_form = ModuleForm()
 
 class PracticalAssessmentForm(forms.ModelForm):
     """Form for creating and updating PracticalAssessment instances."""
@@ -140,3 +137,5 @@ class PracticalAssessmentForm(forms.ModelForm):
         self.fields['solution_code'].widget.attrs.update({'class': 'form-control'})
         self.fields['instructions'].widget.attrs.update({'class': 'form-control'})
         self.fields['timer'].widget.attrs.update({'class': 'form-control'})
+
+

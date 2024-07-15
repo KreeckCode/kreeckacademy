@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 
-from .models import Program, Course, CourseAllocation, Upload, UploadVideo, UserCode, UserProgress, UserProject
+from .models import *
+@admin.register(Module)
+class ModuleAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title')
 
 admin.site.register(Program)
 admin.site.register(Course)

@@ -140,7 +140,20 @@ class Upload(models.Model):
         self.file.delete()
         super().delete(*args, **kwargs)
 
+from django.db import models
+from uuid import uuid4
+from django.utils.translation import gettext_lazy as _
+
+class Module(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    title = models.CharField(_('Title'), max_length=255)
+    course = models.ForeignKey(Course, related_name='modules', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+
 class UploadVideo(models.Model):
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='lessons', null=True, blank=True)
     title = models.CharField(max_length=100)
     slug = models.SlugField(blank=True, unique=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -148,6 +161,7 @@ class UploadVideo(models.Model):
     summary = models.TextField(null=True, blank=True)
     duration = models.DurationField(null=True)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
+    documents = models.ForeignKey(Upload, on_delete=models.CASCADE, related_name='lesson_documents', null=True, blank=True)
 
     def __str__(self):
         return str(self.title)
@@ -170,31 +184,11 @@ def video_pre_save_receiver(sender, instance, *args, **kwargs):
 
 pre_save.connect(video_pre_save_receiver, sender=UploadVideo)
 
-class Lesson(models.Model):
-    title = models.CharField(max_length=200)
-    slug = models.SlugField(blank=True, unique=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    video = models.OneToOneField(UploadVideo, on_delete=models.CASCADE)
-    summary = models.TextField(null=True, blank=True)
-    duration = models.DurationField(null=True)
-    documents = models.ManyToManyField(Upload, related_name='lesson_documents')
-
-    def __str__(self):
-        return self.title
-
-    def get_absolute_url(self):
-        return reverse('lesson_detail', kwargs={'slug': self.slug})
-
-def lesson_pre_save_receiver(sender, instance, *args, **kwargs):
-    if not instance.slug:
-        instance.slug = unique_slug_generator(instance)
-
-pre_save.connect(lesson_pre_save_receiver, sender=Lesson)
 
 class PracticalAssessment(models.Model):
     title = models.CharField(max_length=200, null=True, blank=True)
     slug = models.SlugField(blank=True, unique=True)
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(UploadVideo, on_delete=models.CASCADE)
     template_code = models.TextField(null=True, blank=True)
     solution_code = models.TextField(null=True, blank=True)
     instructions = models.TextField(null=True, blank=True)

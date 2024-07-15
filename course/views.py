@@ -16,10 +16,7 @@ from accounts.models import User, Student
 from app.models import Session, Semester
 from result.models import TakenCourse
 from accounts.decorators import admin_required, lecturer_required, student_required
-from .forms import (
-    ProgramForm, CourseAddForm, CourseAllocationForm, 
-    EditCourseAllocationForm, UploadFormFile, UploadFormVideo
-)
+from .forms import *
 from .models import Program, Course, CourseAllocation, Upload, UploadVideo, UserCode, UserProgress, UserProject
 from django.template.loader import render_to_string
 from django.views.decorators.cache import cache_page
@@ -140,11 +137,13 @@ def program_delete(request, pk):
 ##@cache_page(60 * 40 )
 @login_required
 def course_single(request, slug):
-    course = Course.objects.get(slug=slug)
+    course = get_object_or_404(Course, slug=slug)
     files = Upload.objects.filter(course__slug=slug)
     videos = UploadVideo.objects.filter(course__slug=slug)
+    
+    # Filter modules by course
+    modules = Module.objects.filter(course=course)
 
-    # lecturers = User.objects.filter(allocated_lecturer__pk=course.id)
     lecturers = CourseAllocation.objects.filter(courses__pk=course.id)
 
     return render(request, 'course/course_single.html', {
@@ -152,9 +151,10 @@ def course_single(request, slug):
         'course': course,
         'files': files,
         'videos': videos,
+        'modules': modules,
         'lecturers': lecturers,
         'media_url': settings.MEDIA_ROOT,
-    }, )
+    })
 
 #@cache_page(60 * 40 )
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -412,21 +412,98 @@ def handle_file_delete(request, slug, file_id):
 # ########################################################
 # Video Upload views
 # ########################################################
+@login_required
+@lecturer_required
+def create_module(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+
+    if request.method == 'POST':
+        form = ModuleForm(request.POST)
+        if form.is_valid():
+            module = form.save(commit=False)
+            module.course = course
+            module.save()
+            return JsonResponse({'success': True, 'module_title': module.title, 'module_id': module.id})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+
+    # For GET requests or non-ajax requests, render the form
+    form = ModuleForm()
+    return render(request, 'course/create_module.html', {'form': form, 'course': course})
+
+
+# Update module (for superusers or lecturers)
+@login_required
+@lecturer_required
+def update_module(request, course_slug, module_id):
+    module = get_object_or_404(Module, id=module_id, course__slug=course_slug)
+    
+    # Check if user has permission to update module
+    if not request.user.is_superuser and not request.user.is_lecturer:
+        return JsonResponse({'success': False, 'error': 'Permission denied.'})
+    
+    if request.method == 'POST':
+        form = ModuleForm(request.POST, instance=module)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True, 'module_title': module.title})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'})
+
+# Delete module (for superusers or lecturers)
+@login_required
+def delete_module(request, course_slug, module_id):
+    module = get_object_or_404(Module, id=module_id)
+
+    if request.method == 'POST':
+        module.delete()
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False})
+
+
 #@cache_page(60 * 40 )
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required
 @lecturer_required 
 def handle_video_upload(request, slug):
     course = get_object_or_404(Course, slug=slug)
+    modules = course.modules.all()
+    module_id = request.GET.get('module_id')
+    
+    if module_id:
+        module = get_object_or_404(Module, id=module_id)
+    else:
+        module = None
+
     if request.method == 'POST':
-        form = UploadFormVideo(request.POST, request.FILES, {'course': course})
-        if form.is_valid():
-            uploaded_video = form.save()
+        upload_video_form = UploadFormVideo(request.POST, request.FILES, course=course)
+        module_form = ModuleForm(request.POST)
+
+        if upload_video_form.is_valid():
+            if not upload_video_form.cleaned_data['module']:
+                if module_form.is_valid():
+                    new_module = module_form.save(commit=False)
+                    new_module.course = course
+                    new_module.save()
+                    upload_video_form.instance.module = new_module
+                else:
+                    messages.error(request, 'Module form is not valid.')
+                    return render(request, 'upload/upload_video_form.html', {
+                        'title': "Video Upload | Kreeck Academy",
+                        'upload_video_form': upload_video_form,
+                        'module_form': module_form,
+                        'course': course
+                    })
+
+            uploaded_video = upload_video_form.save()
 
             # Send email to students taking the course
-            students_emails = Student.objects.values_list('student__email', flat=True)
+            students_emails = course.students.values_list('email', flat=True)
             video_title = uploaded_video.title
-            subject = f"New Video Uploaded for Course: {course.title}"
+            subject = f"New Lesson Uploaded for Course: {course.title}"
             template = 'emails/course-video-upload.html'
             context = {
                 'course': course,
@@ -435,23 +512,23 @@ def handle_video_upload(request, slug):
 
             message = render_to_string(template, context)
 
-            if DEBUG:
-                pass
-            else:
+            if not settings.DEBUG:
                 send_mail(subject, '', 'dave@kreeck.com', students_emails, html_message=message)
 
-            messages.success(request, (video_title + ' has been uploaded.'))
+            messages.success(request, f'{video_title} has been uploaded.')
             return redirect('course_detail', slug=slug)
+        else:
+            messages.error(request, 'There was an error uploading the lesson.')
     else:
-        form = UploadFormVideo()
+        upload_video_form = UploadFormVideo(course=course)
+        module_form = ModuleForm()
 
     return render(request, 'upload/upload_video_form.html', {
         'title': "Video Upload | Kreeck Academy",
-        'form': form,
+        'upload_video_form': upload_video_form,
+        'module_form': module_form,
         'course': course
     })
-
-
 
 
 from datetime import timedelta
