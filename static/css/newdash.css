@@ -120,7 +120,7 @@ h6{
 
 .preview-video img {
     width: 100%;
-    max-height: 400px;
+    max-height: 800px;
     display: block;
     max-width: 100%;
     border-radius: 20px;
@@ -175,11 +175,12 @@ h6{
 }
 
 .stats li {
-    flex: 1 1 30%; /* Adjust the basis for the desired width */
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
+     /* Adjust the basis for the desired width */
+     flex: 1;
+     display: flex;
+     align-items: center;
+     padding: 1rem;
+     /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
 }
 
 .stats li i {
@@ -245,7 +246,7 @@ h6{
     position: fixed;
     top: 0;
     right: 0;
-    width: 400px;
+    width: 350px;
     height: 100%;
     overflow-y: auto;
     z-index: 1000;
@@ -260,6 +261,8 @@ h6{
     padding: 2rem;
     border-radius: 10px;
     flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .about-lecture{
