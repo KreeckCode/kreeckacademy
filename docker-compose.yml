@@ -1,7 +1,9 @@
 version: "3.8"
 services:
   app:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - .:/kreeckacademy
     ports:
@@ -14,7 +16,7 @@ services:
   compiler:
     build:
       context: .
-      dockerfile: dockerfile.compiler
+      dockerfile: Dockerfile.compiler
     volumes:
       - compiler_user_code:/home/compiler/user_code
     ports:

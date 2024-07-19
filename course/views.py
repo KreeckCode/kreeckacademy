@@ -796,6 +796,7 @@ def compiler(request, lesson_id=None):
     return render(request, 'compiler/compiler.html', context)
 
 
+
 def execute_code(language, code, inputs):
     """
     Function to execute user code by sending it to the compiler service.

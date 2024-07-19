@@ -50,14 +50,6 @@
                         <b>Video</b><br>{{ upload_video_form.video }}
                         <span class="text-danger">{% if upload_video_form.video.errors %}{{ upload_video_form.video.errors }}{% endif %}</span>
                     </div>
-                    <div class="form-group">
-                        <b>Module</b>
-                        {{ upload_video_form.module }}
-                        <button type="button" class="btn btn-secondary mt-2" id="addModuleButton">
-                            Add New Module
-                        </button>
-                        <span class="text-danger">{% if upload_video_form.module.errors %}{{ upload_video_form.module.errors }}{% endif %}</span>
-                    </div>
                     <p class="text-orange"><b>Valid video formats: </b>'mp4', 'mkv', 'wmv', '3gp', 'f4v', 'avi', 'mp3'</p>
                     <div class="form-group">
                         <button class="btn btn-primary" type="submit">Upload</button>

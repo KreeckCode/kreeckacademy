@@ -96,7 +96,7 @@ PROJECT_APPS = [
     'blog.apps.BlogConfig',
     'hackathon',
     'payments',
-    'support',
+    #'support', Enable this support functionality when you are in production only
     'compiler',
     'common',
 ]
@@ -116,7 +116,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'support.middleware.ErrorLoggingMiddleware',
+    #'support.middleware.ErrorLoggingMiddleware', Enable this only when in Production
     'app.middleware.RedirectMiddleware',
 ]
 
@@ -307,7 +307,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'common.authentication.APIKeyAuthentication', 
     ],
-    'EXCEPTION_HANDLER': 'support.exception_handler.custom_exception_handler',
+    #NOTE : Only enable this in production
+    #'EXCEPTION_HANDLER': 'support.exception_handler.custom_exception_handler',
 }
 
 
