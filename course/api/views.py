@@ -18,12 +18,9 @@ class ProgramList(generics.ListCreateAPIView):
 class ProgramDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Program.objects.all()
     serializer_class = ProgramSerializer
-    if DEBUG == False:
-        authentication_classes = [APIKeyAuthentication]
-        permission_classes = [AllowAny]
-    else:
-        authentication_classes = []
-        permission_classes = [AllowAny] 
+
+    authentication_classes = [APIKeyAuthentication]
+    permission_classes = [AllowAny]
     
 
 class CourseList(generics.ListCreateAPIView):

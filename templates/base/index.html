@@ -19,23 +19,11 @@
     <title>Dashboard | Kreeck Academy</title>
     <link href="/static/css/newdash.css" rel="stylesheet" />
     <style>
-        .sidenav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            overflow-y: auto;
-            background-color: #f8f9fa;
-            z-index: 1000;
-            padding-top: 20px;
-            padding-left: 1rem;
-            /* padding-right: 1rem; */
-        }
 
         .sidenav-margin {
             margin-left: 300px; 
-            margin-right: 400px;
-            padding-top: 100px;
+            margin-right: 1rem;
+            padding-top: 50px;
         }
 
         .body-container {
@@ -46,11 +34,13 @@
 </head>
 
 <body>
-    <div class="container">
+    <!-- Screen overlay -->
+    <div class="screen-overlay" id="screenOverlay"></div>
+    <div class="custom-container ">
         <div class="body-container">
-            <div class="sidenav">
+            <div class="sidenav" id="sidenav">
                 <div class="fixed-sidenav-container">
-                    <div class="top-container mt-4 mb-5">
+                    <div class="top-container mt-3">
                         <div class="logo">
                             <img src="/static/img/icons/full_logo_icon.svg" alt="">
                         </div>
@@ -101,10 +91,12 @@
                     </div>
                 </div>
             </div>
+
+
             <div class="main-container sidenav-margin">
 
                 <div class="main-navigation-container">
-                    <nav class="navigation-bar mt-5">
+                    <nav class="navigation-bar mt-4">
                         <div class="left-top-navigation">
 
                             <div class="jumbo">
@@ -128,8 +120,13 @@
                                     <img src="/static/img/icons/default_profile_icon.svg" alt="">
                                 </div>
                             </div>
+                            
+                            <div class="sidebar-toggle">
+                                <button id="toggleButton" class="toggle-btn"><img src="/static/img/icons/right_sidebar.svg" alt=""></button>
+                                
+                            </div>
                             <div class="menu-toggle">
-                                <a href=""><img src="/static/img/icons/toggle_menu_icon.svg" alt=""></a>
+                                <button class="toggle-btn" id="toggleSidenavButton" ><img src="/static/img/icons/toggle_menu_icon.svg" alt=""></button>
                             </div>
                         </div>
 
@@ -184,7 +181,7 @@
                                     
                                 </div>
 
-                                <div class="description" style="max-width: 900px;">
+                                <div class="description" >
                                     <h6 class="white-text text-xx">Course description</h6>
                                     <hr class="white-text">
                                     <p class="white-text ">Mathematical Literacy is one of the most important subjects in the worlds
@@ -226,7 +223,7 @@
                         </div>
 
                         <!-- right side navigation bar-->
-                        <div class="right-sidenav">
+                        <div class="right-sidenav" id="rightSidenav">
                             <h5 class="text-bold mb-5">Performance</h5>
                             <div class="performance-container">
                                 <div class="performance">
@@ -609,6 +606,7 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- ENd right side navigation bar-->
                     </div>
                 </div>
             </div>
@@ -655,6 +653,48 @@
             });
         });
     </script>
+
+    <script>
+        // this is the right side navigation js
+        document.getElementById('toggleButton').addEventListener('click', function() {
+            const sidenav = document.getElementById('rightSidenav');
+            const overlay = document.getElementById('screenOverlay');
+            sidenav.classList.toggle('show');
+            overlay.style.display = sidenav.classList.contains('show') ? 'block' : 'none';
+        });
+
+        // Hide the side navigation and overlay when clicking on the overlay
+        document.getElementById('screenOverlay').addEventListener('click', function() {
+            const sidenav = document.getElementById('rightSidenav');
+            const overlay = document.getElementById('screenOverlay');
+            sidenav.classList.remove('show');
+            overlay.style.display = 'none';
+        });
+    </script>
+
+    <script>
+        //side navigation toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidenav = document.getElementById('sidenav');
+            const toggleButton = document.getElementById('toggleSidenavButton');
+
+            // Check localStorage for sidenav state
+            const isSidenavHidden = localStorage.getItem('sidenavHidden') === 'true';
+
+            // Apply the stored state
+            if (isSidenavHidden) {
+                sidenav.classList.add('hidden');
+            }
+
+            // Add event listener for the toggle button
+            toggleButton.addEventListener('click', function() {
+                sidenav.classList.toggle('hidden');
+                const isHidden = sidenav.classList.contains('hidden');
+                localStorage.setItem('sidenavHidden', isHidden);
+            });
+        });
+    </script>
+
 </body>
 
 </html>
