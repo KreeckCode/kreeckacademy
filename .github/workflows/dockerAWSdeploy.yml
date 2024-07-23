@@ -1,58 +1,107 @@
-# This workflow builds and pushes Docker images to Amazon ECR,
-# and then deploys a new task definition to Amazon ECS when there is a push to the "development" branch.
-#
-# Set-up steps required:
-#
-# 1. Create an ECR repository for each image:
-#    `aws ecr create-repository --repository-name my-app-repo --region us-east-2`
-#    `aws ecr create-repository --repository-name my-compiler-repo --region us-east-2`
-#    Update the `ECR_REPOSITORY_APP` and `ECR_REPOSITORY_COMPILER` environment variables below with your repository names.
-#    Update the `AWS_REGION` environment variable below with your repository's region.
-#
-# 2. Create an ECS task definition, ECS cluster, and ECS service:
-#    Follow the Getting Started guide on the ECS console:
-#      https://us-east-2.console.aws.amazon.com/ecs/home?region=us-east-2#/firstRun
-#    Update the `ECS_SERVICE` environment variable below with the ECS service name.
-#    Update the `ECS_CLUSTER` environment variable below with the cluster name.
-#
-# 3. Store your ECS task definition as a JSON file in your repository:
-#    The format should follow the output of `aws ecs register-task-definition --generate-cli-skeleton`.
-#    Update the `ECS_TASK_DEFINITION` environment variable below with the path to the JSON file.
-#    Update the `CONTAINER_NAME_APP` and `CONTAINER_NAME_COMPILER` environment variables below with the container names
-#    in the `containerDefinitions` section of the task definition.
-#
-# 4. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
-#    See the documentation for each action used below for the recommended IAM policies for this IAM user,
-#    and best practices on handling the access key credentials.
+# Workflow to deploy a Django application to Amazon ECS
 
 name: Deploy to Amazon ECS
 
+# Trigger this workflow on pushes to the "development" branch
 on:
   push:
-    branches: [ "nginx" ]  # Trigger the workflow on pushes to the "development" branch
+    branches: [ "nginx" ]
 
+# Define environment variables
 env:
-  AWS_REGION: MY_AWS_REGION                    # Set to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY_APP: my-app-repo              # Set to your Amazon ECR repository name for the app
-  ECR_REPOSITORY_COMPILER: my-compiler-repo    # Set to your Amazon ECR repository name for the compiler
-  ECS_SERVICE: MY_ECS_SERVICE                  # Set to your Amazon ECS service name
-  ECS_CLUSTER: MY_ECS_CLUSTER                  # Set to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: MY_ECS_TASK_DEFINITION  # Set to the path to your Amazon ECS task definition file, e.g. .aws/task-definition.json
-  CONTAINER_NAME_APP: app                      # Set to the name of the app container in the task definition
-  CONTAINER_NAME_COMPILER: compiler            # Set to the name of the compiler container in the task definition
+  AWS_REGION: MY_AWS_REGION                          # AWS region
+  ECR_REPOSITORY_APP: my-app-repo                    # ECR repository for the app
+  ECR_REPOSITORY_COMPILER: my-compiler-repo          # ECR repository for the compiler
+  ECS_SERVICE: MY_ECS_SERVICE                        # ECS service name
+  ECS_CLUSTER: MY_ECS_CLUSTER                        # ECS cluster name
+  ECS_TASK_DEFINITION: MY_ECS_TASK_DEFINITION        # Path to the ECS task definition file
+  CONTAINER_NAME_APP: app                            # Container name for the app
+  CONTAINER_NAME_COMPILER: compiler                  # Container name for the compiler
 
+# Set the permissions for the GitHub token
 permissions:
-  contents: read  # Set read permissions for repository contents
+  contents: read
 
+# Define the jobs in the workflow
 jobs:
+  # Job to lint and perform static analysis on the code
+  lint:
+    name: Lint and Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4      # Check out the code from the repository
+
+    - name: Set up Python
+      uses: actions/setup-python@v4  # Set up Python environment
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: pip install flake8 pylint bandit  # Install linting and security tools
+
+    - name: Run flake8
+      run: flake8 .  # Run flake8 for style guide enforcement
+
+    - name: Run pylint
+      run: pylint **/*.py  # Run pylint for code analysis
+
+    - name: Run bandit
+      run: bandit -r .  # Run bandit for security analysis
+
+  # Job to run tests
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4  # Check out the code from the repository
+
+    - name: Set up Python
+      uses: actions/setup-python@v4  # Set up Python environment
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt  # Install dependencies
+
+    - name: Run tests
+      run: pytest  # Run tests using pytest
+
+  # Job to perform security scan on the Docker image
+  security_scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4  # Check out the code from the repository
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1  # Log in to Amazon ECR
+
+    - name: Build Docker image
+      id: build-image
+      run: docker build -t my-app:latest .  # Build Docker image
+
+    - name: Scan Docker image with Trivy
+      uses: aquasecurity/trivy-action@v0.2.0  # Perform security scan using Trivy
+      with:
+        image-ref: my-app:latest
+
+  # Job to deploy the application to Amazon ECS
   deploy:
     name: Deploy
-    runs-on: ubuntu-latest  # Use the latest Ubuntu environment for the job
+    runs-on: ubuntu-latest
+    needs: [lint, test, security_scan]  # Run this job after lint, test, and security_scan jobs are successful
     environment: production
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4  # Check out the repository code
+      uses: actions/checkout@v4  # Check out the code from the repository
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1  # Configure AWS credentials
@@ -71,10 +120,9 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        # Build, tag, and push the Docker image for the app to Amazon ECR
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_APP:$IMAGE_TAG -f Dockerfile .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY_APP:$IMAGE_TAG
-        echo "app_image=$ECR_REGISTRY/$ECR_REPOSITORY_APP:$IMAGE_TAG" >> $GITHUB_OUTPUT
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_APP:$IMAGE_TAG -f Dockerfile .  # Build Docker image for the app
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_APP:$IMAGE_TAG  # Push Docker image to ECR
+        echo "app_image=$ECR_REGISTRY/$ECR_REPOSITORY_APP:$IMAGE_TAG" >> $GITHUB_OUTPUT  # Output image details
 
     - name: Build, tag, and push compiler image to Amazon ECR
       id: build-compiler-image
@@ -82,14 +130,13 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        # Build, tag, and push the Docker image for the compiler to Amazon ECR
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_COMPILER:$IMAGE_TAG -f Dockerfile.compiler .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY_COMPILER:$IMAGE_TAG
-        echo "compiler_image=$ECR_REGISTRY/$ECR_REPOSITORY_COMPILER:$IMAGE_TAG" >> $GITHUB_OUTPUT
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_COMPILER:$IMAGE_TAG -f Dockerfile.compiler .  # Build Docker image for the compiler
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_COMPILER:$IMAGE_TAG  # Push Docker image to ECR
+        echo "compiler_image=$ECR_REGISTRY/$ECR_REPOSITORY_COMPILER:$IMAGE_TAG" >> $GITHUB_OUTPUT  # Output image details
 
     - name: Fill in the new image IDs in the ECS task definition
       id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1  # Render the ECS task definition with new image IDs
+      uses: aws-actions/amazon-ecs-render-task-definition@v1  # Update ECS task definition with new image IDs
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: ${{ env.CONTAINER_NAME_APP }}
@@ -101,9 +148,18 @@ jobs:
         overwrite: true
 
     - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1  # Deploy the ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1  # Deploy updated task definition to ECS
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: ${{ env.ECS_SERVICE }}
         cluster: ${{ env.ECS_CLUSTER }}
-        wait-for-service-stability: true  # Wait for the service to stabilize after deployment
+        wait-for-service-stability: true
+
+    - name: Notify on Slack
+      if: failure()
+      uses: 8398a7/action-slack@v3  # Send notification to Slack on failure
+      with:
+        status: ${{ job.status }}
+        fields: repo,commit,author,action,eventName,ref,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
