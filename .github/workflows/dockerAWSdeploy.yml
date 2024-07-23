@@ -1,0 +1,109 @@
+# This workflow builds and pushes Docker images to Amazon ECR,
+# and then deploys a new task definition to Amazon ECS when there is a push to the "development" branch.
+#
+# Set-up steps required:
+#
+# 1. Create an ECR repository for each image:
+#    `aws ecr create-repository --repository-name my-app-repo --region us-east-2`
+#    `aws ecr create-repository --repository-name my-compiler-repo --region us-east-2`
+#    Update the `ECR_REPOSITORY_APP` and `ECR_REPOSITORY_COMPILER` environment variables below with your repository names.
+#    Update the `AWS_REGION` environment variable below with your repository's region.
+#
+# 2. Create an ECS task definition, ECS cluster, and ECS service:
+#    Follow the Getting Started guide on the ECS console:
+#      https://us-east-2.console.aws.amazon.com/ecs/home?region=us-east-2#/firstRun
+#    Update the `ECS_SERVICE` environment variable below with the ECS service name.
+#    Update the `ECS_CLUSTER` environment variable below with the cluster name.
+#
+# 3. Store your ECS task definition as a JSON file in your repository:
+#    The format should follow the output of `aws ecs register-task-definition --generate-cli-skeleton`.
+#    Update the `ECS_TASK_DEFINITION` environment variable below with the path to the JSON file.
+#    Update the `CONTAINER_NAME_APP` and `CONTAINER_NAME_COMPILER` environment variables below with the container names
+#    in the `containerDefinitions` section of the task definition.
+#
+# 4. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+#    See the documentation for each action used below for the recommended IAM policies for this IAM user,
+#    and best practices on handling the access key credentials.
+
+name: Deploy to Amazon ECS
+
+on:
+  push:
+    branches: [ "nginx" ]  # Trigger the workflow on pushes to the "development" branch
+
+env:
+  AWS_REGION: MY_AWS_REGION                    # Set to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY_APP: my-app-repo              # Set to your Amazon ECR repository name for the app
+  ECR_REPOSITORY_COMPILER: my-compiler-repo    # Set to your Amazon ECR repository name for the compiler
+  ECS_SERVICE: MY_ECS_SERVICE                  # Set to your Amazon ECS service name
+  ECS_CLUSTER: MY_ECS_CLUSTER                  # Set to your Amazon ECS cluster name
+  ECS_TASK_DEFINITION: MY_ECS_TASK_DEFINITION  # Set to the path to your Amazon ECS task definition file, e.g. .aws/task-definition.json
+  CONTAINER_NAME_APP: app                      # Set to the name of the app container in the task definition
+  CONTAINER_NAME_COMPILER: compiler            # Set to the name of the compiler container in the task definition
+
+permissions:
+  contents: read  # Set read permissions for repository contents
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest  # Use the latest Ubuntu environment for the job
+    environment: production
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4  # Check out the repository code
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1  # Configure AWS credentials
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} 
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1  # Log in to Amazon ECR
+
+    - name: Build, tag, and push app image to Amazon ECR
+      id: build-app-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # Build, tag, and push the Docker image for the app to Amazon ECR
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_APP:$IMAGE_TAG -f Dockerfile .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_APP:$IMAGE_TAG
+        echo "app_image=$ECR_REGISTRY/$ECR_REPOSITORY_APP:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    - name: Build, tag, and push compiler image to Amazon ECR
+      id: build-compiler-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # Build, tag, and push the Docker image for the compiler to Amazon ECR
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_COMPILER:$IMAGE_TAG -f Dockerfile.compiler .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_COMPILER:$IMAGE_TAG
+        echo "compiler_image=$ECR_REGISTRY/$ECR_REPOSITORY_COMPILER:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    - name: Fill in the new image IDs in the ECS task definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1  # Render the ECS task definition with new image IDs
+      with:
+        task-definition: ${{ env.ECS_TASK_DEFINITION }}
+        container-name: ${{ env.CONTAINER_NAME_APP }}
+        image: ${{ steps.build-app-image.outputs.app_image }}
+        overwrite: true
+      with:
+        container-name: ${{ env.CONTAINER_NAME_COMPILER }}
+        image: ${{ steps.build-compiler-image.outputs.compiler_image }}
+        overwrite: true
+
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1  # Deploy the ECS task definition
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: ${{ env.ECS_SERVICE }}
+        cluster: ${{ env.ECS_CLUSTER }}
+        wait-for-service-stability: true  # Wait for the service to stabilize after deployment
