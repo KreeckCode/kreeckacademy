@@ -7,10 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="author" content="kreeck.com" />
     <link rel="shortcut icon" href="{% static 'img/kreeck_box_logo.svg' %}" />
-
     <meta name="description" content="" />
     <meta name="keywords" content="bootstrap, bootstrap4" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <!-- Open Graph meta tags for social media sharing -->
     <meta property="og:title" content="Kreeck Academy">
     <meta property="og:description" content="Your Path to Knowledge and Skills">
@@ -24,12 +24,11 @@
     <meta name="twitter:description" content="Your Path to Knowledge and Skills">
     <meta name="twitter:image" content="{% static 'img/kreeck_box_logo.svg' %}">
     <meta name="twitter:url" content="https://academy.kreeck.com">
+
     <title>{% block title %}Sign in | Kreeck Academy{% endblock title %}</title>
-    <link rel="stylesheet" href="{% static 'css/auth.bootstrap.css' %} ">
+    <link rel="stylesheet" href="{% static 'css/auth.bootstrap.css' %}">
     <link href="https://fonts.cdnfonts.com/css/poppins" rel="stylesheet">
     <link href="https://fonts.cdnfonts.com/css/inter" rel="stylesheet">
-                
-
 
     <style>
         @import url('https://fonts.cdnfonts.com/css/inter');
@@ -92,19 +91,15 @@
                 </div>
                 <div class="center-content-left">
                     <h5 class="welcome">
-                        Welcome to <span class="link">Kreeck Academy</span>
-                        .
+                        Welcome to <span class="link">Kreeck Academy</span>.
                     </h5>
                     <h1 class="signin">Sign In</h1>
                 </div>
             </div>
             <div class="left">
                 <div class="header">
-
                     <div class="signup">
-                        <p>
-                            don't have an account? <a href="{% url 'add_student' %}" class="link">Sign Up</a>
-                        </p>
+                        <p>don't have an account? <a href="{% url 'add_student' %}" class="link">Sign Up</a></p>
                     </div>
                 </div>
                 <div class="center-content">
@@ -114,19 +109,24 @@
                     <h5 class="signin-title pb-4">Sign in to your Kreeck account.</h5>
                     <form action="{% url 'login' %}" class="form" method="post" id="login-form">
                         {% csrf_token %}
-                        {% for message in messages %}
+                        {% if form.errors %}
                         <div class="alert alert-danger" role="alert">
-                            {{ message }}
+                            <ul>
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
                         </div>
-                        {% endfor %}
+                        {% endif %}
                         <div class="inputContainer">
                             <input type="text" name="username" id="username_id" class="input" placeholder="a" required>
-                            <label for="exampleInputEmail1" class="label">Username
-                                or Email</label>
+                            <label for="username_id" class="label">Username or Email</label>
                         </div>
                         <div class="inputContainer">
-                            <input type="password" name="password" id="password_id"class="input" placeholder="a" required>
-                            <label for="" class="label">Password</label>
+                            <input type="password" name="password" id="password_id" class="input" placeholder="a" required>
+                            <label for="password_id" class="label">Password</label>
                         </div>
                         <div class="buttons">
                             <p class="small-text">Or sign in with</p>
@@ -135,52 +135,48 @@
                                     Forgot password? <a href="{% url 'password_reset' %}" class="link">Reset Password</a>
                                 </p>
                             </div>
-
                             <input type="submit" class="btn btn-secondary" value="Sign in">
-
                         </div>
                     </form>
-                    <a href="" class="btn btn-outline-primary " aria-disabled="true">Continue with Github</a>
+                    <a href="" class="btn btn-outline-primary" aria-disabled="true">Continue with Github</a>
                     <a href="" class="btn btn-outline-primary mt-2">Continue with Google</a>
-
                 </div>
                 <div class="bottom">
                     <div class="terms">
-                        <p class="text-center small-text">By continuing, you agree to the kreeck academy terms of service
-                            and privacy notice.</p>
+                        <p class="text-center small-text">By continuing, you agree to the kreeck academy terms of service and privacy notice.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <script>
-        $('#login-form').submit(function (e) {
-            // e.preventDefault();
-            $('#login-btn').addClass('disabled')
-            $('#login-btn').html(`<i class="fas fa-sign-in-alt"></i> Logging you in . . .`)
-        })
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById('login-form').addEventListener('submit', function () {
+                document.getElementById('login-btn').classList.add('disabled');
+                document.getElementById('login-btn').innerHTML = '<i class="fas fa-sign-in-alt"></i> Logging you in . . .';
+            });
 
-        $("#username").on("input", function () {
-            username = $(this).val();
+            document.getElementById("username").addEventListener("input", function () {
+                const username = this.value;
 
-            $.ajax({
-                url: "/accounts/ajax/validate-username/",
-                data: {
-                    username: username
-                },
-                dataType: 'json',
-                success: function (data) {
+                fetch("/accounts/ajax/validate-username/", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username: username })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const messageWrapper = document.getElementById('message-wrapper');
                     if (data.is_taken) {
-                        console.log(data.is_taken);
-                        $('#message-wrapper').html(`<p class="my-2 alert alert-danger"><span class="bg-error p-2"><b>${username}</b> already taken :( try another one </span></p>`)
+                        messageWrapper.innerHTML = `<p class="my-2 alert alert-danger"><span class="bg-error p-2"><b>${username}</b> already taken :( try another one </span></p>`;
+                    } else {
+                        messageWrapper.innerHTML = `<p class="my-2 alert alert-success"><span class="bg-correct p-2"><b>${username}</b> is valid </span></p>`;
                     }
-                    else {
-                        $('#message-wrapper').html(`<p class="my-2 alert alert-success"><span class="bg-correct p-2"><b>${username}</b> is valid </span></p>`)
-                    }
-                }
-
-            })
-        })
+                });
+            });
+        });
     </script>
 </body>
 
