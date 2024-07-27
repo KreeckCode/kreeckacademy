@@ -173,16 +173,7 @@ class UploadVideo(models.Model):
         self.video.delete()
         super().delete(*args, **kwargs)
 
-def video_pre_save_receiver(sender, instance, *args, **kwargs):
-    if not instance.slug:
-        instance.slug = unique_slug_generator(instance)
-    if instance.video:
-        video_path = instance.video.path
-        clip = mp.VideoFileClip(video_path)
-        duration = int(clip.duration)
-        instance.duration = duration
 
-pre_save.connect(video_pre_save_receiver, sender=UploadVideo)
 
 
 class PracticalAssessment(models.Model):

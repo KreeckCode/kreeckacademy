@@ -3,19 +3,26 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-
 <div id="input-nav">
     <a href="{% url 'home' %}" class="primary1">Home</a>
-    <i>&rsaquo;</i> 
+    <i>&rsaquo;</i>
     <a href="{% url 'programs' %}" class="primary1">Programs</a>
-    <i>&rsaquo;</i> 
+    <i>&rsaquo;</i>
     <a href="{% url 'program_detail' course.program.id %}" class="primary1">{{ course.program }}</a>
-    <i>&rsaquo;</i> 
+    <i>&rsaquo;</i>
     <a href="{% url 'course_detail' course.slug %}" class="primary1">{{ course }}</a>
-    <i>&rsaquo;</i> Lesson upload
+    <i>&rsaquo;</i> Lesson Upload
 </div>
 
-<p class="title">Lesson upload for {{ course }}</p>
+
+
+{% if modules %}
+        {% for module in modules %}
+        <p class="title">Lesson Upload for {{ course }} || module: {{ module.title }}</p>
+        {% endfor %}
+{% else %}
+    <p>No modules available for this course.</p>
+{% endif %}
 <div class="title-line"></div><br>
 
 {% if messages %}
@@ -50,6 +57,22 @@
                         <b>Video</b><br>{{ upload_video_form.video }}
                         <span class="text-danger">{% if upload_video_form.video.errors %}{{ upload_video_form.video.errors }}{% endif %}</span>
                     </div>
+                    <div class="form-group">
+                        <b>Module</b><br>
+                        {% if modules %}
+                            <select name="module" class="form-control">
+                                <option value="">Select a module</option>
+                                {% for module in modules %}
+                                    <option value="{{ module.id }}" {% if module.id == module.id %}selected{% endif %}>{{ module.title }}</option>
+                                {% endfor %}
+                            </select>
+                        {% else %}
+                            <p>No modules available for this course.</p>
+                        {% endif %}
+                        <span class="text-danger">{% if upload_video_form.module.errors %}{{ upload_video_form.module.errors }}{% endif %}</span>
+                    </div>
+                    
+                    <input type="hidden" name="course" value="{{ course.id }}"> <!-- Hidden field for course -->
                     <p class="text-orange"><b>Valid video formats: </b>'mp4', 'mkv', 'wmv', '3gp', 'f4v', 'avi', 'mp3'</p>
                     <div class="form-group">
                         <button class="btn btn-primary" type="submit">Upload</button>
@@ -62,10 +85,8 @@
     </div>
 </div>
 
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-
 
 {% endblock content %}

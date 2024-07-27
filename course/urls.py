@@ -26,11 +26,11 @@ urlpatterns = [
     path('course/<slug>/documentations/<int:file_id>/edit/', handle_file_edit, name='upload_file_edit'),
     path('course/<slug>/documentations/<int:file_id>/delete/', handle_file_delete, name='upload_file_delete'),
 
-    # Video uploads urls
+    # Lesson urls
     path('course/<slug>/video/upload/', handle_video_upload, name='upload_video'),
     path('course/<slug>/video/<video_slug>/detail/', handle_video_single, name='video_single'),
-    path('course/<slug>/video/<video_slug>/edit/', handle_video_edit, name='upload_video_edit'),
-    path('course/<slug>/video/<video_slug>/delete/', handle_video_delete, name='upload_video_delete'),
+    path('course/<slug>/video/<uuid:video_id>/edit/', handle_video_edit, name='upload_video_edit'),
+    path('course/<slug>/video/<uuid:video_id>/delete/', handle_video_delete, name='upload_video_delete'),
 
     # Module creation
     path('course/<slug:course_slug>/create_module/', create_module, name='create_module'),

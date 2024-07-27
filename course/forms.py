@@ -37,6 +37,7 @@ class CourseAddForm(forms.ModelForm):
         self.fields['level'].widget.attrs.update({'class': 'form-control'})
         self.fields['year'].widget.attrs.update({'class': 'form-control'})
         self.fields['semester'].widget.attrs.update({'class': 'form-control'})
+        self.fields['price'].widget.attrs.update({'class': 'form-control'})
 
 class CourseAllocationForm(forms.ModelForm):
     """Form for creating and updating CourseAllocation instances."""
@@ -109,9 +110,11 @@ class UploadFormVideo(forms.ModelForm):
         self.fields['course'].widget.attrs.update({'class': 'form-control'})
         if course:
             self.fields['module'].queryset = course.modules.all()
+            self.fields['course'].initial = course  # Set the initial value of the course field
         self.fields['module'].required = False
         self.fields['module'].widget = forms.Select(attrs={'id': 'module-select'})
         self.fields['documents'].widget.attrs.update({'class': 'form-control'})
+
 
 class ModuleForm(forms.ModelForm):
     class Meta:

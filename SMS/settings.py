@@ -269,7 +269,9 @@ if DEBUG:
     STATIC_ROOT = posixpath.join(*(BASE_DIR.split(os.path.sep) + ['staticfiles']))
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
     MEDIA_URL = '/media/'
-    MEDIA_ROOT = posixpath.join(*(BASE_DIR.split(os.path.sep) + ['media_root']))
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
+
+
 else:
     STATIC_URL = 'https://d2bzxomyx8oypj.cloudfront.net/static/'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

@@ -140,10 +140,7 @@ def course_single(request, slug):
     course = get_object_or_404(Course, slug=slug)
     files = Upload.objects.filter(course__slug=slug)
     videos = UploadVideo.objects.filter(course__slug=slug)
-    
-    # Filter modules by course
     modules = Module.objects.filter(course=course)
-
     lecturers = CourseAllocation.objects.filter(courses__pk=course.id)
 
     return render(request, 'course/course_single.html', {
@@ -157,21 +154,17 @@ def course_single(request, slug):
     })
 
 #@cache_page(60 * 40 )
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+#@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required
 #@lecturer_required
 def course_add(request, pk):
     users = User.objects.all()
     if request.method == 'POST':
         form = CourseAddForm(request.POST)
-        course_name = request.POST.get('title')
-        course_code = request.POST.get('code')
         if form.is_valid():
             course = form.save()
 
-            if DEBUG:
-                pass
-            else:
+            if not DEBUG:
                 send_mail(
                     subject="New Course Created at Kreeck Academy",
                     message=f"A new course '{course.title}' with code '{course.code}' has been created.",
@@ -179,10 +172,12 @@ def course_add(request, pk):
                     recipient_list=["kreeckinc@gmail.com"],
                 )
 
-            messages.success(request, (course_name + '(' + course_code + ')' + ' has been created.'))
+            messages.success(request, f"Course '{course.title}' ({course.code}) has been created.")
             return redirect('program_detail', pk=request.POST.get('program'))
         else:
-            messages.error(request, 'Correct the error(s) below.')
+            for field in form:
+                for error in field.errors:
+                    messages.error(request, f"{field.label}: {error}")
     else:
         form = CourseAddForm(initial={'program': Program.objects.get(pk=pk)})
 
@@ -388,6 +383,8 @@ def handle_file_edit(request, slug, file_id):
         'title': instance.title,
         'form': form, 'course': course})
 
+
+
 #@cache_page(60 * 40 )
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def handle_file_delete(request, slug, file_id):
@@ -465,14 +462,14 @@ def delete_module(request, course_slug, module_id):
 
 
 #@cache_page(60 * 40 )
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+#@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required
-@lecturer_required 
+@lecturer_required
 def handle_video_upload(request, slug):
     course = get_object_or_404(Course, slug=slug)
     modules = course.modules.all()
     module_id = request.GET.get('module_id')
-    
+
     if module_id:
         module = get_object_or_404(Module, id=module_id)
     else:
@@ -483,39 +480,33 @@ def handle_video_upload(request, slug):
         module_form = ModuleForm(request.POST)
 
         if upload_video_form.is_valid():
-            if not upload_video_form.cleaned_data['module']:
+            uploaded_video = upload_video_form.save(commit=False)
+
+            if module:
+                uploaded_video.module = module
+            else:
                 if module_form.is_valid():
                     new_module = module_form.save(commit=False)
                     new_module.course = course
                     new_module.save()
-                    upload_video_form.instance.module = new_module
+                    uploaded_video.module = new_module
                 else:
                     messages.error(request, 'Module form is not valid.')
                     return render(request, 'upload/upload_video_form.html', {
                         'title': "Video Upload | Kreeck Academy",
                         'upload_video_form': upload_video_form,
                         'module_form': module_form,
-                        'course': course
+                        'course': course,
+                        'modules': modules,
+                        'module': module,
                     })
 
-            uploaded_video = upload_video_form.save()
+            uploaded_video.course = course
+            uploaded_video.save()
 
-            # Send email to students taking the course
-            students_emails = course.students.values_list('email', flat=True)
-            video_title = uploaded_video.title
-            subject = f"New Lesson Uploaded for Course: {course.title}"
-            template = 'emails/course-video-upload.html'
-            context = {
-                'course': course,
-                'video_title': video_title,
-            }
+            # Video processing will be handled by the post_save signal
 
-            message = render_to_string(template, context)
-
-            if not settings.DEBUG:
-                send_mail(subject, '', 'dave@kreeck.com', students_emails, html_message=message)
-
-            messages.success(request, f'{video_title} has been uploaded.')
+            messages.success(request, f'{uploaded_video.title} has been uploaded.')
             return redirect('course_detail', slug=slug)
         else:
             messages.error(request, 'There was an error uploading the lesson.')
@@ -527,7 +518,9 @@ def handle_video_upload(request, slug):
         'title': "Video Upload | Kreeck Academy",
         'upload_video_form': upload_video_form,
         'module_form': module_form,
-        'course': course
+        'course': course,
+        'modules': modules,
+        'module': module,
     })
 
 
@@ -538,7 +531,7 @@ from datetime import timedelta
 #@admin_required
 def handle_video_single(request, slug, video_slug):
     course = get_object_or_404(Course, slug=slug)
-    video = get_object_or_404(UploadVideo, slug=video_slug)
+    video = get_object_or_404(UploadVideo, course__slug=slug, slug=video_slug)
     videos = UploadVideo.objects.filter(course=course)
     files = Upload.objects.filter(course__slug=slug)
 
@@ -554,20 +547,27 @@ def handle_video_single(request, slug, video_slug):
 @login_required
 @lecturer_required
 def handle_video_edit(request, slug, video_slug):
-    course = Course.objects.get(slug=slug)
-    instance = UploadVideo.objects.get(slug=video_slug)
+    course = get_object_or_404(Course, slug=slug)
+    video = get_object_or_404(UploadVideo, slug=video_slug)
+    
     if request.method == 'POST':
-        form = UploadFormVideo(request.POST, request.FILES, instance=instance)
+        form = UploadFormVideo(request.POST, request.FILES, instance=video, course=course)
         if form.is_valid():
             form.save()
-            messages.success(request, (request.POST.get('title') + ' has been updated.'))
-            return redirect('course_detail', slug=slug)
+            messages.success(request, f'{video.title} has been updated.')
+            return redirect('video_single', slug=slug, video_slug=video_slug)
+        else:
+            messages.error(request, 'There was an error updating the video.')
     else:
-        form = UploadFormVideo(instance=instance)
+        form = UploadFormVideo(instance=video, course=course)
 
     return render(request, 'upload/upload_video_form.html', {
-        'title': instance.title,
-        'form': form, 'course': course})
+        'title': f'Edit {video.title}',
+        'form': form,
+        'course': course,
+        'video': video
+    })
+
 
 
 def handle_video_delete(request, slug, video_slug):
