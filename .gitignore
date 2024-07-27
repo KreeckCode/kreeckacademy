@@ -8,7 +8,7 @@ credentials
 .staticfiles/
 .media/
 .media_root/
-media_root/course_videos/videoplayback.mp4
+media_root/
 Contributions.md
 .coverage
 commit_frequency_chart.png
