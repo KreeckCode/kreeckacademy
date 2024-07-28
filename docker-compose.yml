@@ -1,6 +1,7 @@
 version: "3.8"
+
 services:
-  app:
+  app_blue:
     build: 
       context: .
       dockerfile: Dockerfile
@@ -13,6 +14,19 @@ services:
     networks:
       - kreeck_network
 
+  app_green:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/kreeckacademy
+    ports:
+      - "8001:8000"
+    command: >
+      sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    networks:
+      - kreeck_network
+
   compiler:
     build:
       context: .
@@ -20,7 +34,7 @@ services:
     volumes:
       - compiler_user_code:/home/compiler/user_code
     ports:
-      - "8001:8001"
+      - "8002:8001"
     networks:
       - kreeck_network
 
@@ -36,6 +50,8 @@ services:
       - ./nginx/SECURITY_CERTIFICATES/kreeck_com/kreeck_com.key:/etc/nginx/SECURITY_CERTIFICATES/kreeck_com/kreeck_com.key
     networks:
       - kreeck_network
+    environment:
+      - TARGET_ENV=blue  # Use 'blue' or 'green' to switch environments
 
 networks:
   kreeck_network:
