@@ -22,7 +22,7 @@ from reportlab.lib.units import inch
 from reportlab.lib import colors
 from .models import *
 from django.template.loader import render_to_string
-from SMS.settings import DEBUG
+from kreeckacademy.settings import DEBUG
 cm = 2.54
 from reportlab.lib.pagesizes import A4
 

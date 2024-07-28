@@ -10,7 +10,7 @@ from django.urls import reverse_lazy
 from django.db import transaction
 from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
-from SMS.settings import DEBUG
+from kreeckacademy.settings import DEBUG
 from accounts.decorators import student_required, lecturer_required
 from .models import *
 from .forms import *
@@ -18,7 +18,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.views.decorators.cache import cache_page
 
-from SMS.settings import DEBUG
+from kreeckacademy.settings import DEBUG
 
 
 @method_decorator([login_required, lecturer_required], name='dispatch')

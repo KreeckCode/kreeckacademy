@@ -10,7 +10,7 @@ from .models import *
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.views.decorators.cache import cache_page
-from SMS.settings import DEBUG
+from kreeckacademy.settings import DEBUG
 # ########################################################
 # News & Events
 # ########################################################

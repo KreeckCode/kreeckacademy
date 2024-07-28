@@ -98,7 +98,7 @@ MIDDLEWARE = [
     'support.middleware.ErrorLoggingMiddleware',
 ]
 
-ROOT_URLCONF = 'SMS.urls'
+ROOT_URLCONF = 'kreeckacademy.urls'
 
 TEMPLATES = [
     {
@@ -116,8 +116,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'SMS.wsgi.application'
-ASGI_APPLICATION = "SMS.asgi.application"
+WSGI_APPLICATION = 'kreeckacademy.wsgi.application'
+ASGI_APPLICATION = "kreeckacademy.asgi.application"
 
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,

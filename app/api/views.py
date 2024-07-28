@@ -2,7 +2,7 @@ from rest_framework import generics
 from .serializers import NewsSerializer, SemesterSerializer, SessionSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
-from SMS.settings import DEBUG
+from kreeckacademy.settings import DEBUG
 from app.models import NewsAndEvents, Semester, Session
 from common.authentication import *
 

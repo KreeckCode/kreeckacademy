@@ -3,7 +3,7 @@ from accounts.models import User
 from .serializers import UserSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
-from SMS.settings import DEBUG
+from kreeckacademy.settings import DEBUG
 from common.authentication import *
 
 

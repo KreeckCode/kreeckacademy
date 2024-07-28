@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 USE_X_FORWARDED_HOST = True
 
@@ -99,7 +99,7 @@ MIDDLEWARE = [
     'support.middleware.ErrorLoggingMiddleware',
 ]
 
-ROOT_URLCONF = 'SMS.urls'
+ROOT_URLCONF = 'kreeckacademy.urls'
 
 TEMPLATES = [
     {
@@ -117,8 +117,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'SMS.wsgi.application'
-ASGI_APPLICATION = "SMS.asgi.application"
+WSGI_APPLICATION = 'kreeckacademy.wsgi.application'
+ASGI_APPLICATION = "kreeckacademy.asgi.application"
 
 # Database
 DATABASES = {
@@ -208,7 +208,7 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'landing_page'
 LOGIN_URL = '/auth/login/'
-
+LOGOUT_URL = '/auth/logout/'
 # DRF setup
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -248,4 +248,4 @@ STRIPE_LIVE_PUBLISHABLE_KEY = config('STRIPE_LIVE_PUBLISHABLE_KEY')
 STRIPE_LIVE_SECRET_KEY = config('STRIPE_LIVE_SECRET_KEY')
 STRIPE_TEST_SECRET_KEY = config('STRIPE_TEST_SECRET_KEY')
 STRIPE_TEST_PUBLISHABLE_KEY = config('STRIPE_TEST_PUBLISHABLE_KEY')
-STRIPE_LIVE_MODE = True
+STRIPE_LIVE_MODE = False

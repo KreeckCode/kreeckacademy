@@ -4,7 +4,7 @@ from course.models import Program, Course, CourseAllocation
 from .serializers import ProgramSerializer, CourseSerializer, CourseAllocationSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
-from SMS.settings import DEBUG
+from kreeckacademy.settings import DEBUG
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 class ProgramList(generics.ListCreateAPIView):

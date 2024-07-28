@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Subscription
 from .serializers import CreateSubscriptionSerializer
 from course.models import Course
-from SMS.settings import *
+from kreeckacademy.settings import *
 
 stripe.api_key = STRIPE_LIVE_SECRET_KEY
 

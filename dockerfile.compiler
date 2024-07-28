@@ -20,7 +20,7 @@ RUN apt-get update && \
 # Copy all necessary project files to restricted directory
 COPY manage.py /home/compiler/restricted/manage.py
 COPY compiler /home/compiler/restricted/compiler
-COPY SMS /home/compiler/restricted/SMS
+COPY kreeckacademy /home/compiler/restricted/kreeckacademy
 COPY course /home/compiler/restricted/course
 COPY app /home/compiler/restricted/app
 COPY accounts /home/compiler/restricted/accounts
