@@ -91,6 +91,5 @@ class StripeWebhookView(APIView):
         elif event['type'] == 'invoice.payment_failed':
             # Handle failed payment
             pass
-        # Add other event types as needed
 
         return Response(status=200)

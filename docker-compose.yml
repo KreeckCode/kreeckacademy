@@ -25,11 +25,13 @@ services:
       - kreeck_network
 
   nginx:
-    build: ./nginx
+    build:
+      context: ./nginx
+      args:
+        NGINX_CONF: ${NGINX_CONF}  # Use environment variable for nginx configuration
     ports:
       - "80:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/SECURITY_CERTIFICATES/kreeck_com/certificate.crt:/etc/nginx/SECURITY_CERTIFICATES/kreeck_com/certificate.crt
       - ./nginx/SECURITY_CERTIFICATES/kreeck_com/kreeck_com.key:/etc/nginx/SECURITY_CERTIFICATES/kreeck_com/kreeck_com.key
     networks:
