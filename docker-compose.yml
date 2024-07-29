@@ -52,7 +52,7 @@ services:
     networks:
       - kreeck_network
     environment:
-      - TARGET_ENV=blue  # Use 'blue' or 'green' to switch environments
+      - TARGET_ENV=green  # Use 'blue' or 'green' to switch environments
 
 networks:
   kreeck_network:
