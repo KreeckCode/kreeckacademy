@@ -3,6 +3,7 @@ kreeckacademy/.env/
 .env
 credentials
 .venv
+venv
 # Ignore local development directories (if needed)
 .static/
 .staticfiles/
