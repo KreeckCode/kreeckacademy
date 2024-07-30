@@ -63,7 +63,7 @@ body {
 }
 
 .right {
-  background-color: #EFEFEF;
+  /* background-color: #EFEFEF; */
   padding: 2rem 0rem 0rem 6rem;
   display: flex;
   flex-direction: column;

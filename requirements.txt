@@ -51,3 +51,4 @@ pymemcache
 #this willl add the rich text editor to everything i wanna do
 django-tinymce
 stripe
+ffmpeg
