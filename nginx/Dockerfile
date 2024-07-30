@@ -1,8 +1,11 @@
-# Use the latest nginx base image from Docker Hub
 FROM nginx:latest
 
-# Environment variable to determine the configuration file
-ARG NGINX_CONF=nginx.dev.conf
+# Copy Nginx configuration files into the container
+COPY nginx.dev.conf /etc/nginx/nginx.conf
+COPY entrypoint.sh /usr/bin/entrypoint.sh
 
-# Copy the appropriate nginx configuration file to the container
-COPY ${NGINX_CONF} /etc/nginx/nginx.conf
+# Ensure the entrypoint script is executable
+RUN chmod +x /usr/bin/entrypoint.sh
+
+# Command to run Nginx
+CMD ["/usr/bin/entrypoint.sh"]

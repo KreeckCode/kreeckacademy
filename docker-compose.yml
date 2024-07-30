@@ -43,7 +43,7 @@ services:
     build:
       context: ./nginx
       args:
-        NGINX_CONF: ${NGINX_CONF}  # Use environment variable for nginx configuration
+        NGINX_CONF: ${NGINX_CONF}
     ports:
       - "80:80"
     volumes:
@@ -52,7 +52,7 @@ services:
     networks:
       - kreeck_network
     environment:
-      - TARGET_ENV=green  # Use 'blue' or 'green' to switch environments
+      - TARGET_ENV=green  # Change to 'blue' or 'green' to switch environments
 
 networks:
   kreeck_network:
