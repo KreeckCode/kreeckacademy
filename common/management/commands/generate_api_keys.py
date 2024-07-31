@@ -1,4 +1,3 @@
-# generate_api_keys.py
 from django.core.management.base import BaseCommand
 from common.models import APIKey  
 from django.utils.crypto import get_random_string
