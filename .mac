@@ -1,0 +1,19 @@
+export IMAGEIO_FFMPEG_EXE=$(which ffmpeg)
+
+#This is to allow the environment variable
+
+
+
+
+#this is how to remove the migrations in the database 
+python manage.py migrate --fake app zero
+python manage.py migrate --fake accounts zero
+python manage.py migrate --fake compiler zero
+python manage.py migrate --fake quiz zero
+python manage.py migrate --fake result zero
+python manage.py migrate --fake blog zero
+python manage.py migrate --fake course zero
+python manage.py migrate --fake results zero
+python manage.py migrate --fake kreeck zero
+python manage.py migrate --fake hackathon zero
+# Repeat for other apps if necessary
