@@ -1,5 +1,6 @@
 
 kreeckacademy/.env/
+.mac
 .env
 credentials
 .venv
@@ -19,6 +20,9 @@ historical_comparison_chart.png
 historical_contributions.json
 .coverage
 migrations/
+.migrations
 __pycache__/
+.__pycache__/
+.__pycache__
 .vscode
 SECURITY_CERTIFICATES

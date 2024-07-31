@@ -127,75 +127,7 @@
         </div>
     </div>
 
-    <!-- Videos Section -->
-    <div class="row mb-5">
-        <div class="col-md-12 p-0">
-            <p class="form-title m-0">Video Tutorials</p>
-            <div class="table-responsive">
-                <table class="table table-shadow table-light table-striped m-0">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Video Title</th>
-                            <th>Uploaded Date</th>
-                            <th>Get Started</th>
-                            {% if request.user.is_superuser or request.user.is_lecturer %}
-                            <th>Actions</th>
-                            {% endif %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for video in videos %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td><a href="{{ video.get_absolute_url }}" title="{{ video }}">
-                                    <i style="font-size: 20px; padding-right: 10px;" class="fas fa-video"></i>
-                                    {{ video.title|title }}
-                                </a>
-                            </td>
-                            <td>{{ video.timestamp|date }}</td>
-                            <th>
-                                <div>
-                                    <a class="download-btn" href="{{ video.get_absolute_url }}"
-                                        title="Download to your device">
-                                        <i class="fas fa-download"></i>Play</a>
-                                </div>
-                            </th>
-
-                            {% if request.user.is_superuser or request.user.is_lecturer %}
-                            <td>
-                                <div class="update-delete">
-                                   
-                                </div>
-                            </td>
-                            {% endif %}
-
-                            {% empty %}
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td>
-                                <span class="text-danger">
-                                    <i class="far fa-frown fa-1x"></i> No video Uploaded.
-                                    {% if request.user.is_superuser or request.user.is_lecturer %}
-                                    <a href="{% url 'upload_video' course.slug %}">
-                                        <i class="primary" style="font-size: 22px;">
-                                            Upload now.
-                                        </i>
-                                        {% endif %}
-                                    </a>
-                                </span>
-                            </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    
 
     <div class="row">
         <div class="col-md-12 p-0">

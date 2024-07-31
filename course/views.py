@@ -317,20 +317,26 @@ def deallocate_course(request, pk):
     course.delete()
     messages.success(request, 'successfully deallocate!')
     return redirect("course_allocation_view")
-# ########################################################
 
 
-# ########################################################
-# File Upload views
-# ########################################################
 
 #@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required
 @lecturer_required
 def handle_file_upload(request, slug):
     course = get_object_or_404(Course, slug=slug)
+    modules = course.modules.all()
+    module_id = request.GET.get('module_id')
+
+    if module_id:
+        module = get_object_or_404(Module, id=module_id)
+    else:
+        module = None
+
+    
     if request.method == 'POST':
         form = UploadFormFile(request.POST, request.FILES, {'course': course})
+        module_form = ModuleForm(request.POST)
         if form.is_valid():
             uploaded_file = form.save()
 
