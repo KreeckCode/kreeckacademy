@@ -330,6 +330,7 @@ def handle_file_upload(request, slug):
 
     if module_id:
         module = get_object_or_404(Module, id=module_id)
+
     else:
         module = None
 
