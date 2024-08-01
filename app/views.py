@@ -195,7 +195,8 @@ def session_delete_view(request, pk):
 @lecturer_required
 def semester_list_view(request):
     semesters = Semester.objects.all().order_by('-is_current_semester', '-semester')
-    return render(request, 'app/semester_list.html', {"semesters": semesters, })
+    return render(request, 'app/semester_list.html', {"semesters": semesters,
+                                                      'title': 'Semester List | Kreeck Academy', })
 
 
 @login_required
