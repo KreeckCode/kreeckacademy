@@ -190,130 +190,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/display/autorefresh.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material-darker.min.js"></script>
     <!-- Custom JS -->
-    <script>
-        /*
-        document.addEventListener("DOMContentLoaded", function () {
-            var practicalAssessmentDuration = '{{ practical_assessment_duration }}';
-    
-            // Convert to integer if needed
-            practicalAssessmentDuration = parseInt(practicalAssessmentDuration);
-    
-            if (practicalAssessmentDuration > 0) {
-                startTimer(practicalAssessmentDuration * 60);
-            }
-    
-            var codeMainEditor = CodeMirror.fromTextArea(document.getElementById('code_main'), {
-                lineNumbers: true,
-                mode: 'python',
-                theme: 'material-darker',
-                autoCloseBrackets: true,
-                extraKeys: { 'Ctrl-/': 'toggleComment' },
-                gutters: ['CodeMirror-lint-markers']
-            });
-    
-            var codeTestEditor = CodeMirror.fromTextArea(document.getElementById('code_test'), {
-                lineNumbers: true,
-                mode: 'python',
-                theme: 'material-darker',
-                autoCloseBrackets: true,
-                extraKeys: { 'Ctrl-/': 'toggleComment' },
-                gutters: ['CodeMirror-lint-markers']
-            });
-    
-            $('#language').on('change', function () {
-                var language = $(this).val();
-                var mode = {
-                    'python': 'python',
-                    'javascript': 'javascript',
-                    'cpp': 'text/x-c++src',
-                    'html': 'xml',
-                    'css': 'css'
-                }[language];
-    
-                codeMainEditor.setOption('mode', mode);
-                codeTestEditor.setOption('mode', mode);
-            });
-    
-    
-            var loadProjectCode = function (projectId) {
-                $.ajax({
-                    url: "{% url 'get_project_code' %}",
-                    method: "GET",
-                    data: {
-                        'project_id': projectId
-                    },
-                    success: function (response) {
-                        $('#project_id').val(projectId);
-                        codeMainEditor.setValue(response.code_main);
-                        codeTestEditor.setValue(response.code_test);
-                        $('#language').val(response.language).trigger('change');
-                    },
-                    error: function (response) {
-                        alert('Error loading project code.');
-                    }
-                });
-            };
-    
-            $('.project-link').on('click', function () {
-                var projectId = $(this).data('id');
-                loadProjectCode(projectId);
-            });
-    
-            $('#create-project-form').on('submit', function (e) {
-                e.preventDefault();
-                var projectName = $('#project_name').val();
-                var language = $('#modal_language').val();
-                var csrfToken = $('[name="csrfmiddlewaretoken"]').val();
-    
-                $.ajax({
-                    url: "{% url 'create_project' %}",
-                    method: "POST",
-                    data: {
-                        'project_name': projectName,
-                        'language': language,
-                        'csrfmiddlewaretoken': csrfToken
-                    },
-                    success: function (response) {
-                        $('#createProjectModal').modal('hide');
-                        location.reload();
-                    },
-                    error: function (response) {
-                        alert('Error creating project.');
-                    }
-                });
-            });
-    
-            var startTimer = function (duration) {
-                var start = Date.now(),
-                    diff,
-                    minutes,
-                    seconds;
-    
-                function timer() {
-                    diff = duration - (((Date.now() - start) / 1000) | 0);
-    
-                    minutes = (diff / 60) | 0;
-                    seconds = (diff % 60) | 0;
-    
-                    minutes = minutes < 10 ? "0" + minutes : minutes;
-                    seconds = seconds < 10 ? "0" + seconds : seconds;
-    
-                    $('#timer').text(minutes + ":" + seconds);
-    
-                    if (diff <= 0) {
-                        clearInterval(timerInterval);
-                        $('#compiler-form :input').prop('disabled', true);
-                        alert('Time is up! You can no longer submit your code.');
-                    }
-                };
-    
-                timer();
-                var timerInterval = setInterval(timer, 1000);
-            };
-        });
-        */
 
-    </script>
      <script>
         document.addEventListener("DOMContentLoaded", function () {
     var codeMirrorOptions = {
@@ -427,6 +304,7 @@
         }
     });
 
+    // Handling the code saving functionality
     document.getElementById("save-code").addEventListener("click", function () {
         alert("Code saved successfully!");
     });

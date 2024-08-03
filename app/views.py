@@ -117,7 +117,7 @@ def session_add_view(request):
     if request.method == 'POST':
         form = SessionForm(request.POST)
         if form.is_valid():
-            data = form.data.get('is_current_session')  # returns string of 'True' if the user selected Yes
+            data = form.data.get('is_current_session')  
             print(data)
             if data == 'true':
                 sessions = Session.objects.all()
