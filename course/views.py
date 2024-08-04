@@ -460,9 +460,10 @@ def update_module(request, course_slug, module_id):
 @login_required
 def delete_module(request, course_slug, module_id):
     module = get_object_or_404(Module, id=module_id)
-
+    
+    # You have to fix this soon
     if request.method == 'POST':
-        module.delete()
+        module.delete() 
         return JsonResponse({'success': True})
 
     return JsonResponse({'success': False})

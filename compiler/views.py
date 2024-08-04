@@ -114,7 +114,7 @@ def execute_code(language, code):
         with open('temp.cpp', 'w') as file:
             file.write(code)
         
-        # Compile the C++ code
+        # Compile the C++ code this shouldnt be allowed anymore in the program
         compile_command = ['g++', 'temp.cpp', '-o', 'temp']
         compile_result = subprocess.run(compile_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         
