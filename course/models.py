@@ -153,6 +153,14 @@ class Module(models.Model):
         return self.title
 
 class UploadVideo(models.Model):
+    """_summary_
+
+    Args:
+        models (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='lessons', null=True, blank=True)
     title = models.CharField(max_length=100)
     slug = models.SlugField(blank=True, unique=True)

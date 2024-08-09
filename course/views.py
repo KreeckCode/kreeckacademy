@@ -741,7 +741,7 @@ def compiler(request, lesson_id=None):
     """
     View to handle code execution and rendering of the compiler interface.
     """
-    print("Entering compiler view")
+    #print("Entering compiler view")
     compiler_service_status = check_compiler_service()
     print(f"Compiler service status: {compiler_service_status}")
     projects = UserProject.objects.filter(user=request.user)
