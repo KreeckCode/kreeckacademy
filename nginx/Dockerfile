@@ -1,5 +1,5 @@
+# Use the latest nginx base image from Docker Hub
 FROM nginx:latest
+
+# Copy nginx configuration file to the container
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY entrypoint.sh /usr/bin/entrypoint.sh
-RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["/usr/bin/entrypoint.sh"]
