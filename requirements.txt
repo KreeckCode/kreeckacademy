@@ -52,3 +52,7 @@ pymemcache
 django-tinymce
 stripe
 ffmpeg
+
+django-environ
+moviepy
+imageio

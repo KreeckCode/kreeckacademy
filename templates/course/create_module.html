@@ -4,9 +4,6 @@
 {% block content %}
 
 <style>
-    .form-group label {
-    font-weight: 600;
-}
 
 .form-group input, .form-group textarea {
     border-radius: 0.25rem;
@@ -22,8 +19,8 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Create Module for {{ course.title }}</h5>
+                <div class="card-header ">
+                    <h6 class="mb-0">Create Module for {{ course.title }}</h6>
                 </div>
                 <div class="card-body">
                     <form id="createModuleForm" method="POST" action="{% url 'create_module' course.slug %}">

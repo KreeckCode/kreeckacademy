@@ -304,6 +304,7 @@ h6 {
 }
 
 .right-sidenav.show {
+    overflow: scroll;
     transform: translateX(0);
 }
 
