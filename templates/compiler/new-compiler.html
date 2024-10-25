@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.22.1/full/pyodide.js"></script>
+    <script src="https://unpkg.com/codemirror@5.65.6/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/codemirror@5.65.6/lib/codemirror.css">
+    <style>
+        .CodeMirror { height: auto; }
+    </style>
+</head>
+<body>
+    <textarea id="code"></textarea>
+    <button id="runButton">Run Code</button>
+    <div id="output"></div>
+
+    <script>
+        let pyodide;
+
+        async function loadPyodideAndPackages() {
+            pyodide = await loadPyodide();  // Load Pyodide
+            document.getElementById('runButton').disabled = false;  // Enable the button when ready
+            console.log("Pyodide is loaded.");
+        }
+
+        async function runPython() {
+            try {
+                const code = editor.getValue();
+                
+                // Redirect Python print output
+                pyodide.runPython(`
+                    import sys
+                    from io import StringIO
+                    sys.stdout = StringIO()
+                `);
+
+                await pyodide.runPythonAsync(code);  // Execute the user code
+                
+                // Get and display the printed output
+                const output = pyodide.runPython('sys.stdout.getvalue()');
+                document.getElementById('output').innerText = output || 'No output';
+            } catch (error) {
+                document.getElementById('output').innerText = `Error: ${error.message}`;
+            }
+        }
+
+        const editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            lineNumbers: true,
+            mode: "python"
+        });
+
+        document.getElementById('runButton').disabled = true;  // Disable the button until Pyodide is ready
+        document.getElementById('runButton').addEventListener('click', runPython);
+
+        loadPyodideAndPackages();
+    </script>
+</body>
+</html>

@@ -1,58 +1,126 @@
+# Django web framework
 django
-reportlab
-pytz
-django-debug-toolbar
-python-slugify
-Pillow
-rcssmin
-argon2-cffi
-whitenoise
-redis
-hiredis
-django-cleanup
-python-decouple
-django-environ
-django-model-utils
-django-crispy-forms
-crispy-bootstrap5
-django-compressor
-django-redis
-django-tailwind
-#django storage
-azure-storage-blob
-# Django REST Framework
-djangorestframework
-django-cors-headers
-# DRF-spectacular for api documentation
-drf-spectacular
-crispy-bootstrap4
-sphinx
-sphinx-autobuild
-flake8
-flake8-isort
-coverage
-black
-pylint-django
-pre-commit
-factory-boy
-python-decouple
-django-debug-toolbar
-django-extensions
-django-coverage-plugin
-pytest-django
-gunicorn
-psycopg2-binary
-boto3
-django-storages[boto3]==1.13.1  # https://github.com/jschneier/django-storages
-django-anymail[amazon_ses]==9.0  # https://github.com/anymail/django-anymail
-moviepy
-#caching system using memcache, we will store the caching data in the memory of the users device
-pymemcache
-#this willl add the rich text editor to everything i wanna do
-django-tinymce
-stripe
-ffmpeg
 
+# PDF generation
+reportlab
+
+# Time zone support (Django uses pytz for managing timezones)
+pytz
+
+# Debugging toolbar for development purposes
+django-debug-toolbar
+
+# Utility to generate URL-friendly slugs
+python-slugify
+
+# Image processing for handling images (e.g., in models)
+Pillow
+
+# CSS minification (for compressing CSS in production)
+rcssmin
+
+# Secure password hashing with Argon2
+argon2-cffi
+
+# Serve static files efficiently in production
+whitenoise
+
+# In-memory data structure store used as a database, cache, or message broker
+#redis
+
+# Redis parser (faster Redis client)
+#hiredis
+
+# Automatically delete files associated with FileField/ ImageField on model deletion
+django-cleanup
+
+# Environment variables management
+python-decouple
+
+# Environment variables and secrets management for Django
 django-environ
+
+# Utilities for Django models like StatusField, TimeStampedModel, etc.
+django-model-utils
+
+# Form handling and rendering in templates
+django-crispy-forms
+
+# Bootstrap 5 support for Django Crispy Forms
+crispy-bootstrap5
+
+# Compress and minify static files like CSS and JavaScript
+django-compressor
+
+# Redis caching backend for Django
+django-redis
+
+# Integration for Django with Tailwind CSS for styling
+django-tailwind
+
+# Azure Blob Storage backend for Django file storage (commented for optional use)
+# azure-storage-blob
+
+# Django REST Framework (for building APIs)
+djangorestframework
+
+# Support for Cross-Origin Resource Sharing (CORS) in APIs
+django-cors-headers
+
+# API documentation generation for Django REST Framework
+drf-spectacular
+
+# Bootstrap 4 support for Django Crispy Forms (if using Bootstrap 4)
+crispy-bootstrap4
+
+# Documentation generator for Python projects
+sphinx
+
+# Auto-reload Sphinx when documentation files are changed
+sphinx-autobuild
+
+# Linting tool to ensure code quality (Python style guide checker)
+flake8
+
+# Flake8 plugin to enforce import order
+flake8-isort
+
+# Code coverage reporting for unit tests
+coverage
+
+# Code formatting tool to ensure a consistent style
+black
+
+# Linting support for Django projects with pylint
+pylint-django
+
+# Automate code checks and formatting using git pre-commit hooks
+pre-commit
+
+# Factory Boy for testing (fixtures replacement to generate test data)
+factory-boy
+
+# Django extensions for various utilities (shell plus, etc.)
+django-extensions
+
+# Django plugin for test coverage reporting
+django-coverage-plugin
+
+# Testing framework for Django (works with pytest)
+pytest-django
+
+# PostgreSQL database adapter for Python (Comment this if you dont have postgres installed on your computer)
+#psycopg2-binary
+
+# Boto3, the AWS SDK for Python, to interact with AWS services like S3
+boto3
+
+# Memcache client for Python (for caching data in memory)
+pymemcache
+
+# Rich text editor for Django admin and forms
+django-tinymce
+
+
 moviepy
-imageio
+stripe
