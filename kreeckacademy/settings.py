@@ -99,6 +99,7 @@ PROJECT_APPS = [
     #'support', Enable this support functionality when you are in production only
     'compiler',
     'common',
+    'student_record',
 ]
 
 
