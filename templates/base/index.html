@@ -20,8 +20,36 @@
     <title>Course Detail | Mathematical Literacy</title>
     <link href="/static/css/newdash.css" rel="stylesheet" />
     <style>
+        .updates-card {
+            background-color: #B99EC1;
+            padding: 1rem;
+            max-width: 257.5px;
+            border-radius: 10px;
+        }
 
+        .card-image img {
+            max-height: 233px;
+            max-width: -webkit-fill-available;
+            border-radius: 10px;
+            border: 0.3px solid #D4D4D4;
+        }
 
+        .active-green a {
+            color: white;
+        }
+
+        .text-white {
+            color: #FFFFFF;
+        }
+
+        .text-grey {
+            color: #E8E8E8;
+        }
+
+        .text-small{
+            font-size: smaller;
+            
+        }
     </style>
 </head>
 
@@ -35,8 +63,11 @@
                         <div class="logo ml-3">
                             <a href="#">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="188" height="26" viewBox="0 0 188 26">
-                                    <text id="text_logo" transform="translate(0 21)" fill="#000900" font-size="22" font-family="Inter" font-weight="700"><tspan x="0" y="0">Kreeck Academy.</tspan></text>
-                                  </svg>
+                                    <text id="text_logo" transform="translate(0 21)" fill="#000900" font-size="22"
+                                        font-family="Inter" font-weight="700">
+                                        <tspan x="0" y="0">Kreeck Academy.</tspan>
+                                    </text>
+                                </svg>
                             </a>
 
                         </div>
@@ -67,27 +98,13 @@
                         </div>
                     </div>
 
-                    <style>
-                        .updates-card{
-                            background-color: #B99EC1;
-                            padding: 1rem;
-                            max-width: 257.5px;
-                            border-radius: 10px;
-                        }
-
-                        .card-image img{
-                            max-height: 233px;
-                            max-width: -webkit-fill-available;
-                            border-radius: 10px;
-                        }
-                    </style>
                     <div class="bottom-container mb-3">
                         <div class="nav-btns">
-                            <div class="updates-card mb-2">
-                                <div class="title">
-                                    <h6 class="mb-2 text-bold">New Feature Available</h6>
-                                    <p>Lorem ipsum dolor sit amet consectetur 
-                                        adipisicing elit. Natus harum officia 
+                            <div class="updates-card mb-3">
+                                <div class="title ">
+                                    <h6 class="mb-2 text-bold text-white">New Feature Available</h6>
+                                    <p class="text-grey text-small">Lorem ipsum dolor sit amet consectetur
+                                        adipisicing elit. Natus harum officia
                                         eligendi velit.</p>
                                 </div>
                                 <div class="card-image">
@@ -95,10 +112,10 @@
                                 </div>
                             </div>
                             <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
-                                <li class="active-green"><a href="" class="sidenav-link"><i><img
+                                <li class="active-green text-white"><a href="" class="sidenav-link"><i><img
                                                 src="/static/img/icons/compiler_icon.svg" alt=""></i>
                                         Code Compiler</a></li>
-                                
+
                                 <li><a href="" class="sidenav-link"><i><img src="/static/img/icons/settings_icon.svg"
                                                 alt=""></i>
                                         Settings</a></li>
@@ -160,7 +177,7 @@
 
                     </nav>
 
-                    
+
                 </div>
 
                 <div class="main-content">

@@ -272,7 +272,8 @@ h6 {
 }
 
 .active-green {
-    background-color: #d3d3d3;
+    background-color: #b99ec1;
+    color: white;
     border-radius: 6px;
     padding-right: 2rem;
 }
