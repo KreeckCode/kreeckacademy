@@ -82,9 +82,19 @@ THIRED_PARTY_APPS = [
     'crispy_forms',
     "crispy_bootstrap4",
     'tinymce',
+
+    #tailwind configurations
+    'tailwind',
+    'theme',
+    #'django_browser_reload',
+
+    ############
     'corsheaders' # This will handle the central login application that is yet to be implemented, as of yet i want to set the functionalities
 ]
 
+
+NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
+ 
 # Custom apps
 PROJECT_APPS = [
     'app.apps.AppConfig',
@@ -100,6 +110,7 @@ PROJECT_APPS = [
     'compiler',
     'common',
     'student_record',
+    
 ]
 
 
@@ -119,6 +130,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     #'support.middleware.ErrorLoggingMiddleware', Enable this only when in Production
     'app.middleware.RedirectMiddleware',
+    #"django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 
@@ -313,6 +325,8 @@ REST_FRAMEWORK = {
     #NOTE : Only enable this in production
     #'EXCEPTION_HANDLER': 'support.exception_handler.custom_exception_handler',
 }
+
+TAILWIND_APP_NAME = 'theme'
 
 
 LOGGING = {

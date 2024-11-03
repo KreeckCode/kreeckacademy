@@ -7,6 +7,7 @@ venv
 # Ignore local development directories (if needed)
 .static/
 .staticfiles/
+staticfiles
 .media/
 .media_root/
 media_root/
@@ -27,3 +28,5 @@ __pycache__/
 /.pyc
 SECURITY_CERTIFICATES
 *.pyc
+.node_modules
+node_modules

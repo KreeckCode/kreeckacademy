@@ -14,6 +14,7 @@ urlpatterns = [
     path('search/', include('search.urls')),
     path('quiz/', include('quiz.urls')),
     path('blog/', include('blog.urls')),
+    path('records/', include('student_record.urls')),
     path('tinymce/', include('tinymce.urls')),
 
     #intergrading the restful APIS
@@ -30,6 +31,7 @@ urlpatterns = [
 
     # Support, Enable this only in Production
     #path('support/', include('support.urls')),
+    #path("__reload__/", include("django_browser_reload.urls")),
     
 ]
 
