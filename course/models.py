@@ -35,8 +35,18 @@ SEMESTER = (
     (THIRD, "Third"),
 )
 
+COHORT_CHOICES = (
+    ("2023A", "2023 Cohort A"),
+    ("2023B", "2023 Cohort B"),
+    ("2024A", "2024 Cohort A"),
+    ("2024B", "2024 Cohort B"),
+)
+
 class ProgramManager(models.Manager):
     def search(self, query=None):
+        """
+        Searches for programs based on a query string.
+        """
         qs = self.get_queryset()
         if query is not None:
             or_lookup = (Q(title__icontains=query) |
@@ -46,6 +56,9 @@ class ProgramManager(models.Manager):
         return qs
 
 class Program(models.Model):
+    """
+    Model representing an academic program (e.g., Computer Science, Mathematics).
+    """
     title = models.CharField(max_length=150, unique=True)
     summary = models.TextField(null=True, blank=True)
 
@@ -59,6 +72,9 @@ class Program(models.Model):
 
 class CourseManager(models.Manager):
     def search(self, query=None):
+        """
+        Searches for courses based on a query string.
+        """
         qs = self.get_queryset()
         if query is not None:
             or_lookup = (Q(title__icontains=query) |
@@ -70,6 +86,9 @@ class CourseManager(models.Manager):
         return qs
 
 class Course(models.Model):
+    """
+    Model representing a course within a program.
+    """
     slug = models.SlugField(blank=True, unique=True)
     title = models.CharField(max_length=200, null=True)
     code = models.CharField(max_length=200, unique=True, null=True)
@@ -78,7 +97,8 @@ class Course(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     level = models.CharField(max_length=25, choices=LEVEL, null=True)
     year = models.IntegerField(choices=YEARS, default=0)
-    semester = models.CharField(choices=SEMESTER, max_length=200)
+    semester = models.CharField(choices=SEMESTER, max_length=200, null=True, blank=True)
+    cohort = models.CharField(choices=COHORT_CHOICES, max_length=200, null=True, blank=True)
     is_elective = models.BooleanField(default=False, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
@@ -92,17 +112,64 @@ class Course(models.Model):
 
     @property
     def is_current_semester(self):
+        """
+        Property to check if the course is in the current semester.
+        This assumes there is a Semester model that tracks the current semester.
+        """
         from app.models import Semester
-        current_semester = Semester.objects.get(is_current_semester=True)
-        return self.semester == current_semester.semester
+        try:
+            current_semester = Semester.objects.get(is_current_semester=True)
+            return self.semester == current_semester.semester
+        except Semester.DoesNotExist:
+            return False
 
+    @property
+    def is_current_cohort(self):
+        """
+        Property to check if the course is part of the current cohort.
+        Useful if the school opts to use cohort-based tracking instead of semester.
+        """
+        from app.models import Cohort
+        try:
+            current_cohort = Cohort.objects.get(is_current_cohort=True)
+            return self.cohort == current_cohort.cohort
+        except Cohort.DoesNotExist:
+            return False
+
+# Cohort model to represent different academic cohorts
+class Cohort(models.Model):
+    """
+    Model representing a cohort (e.g., 2023 Cohort A).
+    """
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(null=True, blank=True)
+    is_current_cohort = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        """
+        Ensure only one cohort is marked as current at a time.
+        """
+        if self.is_current_cohort:
+            Cohort.objects.filter(is_current_cohort=True).update(is_current_cohort=False)
+        super().save(*args, **kwargs)
+
+# Modified pre-save signal to handle the course slug creation
 def course_pre_save_receiver(sender, instance, *args, **kwargs):
+    """
+    Pre-save signal to generate a unique slug for the course if it doesn't exist.
+    """
     if not instance.slug:
         instance.slug = unique_slug_generator(instance)
 
 pre_save.connect(course_pre_save_receiver, sender=Course)
 
 class CourseAllocation(models.Model):
+    """
+    Model to represent the allocation of courses to lecturers.
+    """
     lecturer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='allocated_lecturer')
     courses = models.ManyToManyField(Course, related_name='allocated_course')
     session = models.ForeignKey("app.Session", on_delete=models.CASCADE, blank=True, null=True)
@@ -114,6 +181,9 @@ class CourseAllocation(models.Model):
         return reverse('edit_allocated_course', kwargs={'pk': self.pk})
 
 class Upload(models.Model):
+    """
+    Model to manage course file uploads (e.g., documents, spreadsheets).
+    """
     title = models.CharField(max_length=100)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     file = models.FileField(upload_to='course_files/', validators=[FileExtensionValidator(['pdf', 'docx', 'doc', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'rar', '7zip'])])
@@ -124,6 +194,9 @@ class Upload(models.Model):
         return str(self.file)[6:]
 
     def get_extension_short(self):
+        """
+        Get a short string representation of the file type.
+        """
         ext = str(self.file).split(".")[-1]
         if ext in ['doc', 'docx']:
             return 'word'
@@ -137,14 +210,19 @@ class Upload(models.Model):
             return 'archive'
 
     def delete(self, *args, **kwargs):
+        """
+        Delete the file from storage when deleting the model instance.
+        """
         self.file.delete()
         super().delete(*args, **kwargs)
 
-from django.db import models
 from uuid import uuid4
 from django.utils.translation import gettext_lazy as _
 
 class Module(models.Model):
+    """
+    Model representing a module within a course.
+    """
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     title = models.CharField(_('Title'), max_length=255)
     course = models.ForeignKey(Course, related_name='modules', on_delete=models.CASCADE)
@@ -153,13 +231,8 @@ class Module(models.Model):
         return self.title
 
 class UploadVideo(models.Model):
-    """_summary_
-
-    Args:
-        models (_type_): _description_
-
-    Returns:
-        _type_: _description_
+    """
+    Model to manage video uploads for course modules.
     """
     module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='lessons', null=True, blank=True)
     title = models.CharField(max_length=100)
@@ -178,13 +251,16 @@ class UploadVideo(models.Model):
         return reverse('video_single', kwargs={'slug': self.course.slug, 'video_slug': self.slug})
 
     def delete(self, *args, **kwargs):
+        """
+        Delete the video from storage when deleting the model instance.
+        """
         self.video.delete()
         super().delete(*args, **kwargs)
 
-
-
-
 class PracticalAssessment(models.Model):
+    """
+    Model representing a practical coding assessment for a lesson.
+    """
     title = models.CharField(max_length=200, null=True, blank=True)
     slug = models.SlugField(blank=True, unique=True)
     lesson = models.ForeignKey(UploadVideo, on_delete=models.CASCADE)
@@ -200,12 +276,18 @@ class PracticalAssessment(models.Model):
         return reverse('practical_assessment_detail', kwargs={'slug': self.slug})
 
 def practical_assessment_pre_save_receiver(sender, instance, *args, **kwargs):
+    """
+    Pre-save signal to generate a unique slug for practical assessments.
+    """
     if not instance.slug:
         instance.slug = unique_slug_generator(instance)
 
 pre_save.connect(practical_assessment_pre_save_receiver, sender=PracticalAssessment)
 
 class UserCode(models.Model):
+    """
+    Model to track user-submitted code for a lesson.
+    """
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     lesson = models.ForeignKey(UploadVideo, on_delete=models.CASCADE)
     code_main = models.TextField(null=True, blank=True)
@@ -217,6 +299,9 @@ class UserCode(models.Model):
         return f"{self.user.username} - {self.lesson.title}"
 
 class UserProgress(models.Model):
+    """
+    Model to track user progress through course lessons.
+    """
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     lesson = models.ForeignKey(UploadVideo, on_delete=models.CASCADE)
@@ -226,6 +311,9 @@ class UserProgress(models.Model):
         return f"{self.user.username} - {self.course.title} - {self.lesson.title}"
 
 class UserProject(models.Model):
+    """
+    Model to represent a user-created project.
+    """
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     language = models.CharField(max_length=20)
@@ -235,6 +323,7 @@ class UserProject(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return f"{self.user.username} - {self.name}"
 
