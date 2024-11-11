@@ -8,3 +8,6 @@ class APIKey(models.Model):
 
     def __str__(self):
         return self.key
+    
+
+# TO Generate the API Keys you have to run this command: python manage.py generate_api_keys --count 5 --activate
