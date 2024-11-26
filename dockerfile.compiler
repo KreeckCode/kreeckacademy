@@ -35,6 +35,9 @@ COPY common /home/compiler/restricted/common
 COPY static /home/compiler/restricted/static
 COPY templates /home/compiler/restricted/templates
 COPY requirements.txt /home/compiler/restricted/requirements.txt
+COPY theme /home/compiler/restricted/theme
+COPY student_record /home/compiler/restricted/student_record
+
 
 # Set permissions for the restricted directory
 RUN chown -R compiler:compiler /home/compiler/restricted && \
