@@ -105,7 +105,6 @@ class PersonalDocument(models.Model):
     def reject_document(self, reason):
         """Mark the document as rejected, with a reason."""
         self.status = 'Rejected'
-        # Ideally, we would also log the reason somewhere
         self.save()
 
 class EnrollmentHistory(models.Model):
@@ -197,3 +196,52 @@ class Feedback(models.Model):
 
     def __str__(self):
         return f"Feedback by {self.student_record.student.student.username} for {self.course.title}"
+
+class Notification(models.Model):
+    """
+    Model to track notifications sent to students.
+    """
+    student_record = models.ForeignKey(StudentRecord, on_delete=models.CASCADE, related_name='notifications')
+    message = models.TextField()
+    date_sent = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Notification for {self.student_record.student.student.username} on {self.date_sent}"
+
+class AcademicProgress(models.Model):
+    """
+    Model to track academic progress for students.
+    """
+    student_record = models.ForeignKey(StudentRecord, on_delete=models.CASCADE, related_name='academic_progress')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    progress_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    last_updated = models.DateField(auto_now=True)
+
+    def __str__(self):
+        return f"Progress for {self.student_record.student.student.username} in {self.course.title}"
+
+class EngagementMetrics(models.Model):
+    """
+    Model to track student engagement metrics.
+    """
+    student_record = models.ForeignKey(StudentRecord, on_delete=models.CASCADE, related_name='engagement_metrics')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    views = models.PositiveIntegerField(default=0)
+    participation_score = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    last_accessed = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Engagement for {self.student_record.student.student.username} in {self.course.title}"
+
+class EventParticipation(models.Model):
+    """
+    Model to track event participation of students.
+    """
+    student_record = models.ForeignKey(StudentRecord, on_delete=models.CASCADE, related_name='event_participations')
+    event_name = models.CharField(max_length=255)
+    participation_date = models.DateField()
+    certificate_awarded = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Event Participation by {self.student_record.student.student.username} in {self.event_name}"

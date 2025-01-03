@@ -14,6 +14,8 @@ admin.site.register(UploadVideo)
 admin.site.register(UserCode)
 admin.site.register(UserProgress)
 admin.site.register(UserProject)
+admin.site.register(Cohort)
+
 
 # Unregister the Group model from admin (if not used)
 admin.site.unregister(Group)
