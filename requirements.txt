@@ -15,13 +15,6 @@ python-slugify
 
 # Image processing for handling images (e.g., in models)
 Pillow
-<<<<<<< HEAD
-rcssmin
-argon2-cffi
-whitenoise
-redis
-hiredis
-=======
 
 # CSS minification (for compressing CSS in production)
 rcssmin
@@ -32,35 +25,11 @@ argon2-cffi
 # Serve static files efficiently in production
 whitenoise
 
-# In-memory data structure store used as a database, cache, or message broker
-#redis
-
-# Redis parser (faster Redis client)
-#hiredis
-
 # Automatically delete files associated with FileField/ ImageField on model deletion
->>>>>>> development
 django-cleanup
 
 # Environment variables management
 python-decouple
-<<<<<<< HEAD
-django-environ
-django-model-utils
-django-crispy-forms
-crispy-bootstrap5
-django-compressor
-django-redis
-django-tailwind
-pygame
-#django storage
-azure-storage-blob
-# Django REST Framework
-djangorestframework
-django-cors-headers
-# DRF-spectacular for api documentation
-drf-spectacular
-=======
 
 # Environment variables and secrets management for Django
 django-environ
@@ -82,30 +51,8 @@ django-redis
 
 # Integration for Django with Tailwind CSS for styling
 django-tailwind
->>>>>>> development
 
-# Azure Blob Storage backend for Django file storage (commented for optional use)
-# azure-storage-blob
-
-<<<<<<< HEAD
-sphinx
-sphinx-autobuild
-flake8
-flake8-isort
-coverage
-black
-pylint-django
-pre-commit
-factory-boy
-
-django-debug-toolbar
-django-extensions
-django-coverage-plugin
-pytest-django
-gunicorn
-psycopg2-binary
-=======
-# Django REST Framework (for building APIs)
+# Django REST Framework
 djangorestframework
 
 # Support for Cross-Origin Resource Sharing (CORS) in APIs
@@ -114,8 +61,8 @@ django-cors-headers
 # API documentation generation for Django REST Framework
 drf-spectacular
 
-# Bootstrap 4 support for Django Crispy Forms (if using Bootstrap 4)
-crispy-bootstrap4
+# Django storage
+azure-storage-blob
 
 # Documentation generator for Python projects
 sphinx
@@ -153,11 +100,10 @@ django-coverage-plugin
 # Testing framework for Django (works with pytest)
 pytest-django
 
-# PostgreSQL database adapter for Python (Comment this if you dont have postgres installed on your computer)
-#psycopg2-binary
+# PostgreSQL database adapter for Python (Comment this if you don't have Postgres installed on your computer)
+psycopg2-binary
 
 # Boto3, the AWS SDK for Python, to interact with AWS services like S3
->>>>>>> development
 boto3
 
 # Memcache client for Python (for caching data in memory)
@@ -166,6 +112,13 @@ pymemcache
 # Rich text editor for Django admin and forms
 django-tinymce
 
+# Tailwind CSS integration
 django-tailwind
+
+# Video editing with Python
 moviepy
+
+# Payment processing with Stripe
 stripe
+
+crispy-bootstrap4

@@ -5,7 +5,7 @@ from django.core.validators import FileExtensionValidator
 from django.db.models.signals import pre_save
 from django.db.models import Q
 from .utils import *
-import moviepy.editor as mp
+
 
 # Constants for choices
 YEARS = (

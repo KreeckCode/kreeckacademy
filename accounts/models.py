@@ -161,11 +161,12 @@ class Parent(models.Model):
 
 
 class DepartmentHead(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     department = models.ForeignKey(Program, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return "{}".format(self.user)
+
 
 
 class Group(models.Model):

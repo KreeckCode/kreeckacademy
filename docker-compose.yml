@@ -2,7 +2,7 @@ services:
   app:
     build: 
       context: .
-      dockerfile: Dockerfile
+      dockerfile: DockerFile
     volumes:
       - .:/kreeckacademy
     ports:
@@ -15,7 +15,7 @@ services:
   compiler:
     build:
       context: .
-      dockerfile: Dockerfile.compiler
+      dockerfile: dockerfile.compiler
     volumes:
       - compiler_user_code:/home/compiler/user_code
     ports:
