@@ -166,3 +166,17 @@ class DepartmentHead(models.Model):
 
     def __str__(self):
         return "{}".format(self.user)
+
+
+class Group(models.Model):
+    """Description of the CLass or the function
+    - this is a class to group the users in different groups so that they can access selected courses or modules.
+    eg(Semesters, terms, cohorts)
+
+    name = models.Charfield
+    """
+    name = models.CharField(max_length=20, blank=False, null=False)
+    description = models.CharField(max_length=500, blank=True, null=True)
+    duration = models.CharField(max_length=20)
+    start_date = models.DateField()
+    end_date = models.DateField()

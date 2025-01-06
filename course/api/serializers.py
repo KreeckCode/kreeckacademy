@@ -1,4 +1,3 @@
-# course/serializers.py
 from rest_framework import serializers
 from course.models import Program, Course, CourseAllocation
 

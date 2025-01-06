@@ -42,7 +42,7 @@ class NewsAndEventsManager(models.Manager):
         return self.get_queryset()
 
     def get_by_id(self, id):
-        qs = self.get_queryset().filter(id=id) # NewsAndEvents.objects == self.get_queryset()
+        qs = self.get_queryset().filter(id=id)
         if qs.count() == 1:
             return qs.first()
         return None
@@ -83,6 +83,7 @@ class Semester(models.Model):
         return self.semester
     
 class Landing(models.Model):
+    """This will add the functionality to eventually make the landing page edited without needing deployment"""
     body_Color = models.TextField(max_length=500, blank=True, null=True)
     Hero_Title = models.CharField(max_length=200, blank=True, null=True)
     Hero_Content = models.CharField(max_length=200, blank=True, null=True)

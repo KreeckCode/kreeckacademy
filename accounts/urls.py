@@ -13,15 +13,14 @@ from .views import (
     LecturerListView, StudentListView, 
     staff_add_view, edit_staff, 
     delete_staff, student_add_view, 
-    edit_student, delete_student, ParentAdd, validate_username, register
+    edit_student, delete_student, ParentAdd, validate_username, register, logout_view
 )
 from .forms import EmailValidationOnForgotPassword
 
 urlpatterns = [
     path('', include('django.contrib.auth.urls')),
-
+    path('auth/logout/', logout_view, name='logout'),
     path('admin_panel/', admin_panel, name='admin_panel'),
-
     path('profile/', profile, name='profile'),
     path('profile/<int:id>/detail/', profile_single, name='profile_single'),
     path('setting/', profile_update, name='edit_profile'),
@@ -33,7 +32,7 @@ urlpatterns = [
     path('lecturers/<int:pk>/delete/', delete_staff, name='lecturer_delete'),
 
     path('students/', StudentListView.as_view(), name='student_list'),
-    path('student/add/', student_add_view, name='add_student'),
+    path('enrol', student_add_view, name='add_student'),
     path('student/<int:pk>/edit/', edit_student, name='student_edit'),
     path('students/<int:pk>/delete/', delete_student, name='student_delete'),
 

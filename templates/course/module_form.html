@@ -1,0 +1,15 @@
+<!-- module_form.html -->
+
+{% extends 'base.html' %}
+{% block title %}{{ course.title }} | {% if module %}Edit Module{% else %}Create Module{% endif %}{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <h2>{% if module %}Edit Module{% else %}Create Module{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">{% if module %}Update Module{% else %}Create Module{% endif %}</button>
+    </form>
+</div>
+{% endblock content %}

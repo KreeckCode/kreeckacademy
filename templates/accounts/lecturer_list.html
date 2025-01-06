@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}{{ title }}{% endblock title %}
-
+{% load crispy_forms_tags %}
 {% block content %}
 
 <h3 class="mt mt-4">Lecture List</h3>
@@ -15,6 +15,10 @@
         </button>
     </form>
 </div>
+
+{% if request.user.is_superuser %}
+<a class="add-button" href="{% url 'add_lecturer' %}"><i class="fas fa-plus"></i>Add Lecture</a>
+{% endif %}
 <hr>
 <br>
 <div class="table-responsive">

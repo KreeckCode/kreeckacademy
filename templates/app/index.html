@@ -1,27 +1,30 @@
 {% extends 'base.html' %}
 {% block title %}{{ title }}{% endblock title %}
 
-
 {% block content %}
 
-<div class="container">
-    <div id="input-nav" class="p-2">Home</div>
+<div class="container mt-4">
+    <div id="input-nav" class="p-2 mb-3 bg-light border rounded">Home</div>
 
     {% if request.user.is_superuser %}
-    <div class="manage-wrap">
-        <a class="btn btn-primary" href="{% url 'add_item' %}"><i class="fas fa-plus"></i>Add New Post</a>
+    <div class="mb-3">
+        <a class="btn btn-primary" href="{% url 'add_item' %}">
+            <i class="fas fa-plus"></i> Add New Post
+        </a>
     </div>
     {% endif %}
 
     {% if messages %}
     {% for message in messages %}
     {% if message.tags == 'error' %}
-    <div class="alert alert-danger">
-        <i class="fas fa-exclamation-circle"></i>{{ message }}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle"></i> {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% else %}
-    <div class="alert alert-success">
-        <i class="fas fa-check-circle"></i>{{ message }}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle"></i> {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endif %}
     {% endfor %}
@@ -38,10 +41,7 @@
         .bg-purple {
             background-color: #6f42c1;
         }
-    </style>
 
-
-    <style>
         .card-header-ne {
             position: relative;
             display: flex;
@@ -53,47 +53,43 @@
             vertical-align: middle;
         }
     </style>
+
     {% if items %}
     <div class="row">
         {% for item in items %}
         <div class="col-md-4 mb-4">
-            <div class="bg-white border">
-                <div class="card-header-ne {% if item.posted_as == 'News' %}news{% else %}events{% endif %} p-2">
-                    <span class="p-0">
-                        {{ item.title|title }}
-                    </span>
+            <div class="card">
+                <div class="card-header card-header-ne {% if item.posted_as == 'News' %}bg-primary text-white{% else %}bg-info text-white{% endif %} p-2">
+                    <span class="title">{{ item.title|title }}</span>
                     {% if request.user.is_superuser %}
-                    <div class="dropdown">
-                        <a href="{% url 'edit_post' pk=item.id %}" class="btn btn-sm" >
-                            <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
+                    <div class="btn-group">
+                        <a href="{% url 'edit_post' pk=item.id %}" class="btn btn-sm btn-outline-light">
+                            <i class="fa-solid fa-pen-to-square"></i>
                         </a>
-                        <a href="{% url 'delete_post' pk=item.id %}" class="btn btn-sm" >
-                            <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
+                        <a href="{% url 'delete_post' pk=item.id %}" class="btn btn-sm btn-outline-light">
+                            <i class="fa-solid fa-trash"></i>
                         </a>
-                        
                     </div>
                     {% endif %}
                 </div>
-
-                <div class="p-2">{{ item.summary }}</div>
-
-                <div class="date-wrapper">
-                    <i class="fa fa-calendar mr-2"></i>
-                    {{ item.updated_date|timesince }} ago
+                <div class="card-body">
+                    <p class="card-text">{{ item.summary }}</p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            <i class="fa fa-calendar me-2"></i>
+                            {{ item.updated_date|timesince }} ago
+                        </small>
+                    </p>
                 </div>
-
             </div>
         </div>
         {% endfor %}
     </div>
-
     {% else %}
-    <p>
-        <i class="far fa-frown fa-2x"></i>So empty.
+    <p class="text-center">
+        <i class="far fa-frown fa-2x"></i> So empty.
     </p>
-
     {% endif %}
-
 </div>
 
 {% endblock content %}

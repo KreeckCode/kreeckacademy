@@ -10,7 +10,7 @@ from .models import *
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.views.decorators.cache import cache_page
-from SMS.settings import DEBUG
+from kreeckacademy.settings import DEBUG
 # ########################################################
 # News & Events
 # ########################################################
@@ -33,13 +33,6 @@ def home_view(request):
         'items': items,
     }
     return render(request, 'app/index.html', context)
-"""
-this should be ona different environment because someone can easily break the software
-"""
-#@cache_page(60 * 60 )
-def compiler(request):
-    return render(request, 'compiler/compiler.html')
-
 
 
 @login_required
@@ -124,7 +117,7 @@ def session_add_view(request):
     if request.method == 'POST':
         form = SessionForm(request.POST)
         if form.is_valid():
-            data = form.data.get('is_current_session')  # returns string of 'True' if the user selected Yes
+            data = form.data.get('is_current_session')  
             print(data)
             if data == 'true':
                 sessions = Session.objects.all()
@@ -202,7 +195,8 @@ def session_delete_view(request, pk):
 @lecturer_required
 def semester_list_view(request):
     semesters = Semester.objects.all().order_by('-is_current_semester', '-semester')
-    return render(request, 'app/semester_list.html', {"semesters": semesters, })
+    return render(request, 'app/semester_list.html', {"semesters": semesters,
+                                                      'title': 'Semester List | Kreeck Academy', })
 
 
 @login_required
@@ -340,61 +334,6 @@ def handler400(request, exception, template_name="common/400.html"):
     return response
 
 
-#@cache_page(60 * 40 )
-@login_required
-@admin_required
-def dashboard_view(request):
-    return render(request, 'app/dashboard.html')
 
-
-
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import subprocess
-
-def execute_code(language, code):
-    if language == 'python':
-        command = ['python', '-c', code]
-    elif language == 'html':
-        command = ['echo', code]
-    elif language == 'css':
-        command = ['echo', code]
-    elif language == 'javascript':
-        command = ['node', '-e', code]
-    elif language == 'cpp':
-        # Save the C++ code to a temporary file
-        with open('temp.cpp', 'w') as file:
-            file.write(code)
-        
-        # Compile the C++ code
-        compile_command = ['g++', 'temp.cpp', '-o', 'temp']
-        compile_result = subprocess.run(compile_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        
-        # If compilation is successful, execute the compiled binary
-        if compile_result.returncode == 0:
-            execution_command = ['./temp']
-            execution_result = subprocess.run(execution_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            return execution_result.stdout
-        else:
-            return compile_result.stderr
-
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    if result.returncode == 0:
-        return result.stdout
-    else:
-        return result.stderr
-
-def run_code_view(request):
-    if request.method == 'POST':
-        language = request.POST.get('language')
-        code = request.POST.get('code')
-        try:
-            output = execute_code(language, code)
-            return JsonResponse({'output': output})
-        except Exception as e:
-            return JsonResponse({'error': str(e)})
-
-    return JsonResponse({'error': 'Invalid request method.'})
 
     

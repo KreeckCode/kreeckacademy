@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Create Module{% endblock title %}
+
+{% block content %}
+
+<style>
+
+.form-group input, .form-group textarea {
+    border-radius: 0.25rem;
+    border: 1px solid #ced4da;
+    padding: 0.5rem 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+</style>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header ">
+                    <h6 class="mb-0">Create Module for {{ course.title }}</h6>
+                </div>
+                <div class="card-body">
+                    <form id="createModuleForm" method="POST" action="{% url 'create_module' course.slug %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {{ form.title.label_tag }}
+                            {{ form.title }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.description.label_tag }}
+                            {{ form.description }}
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Create Module</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // AJAX submission of form data
+    document.getElementById('createModuleForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent normal form submission
+        var form = this;
+        var formData = new FormData(form);
+        
+        // AJAX request
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest', // Indicate AJAX request
+                'X-CSRFToken': '{{ csrf_token }}'    // CSRF token
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Handle success (e.g., display success message, redirect to previous page)
+                alert('Module created successfully!');
+                window.location.href = document.referrer; // Redirect to previous page
+            } else {
+                // Handle errors (e.g., display error messages)
+                console.error('Error creating module:', data.errors);
+                alert('Failed to create module. Please check your input.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while creating the module.');
+        });
+    });
+</script>
+{% endblock content %}

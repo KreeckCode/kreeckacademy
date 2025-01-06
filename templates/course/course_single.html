@@ -6,9 +6,10 @@
 
 <div class="container">
 
-    <div id="input-nav"><a href="{% url 'home' %}" class="primary1">Home </a>
-        <a href="{% url 'programs' %}" class="primary1">Programs </a>
-        <a href="{% url 'program_detail' course.program.id %}" class="primary1"> {{ course.program }}</a>
+    <div id="input-nav">
+        <a href="{% url 'home' %}" class="primary1">Home</a>
+        <a href="{% url 'programs' %}" class="primary1">Programs</a>
+        <a href="{% url 'program_detail' course.program.id %}" class="primary1">{{ course.program }}</a>
         {{ course }}
     </div>
 
@@ -22,6 +23,9 @@
                 <a class="add-button" href="{% url 'upload_video' course.slug %}"><i class="fas fa-plus"></i>
                     Upload new video
                 </a>
+                <a class="add-button" href="{% url 'create_module' course.slug %}"><i class="fas fa-plus"></i>
+                    Create Module
+                </a>
                 {% endif %}
             </div>
             <div class="col text-right">
@@ -34,7 +38,7 @@
 
     <div class="title">{{ course }}</div>
     <p class="program-description">{{ course.summary }}</p>
-
+    
     {% if request.user.is_superuser %}
     <div class="btn-flex">
         <a class="edit-btn" href="{% url 'edit_course' course.slug %}">
@@ -57,81 +61,73 @@
     {% endfor %}
     {% endif %}
 
-    <div class="row mb-5">
-        <div class="col-md-12 p-0">
-            <p class="form-title m-0">Video Tutorials</p>
-            <div class="table-responsive">
-                <table class="table table-shadow table-light table-striped m-0">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Video Title</th>
-                            <th>Uploaded Date</th>
-                            <th>Get Started</th>
-                            {% if request.user.is_superuser or request.user.is_lecturer %}
-                            <th>Actions</th>
-                            {% endif %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for video in videos %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td><a href="{{ video.get_absolute_url }}" title="{{ video }}">
-                                    <i style="font-size: 20px; padding-right: 10px;" class="fas fa-video"></i>
-                                    {{ video.title|title }}
+    <!-- Modules and Lessons Section -->
+    <div class="site-section">
+        <div class="title">Modules and Lessons</div>
+        
+        <br>
+        <div class="container">
+            {% if modules %}
+                {% for module in modules %}
+                    <div id="module-{{ module.id }}" class="card mb-3">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 id="module-title-{{ module.id }}" class="module-title" data-module-id="{{ module.id }}" contenteditable="true">{{ module.title }}</h6>
+                            <div>
+                                <a href="{% url 'upload_video' course.slug %}?module_id={{ module.id }}" class="add-lesson-button btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-plus"></i> Add Lesson
                                 </a>
-                            </td>
-                            <td>{{ video.timestamp|date }}</td>
-                            <th>
-                                <div>
-                                    <a class="download-btn" href="{{ video.get_absolute_url }}"
-                                        title="Download to your device">
-                                        <i class="fas fa-download"></i>Play</a>
-                                </div>
-                            </th>
-
-                            {% if request.user.is_superuser or request.user.is_lecturer %}
-                            <td>
-                                <div class="update-delete">
-                                    <a href="{% url 'upload_video_edit' slug=course.slug video_slug=video.slug %}"
-                                        class="update" title="Edit">
-                                        <i class="fas fa-pencil-alt"></i>
-                                    </a>
-                                    <a href="{% url 'upload_video_delete' slug=course.slug video_slug=video.slug %}"
-                                        class="delete" title="Delete">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </a>
-                                </div>
-                            </td>
-                            {% endif %}
-
-                            {% empty %}
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td>
-                                <span class="text-danger">
-                                    <i class="far fa-frown fa-1x"></i> No video Uploaded.
-                                    {% if request.user.is_superuser or request.user.is_lecturer %}
-                                    <a href="{% url 'upload_video' course.slug %}">
-                                        <i class="primary" style="font-size: 22px;">
-                                            Upload now.
-                                        </i>
-                                        {% endif %}
-                                    </a>
-                                </span>
-                            </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                                <a href="#" class="delete-module-button btn btn-sm btn-outline-danger" data-module-id="{{ module.id }}">
+                                    <i class="fas fa-trash-alt"></i> Delete Module
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Lesson Title</th>
+                                        <th>Duration</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for lesson in module.lessons.all %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>
+                                                <a href="{{ lesson.get_absolute_url }}" title="{{ lesson }}">
+                                                    <i style="font-size: 20px; padding-right: 10px;" class="fas fa-video"></i>
+                                                        {{ lesson.title|title }}
+                                                </a>
+                                            </td>
+                                            <td>{{ lesson.duration }}</td>
+                                            <td>
+                                                <a href="#" class="update">Edit</a>
+                                                <a href="#" class="delete" data-lesson-id="{{ lesson.id }}">Delete</a>
+                                            </td>
+                                            
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="3">No lessons available.</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No modules available.</p>
+                <a class="add-button" href="{% url 'create_module' course.slug %}"><i class="fas fa-plus"></i>
+                    Create Module
+                </a>
+            {% endif %}
         </div>
     </div>
+
+    
 
     <div class="row">
         <div class="col-md-12 p-0">
@@ -165,35 +161,33 @@
                             <th>
                                 <div>
                                     <a class="downloadBtn" href="{{ file.file.url }}">
-                                        <svg class="svgIcon" viewBox="0 0 384 512" height="1em" xmlns="http://www.w3.org/2000/svg"><path d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"></path></svg>
-                                        <span class="icon2"></span>
-                                        <span class="tooltip">Download</span>
-                                     </a>
+                                        <svg class="svgIcon" viewBox="0 0 384 512" height="1em" xmlns="http://www.w3.org/2000/svg"><path d="M169.4 470.6c-12.5 12.5-32.8 12.5-45.3 0l-93.4-93.4c-12.5-12.5-12.5-32.8 0-45.3 12.5-12.5 32.8-12.5 45.3 0l64.4 64.3V40c0-17.7 14.3-32 32-32s32 14.3 32 32v396.7l64.4-64.3c12.5-12.5 32.8-12.5 45.3 0 12.5 12.5 12.5 32.8 0 45.3l-93.4 93.4zM384 64H32C14.3 64 0 78.3 0 96v320c0 17.7 14.3 32 32 32h352c17.7 0 32-14.3 32-32V96c0-17.7-14.3-32-32-32z"/></svg>
+                                        Download
+                                    </a>
                                 </div>
                             </th>
 
                             {% if request.user.is_superuser or request.user.is_lecturer %}
                             <td>
                                 <div class="update-delete">
-                                    <a href="{% url 'upload_file_edit' slug=course.slug file_id=file.pk %}"
+                                    <a href="{% url 'upload_file_edit' slug=course.slug file_slug=file.slug %}"
                                         class="update" title="Edit">
                                         <i class="fas fa-pencil-alt"></i>
                                     </a>
-                                    <a href="{% url 'upload_file_delete' slug=course.slug file_id=file.pk %}"
+                                    <a href="{% url 'upload_file_delete' slug=course.slug file_slug=file.slug %}"
                                         class="delete" title="Delete">
                                         <i class="fas fa-trash-alt"></i>
                                     </a>
                                 </div>
                             </td>
                             {% endif %}
-
                             {% empty %}
                         <tr>
                             <td></td>
                             <td></td>
                             <td>
                                 <span class="text-danger">
-                                    <i class="far fa-frown fa-1x"></i> No File Uploaded.
+                                    <i class="far fa-frown fa-1x"></i> No document Uploaded.
                                     {% if request.user.is_superuser or request.user.is_lecturer %}
                                     <a href="{% url 'upload_file_view' course.slug %}">
                                         <i class="primary" style="font-size: 22px;">
@@ -216,33 +210,111 @@
 
 </div>
 
-<div class="site-section">
-    <div class="title">Instructor(s)</div>
-    <br>
-    <div class="container marketing">
-        <div class="row">
-            {% for lecturer in lecturers %}
-            <div class="col-lg-4 mx-auto" style="background: transparent; box-shadow: none;">
-                {% if lecturer.lecturer.picture %}
-                <img class="" src="{{ lecturer.lecturer.picture.url }}" alt="" style="width:140px;">
-                {% endif %}
-                <h2>{{ lecturer|title }}</h2>
-                <p style="color: #6c757d;">{{ lecturer.lecturer.email }}</p>
-                <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies
-                    vehicula ut id elit.</p>
-                <p>
-                    <a class="btn rounded-circle btn-secondary" href="#" role="button"><i
-                            class="fab fa-twitter"></i></a>
-                    <a class="btn rounded-circle btn-secondary" href="#" role="button"><i
-                            class="fab fa-facebook-f"></i></a>
-                    <a class="btn rounded-circle btn-secondary" href="#" role="button"><i
-                            class="fab fa-linkedin-in"></i></a>
-                </p>
-                <!-- <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p> -->
+<!-- Modal for Lesson Details -->
+<div class="modal fade" id="lessonDetailsModal" tabindex="-1" role="dialog" aria-labelledby="lessonDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="lessonDetailsModalLabel">Lesson Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            {% endfor %}
-
+            <div class="modal-body">
+                <p id="lesson-details-text"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // JavaScript for inline module title editing
+    $(document).ready(function() {
+        $('.module-title').on('blur', function() {
+            var moduleId = $(this).data('module-id');
+            var newTitle = $(this).text().trim();
+
+            $.ajax({
+                url: '/programs/' + '{{ course.slug }}' + '/module/' + moduleId + '/update/',
+                type: 'POST',
+                data: {
+                    'title': newTitle,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        $('#module-title-' + moduleId).text(response.module_title);
+                    } else {
+                        alert('Failed to update module title.');
+                    }
+                },
+                error: function() {
+                    alert('An error occurred while processing your request.');
+                }
+            });
+        });
+
+
+        // Delete Lesson (assuming you have an endpoint and view set up for lesson deletion)
+        $('.delete-lesson-button').on('click', function(e) {
+            e.preventDefault();
+            var lessonId = $(this).data('lesson-id');
+            if (confirm('Are you sure you want to delete this lesson?')) {
+                $.ajax({
+                    url: '/programs/' + '{{ course.slug }}' + '/lesson/' + lessonId + '/delete/',
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.reload(); // Reload the page after successful deletion
+                        } else {
+                            alert('Failed to delete lesson.');
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while processing your request.');
+                    }
+                });
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $('.delete-module-button').on('click', function(e) {
+            e.preventDefault();
+            var moduleId = $(this).data('module-id');
+
+            if (confirm('Are you sure you want to delete this module?')) {
+                var deleteUrl = '/programs/{{ course.slug }}/module/' + moduleId + '/delete/';
+
+                $.ajax({
+                    type: 'POST',
+                    url: deleteUrl,
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            $('#module-' + moduleId).remove();  // Update the UI to remove the deleted module
+                        } else {
+                            alert('Failed to delete module.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('An error occurred while processing your request.');
+                    }
+                });
+            }
+        });
+    });
+</script>
 {% endblock content %}

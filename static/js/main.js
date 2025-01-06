@@ -82,3 +82,90 @@ function showCourses(btn) {
   }
   collapsed = !collapsed;
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    var toggles = document.querySelectorAll('.icon');
+
+    toggles.forEach(function (toggle) {
+        toggle.addEventListener('click', function () {
+            var target = document.querySelector(this.getAttribute('href'));
+
+            toggles.forEach(function (otherToggle) {
+                if (otherToggle !== toggle) {
+                    var otherTarget = document.querySelector(otherToggle.getAttribute('href'));
+                    otherToggle.classList.remove('rotate');
+                    otherTarget.classList.remove('show');
+                }
+            });
+
+            if (target.classList.contains('show')) {
+                this.classList.remove('rotate');
+            } else {
+                this.classList.add('rotate');
+            }
+        });
+    });
+
+    $('.collapse').on('shown.bs.collapse', function () {
+        var toggle = document.querySelector('a[href="#' + this.id + '"]');
+        toggle.classList.add('rotate');
+    });
+
+    $('.collapse').on('hidden.bs.collapse', function () {
+        var toggle = document.querySelector('a[href="#' + this.id + '"]');
+        toggle.classList.remove('rotate');
+    });
+});
+// this is the right side navigation js
+document.getElementById('toggleButton').addEventListener('click', function () {
+    const sidenav = document.getElementById('rightSidenav');
+    const overlay = document.getElementById('screenOverlay');
+
+    // Toggle the 'show' class on the sidenav
+    sidenav.classList.toggle('show');
+
+    // Toggle the display of the overlay based on the 'show' class presence
+    overlay.style.display = sidenav.classList.contains('show') ? 'block' : 'none';
+});
+
+// Hide the side navigation and overlay when clicking on the overlay
+document.getElementById('screenOverlay').addEventListener('click', function () {
+    const sidenav = document.getElementById('rightSidenav');
+    const overlay = document.getElementById('screenOverlay');
+
+    sidenav.classList.remove('show');
+    overlay.style.display = 'none';
+});
+
+// Close button functionality for right side navigation
+document.getElementById('closeToggleButton').addEventListener('click', function () {
+    const sidenav = document.getElementById('rightSidenav');
+    const overlay = document.getElementById('screenOverlay');
+
+    // Remove the 'show' class from the sidenav
+    sidenav.classList.remove('show');
+
+    // Hide the overlay
+    overlay.style.display = 'none';
+});
+
+// Toggle the side navigation and screen overlay
+document.getElementById('toggleSidenavButton').addEventListener('click', function () {
+    const sidenav = document.getElementById('sidenav');
+    const overlay = document.getElementById('screenOverlay');
+
+    // Toggle the 'show' class on the sidenav
+    sidenav.classList.toggle('show');
+
+    // Toggle the display of the overlay based on the 'show' class presence
+    overlay.style.display = sidenav.classList.contains('show') ? 'block' : 'none';
+});
+
+// Hide the side navigation and overlay when clicking on the overlay
+document.getElementById('screenOverlay').addEventListener('click', function () {
+    const sidenav = document.getElementById('sidenav');
+    const overlay = document.getElementById('screenOverlay');
+
+    sidenav.classList.remove('show');
+    overlay.style.display = 'none';
+});

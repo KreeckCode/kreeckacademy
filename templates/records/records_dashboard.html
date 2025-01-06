@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block title %}Records Dashboard{% endblock title %}
+
+{% block content %}
+<div class="p-6 bg-gradient-to-r from-blue-50 to-blue-100 min-h-screen">
+    <nav class="flex text-blue-600 mb-6">
+        <a href="{% url 'home' %}" class="hover:underline">Home</a> <span class="mx-2">&rsaquo;</span> <span>Records Dashboard</span>
+    </nav>
+
+    <div class="text-3xl font-bold text-gray-800 mb-4">Records Dashboard</div>
+    <div class="border-b-2 border-gray-300 mb-6"></div>
+
+    <div class="grid grid-cols-1 gap-8">
+        <!-- Student Section -->
+        {% if request.user.is_student %}
+        <div class="bg-white rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all duration-300">
+            <h5 class="text-xl font-semibold text-gray-800">Welcome, {{ request.user.username }}!</h5>
+            <p class="text-gray-700 mt-6">Account Expiry Date: <strong class="text-red-500">{{ student_record.account_expiry_date }}</strong></p>
+            <p class="text-gray-700">Outstanding Balance: <strong class="text-red-500">${{ student_record.outstanding_balance }}</strong></p>
+            <!-- Button to trigger document upload modal -->
+            <button type="button" class="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all duration-300" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">Upload Documents</button>
+
+            <!-- Upload Document Modal -->
+            <div class="modal fade" id="uploadDocumentModal" tabindex="-1" aria-labelledby="uploadDocumentModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-gray-800" id="uploadDocumentModalLabel">Upload Document</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Form for uploading documents -->
+                            <form method="post" action="{% url 'upload_document_modal' %}" enctype="multipart/form-data" class="space-y-4">
+                                {% csrf_token %}
+                                <div>
+                                    <!-- Dropdown for selecting document type -->
+                                    <label for="id_document_type" class="block text-sm font-medium text-gray-700">Document Type</label>
+                                    <select name="document_type" id="id_document_type" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                        <option value="">Select Document Type</option>
+                                        <option value="ID">ID</option>
+                                        <option value="Passport">Passport</option>
+                                        <option value="Proof of Residency">Proof of Residency</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <!-- File input for uploading document -->
+                                    <label for="id_document_file" class="block text-sm font-medium text-gray-700">Document File</label>
+                                    <input type="file" name="document_file" id="id_document_file" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                                <!-- Submit button for form -->
+                                <button type="submit" class="mt-4 w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition-all duration-300">Upload</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Lecturer Section -->
+        {% if request.user.is_lecturer %}
+        <div class="bg-white rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all duration-300">
+            <h5 class="text-xl font-semibold text-gray-800">Manage Students</h5>
+            <div class="overflow-x-auto">
+                <!-- Table for displaying students managed by lecturer -->
+                <table class="w-full mt-6 table-auto">
+                    <thead>
+                    <tr class="bg-blue-100">
+                        <th class="p-4 text-left font-semibold">Student Username</th>
+                        <th class="p-4 text-left font-semibold">Full Name</th>
+                        <th class="p-4 text-left font-semibold">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for student_record in student_records %}
+                        <tr class="bg-white hover:bg-gray-100">
+                            <td class="border-b border-gray-200 p-4">{{ student_record.student.student.username }}</td>
+                            <td class="border-b border-gray-200 p-4">{{ student_record.student.student.get_full_name }}</td>
+                            <td class="border-b border-gray-200 p-4">
+                                <!-- Button to trigger manage grades modal -->
+                                <button type="button" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition-all duration-300" data-bs-toggle="modal" data-bs-target="#manageGradesModal-{{ student_record.id }}">Manage Grades</button>
+
+                                <!-- Manage Grades Modal -->
+                                <div class="modal fade" id="manageGradesModal-{{ student_record.id }}" tabindex="-1" aria-labelledby="manageGradesModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="manageGradesModalLabel">Manage Grades for {{ student_record.student.student.get_full_name }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- Form for managing grades -->
+                                                <form method="post" action="{% url 'manage_grades_modal' student_record.id %}" class="space-y-4">
+                                                    {% csrf_token %}
+                                                    <div>
+                                                        <!-- Dropdown for selecting course -->
+                                                        <label for="id_course" class="block text-sm font-medium text-gray-700">Course</label>
+                                                        <select name="course" id="id_course" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                                            {% for course in student_record.enrolled_courses.all %}
+                                                                <option value="{{ course.id }}">{{ course.title }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <!-- Input for assignment name -->
+                                                        <label for="id_assignment" class="block text-sm font-medium text-gray-700">Assignment</label>
+                                                        <input type="text" name="assignment" id="id_assignment" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                                    </div>
+                                                    <div>
+                                                        <!-- Input for grade -->
+                                                        <label for="id_grade" class="block text-sm font-medium text-gray-700">Grade</label>
+                                                        <input type="text" name="grade" id="id_grade" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                                    </div>
+                                                    <div>
+                                                        <!-- Textarea for feedback -->
+                                                        <label for="id_feedback" class="block text-sm font-medium text-gray-700">Feedback</label>
+                                                        <textarea name="feedback" id="id_feedback" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+                                                    </div>
+                                                    <!-- Submit button for saving grades -->
+                                                    <button type="submit" class="mt-4 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all duration-300">Save Grade</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Admin Section -->
+        {% if request.user.is_superuser %}
+        <div class="bg-white rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all duration-300">
+            <h5 class="text-xl font-semibold text-gray-800">All Student Records</h5>
+            <div class="overflow-x-auto">
+                <!-- Table for displaying all student records for admin -->
+                <table class="w-full mt-6 table-auto">
+                    <thead>
+                    <tr class="bg-blue-100">
+                        <th class="p-4 text-left font-semibold">Student Username</th>
+                        <th class="p-4 text-left font-semibold">Full Name</th>
+                        <th class="p-4 text-left font-semibold">Expiry Date</th>
+                        <th class="p-4 text-left font-semibold">Outstanding Balance</th>
+                        <th class="p-4 text-left font-semibold">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for student_record in student_records %}
+                        <tr class="bg-white hover:bg-gray-100">
+                            <td class="border-b border-gray-200 p-4">{{ student_record.student.student.username }}</td>
+                            <td class="border-b border-gray-200 p-4">{{ student_record.student.student.get_full_name }}</td>
+                            <td class="border-b border-gray-200 p-4">{{ student_record.account_expiry_date }}</td>
+                            <td class="border-b border-gray-200 p-4">${{ student_record.outstanding_balance }}</td>
+                            <td class="border-b border-gray-200 p-4">
+                                <!-- Button to trigger manage disciplinary actions modal -->
+                                <button type="button" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-all duration-300" data-bs-toggle="modal" data-bs-target="#manageDisciplinaryModal-{{ student_record.id }}">Manage Disciplinary Actions</button>
+
+                                <!-- Manage Disciplinary Actions Modal -->
+                                <div class="modal fade" id="manageDisciplinaryModal-{{ student_record.id }}" tabindex="-1" aria-labelledby="manageDisciplinaryModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="manageDisciplinaryModalLabel">Manage Disciplinary Actions for {{ student_record.student.student.get_full_name }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- Form for managing disciplinary actions -->
+                                                <form method="post" action="{% url 'manage_disciplinary_actions_modal' student_record.id %}" class="space-y-4">
+                                                    {% csrf_token %}
+                                                    <div>
+                                                        <!-- Input for incident date -->
+                                                        <label for="id_incident_date" class="block text-sm font-medium text-gray-700">Incident Date</label>
+                                                        <input type="date" name="incident_date" id="id_incident_date" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                                    </div>
+                                                    <div>
+                                                        <!-- Textarea for description of incident -->
+                                                        <label for="id_description" class="block text-sm font-medium text-gray-700">Description</label>
+                                                        <textarea name="description" id="id_description" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+                                                    </div>
+                                                    <div>
+                                                        <!-- Input for action taken -->
+                                                        <label for="id_action_taken" class="block text-sm font-medium text-gray-700">Action Taken</label>
+                                                        <input type="text" name="action_taken" id="id_action_taken" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                                    </div>
+                                                    <div>
+                                                        <!-- Dropdown for status -->
+                                                        <label for="id_status" class="block text-sm font-medium text-gray-700">Status</label>
+                                                        <select name="status" id="id_status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                                            <option value="Pending">Pending</option>
+                                                            <option value="Resolved">Resolved</option>
+                                                        </select>
+                                                    </div>
+                                                    <!-- Submit button for saving disciplinary action -->
+                                                    <button type="submit" class="mt-4 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all duration-300">Save Action</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

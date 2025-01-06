@@ -1,7 +1,6 @@
 from django.urls import path
 from .views import *
 
-
 urlpatterns = [
     # Program urls
     path('', program_view, name='programs'),
@@ -27,15 +26,29 @@ urlpatterns = [
     path('course/<slug>/documentations/<int:file_id>/edit/', handle_file_edit, name='upload_file_edit'),
     path('course/<slug>/documentations/<int:file_id>/delete/', handle_file_delete, name='upload_file_delete'),
 
-    # Video uploads urls
+    # Lesson urls
     path('course/<slug>/video/upload/', handle_video_upload, name='upload_video'),
     path('course/<slug>/video/<video_slug>/detail/', handle_video_single, name='video_single'),
-    path('course/<slug>/video/<video_slug>/edit/', handle_video_edit, name='upload_video_edit'),
-    path('course/<slug>/video/<video_slug>/delete/', handle_video_delete, name='upload_video_delete'),
+    path('course/<slug>/video/<uuid:video_id>/edit/', handle_video_edit, name='upload_video_edit'),
+    path('course/<slug>/video/<uuid:video_id>/delete/', handle_video_delete, name='upload_video_delete'),
 
-    # course registration
+    # Module creation
+    path('course/<slug:course_slug>/create_module/', create_module, name='create_module'),
+    path('<slug:course_slug>/module/<uuid:module_id>/update/', update_module, name='update_module'),
+    path('<slug:course_slug>/module/<uuid:module_id>/delete/', delete_module, name='delete_module'),
+
+    
+
+    # Course registration
     path('course/registration/', course_registration, name='course_registration'),
     path('course/drop/', course_drop, name='course_drop'),
     
     path('my_courses/', user_course_list, name="user_course_list"),
+
+    # Compiler view
+    path('compiler/', compiler, name='compiler'),
+    path('compiler/<int:lesson_id>/', compiler, name='compiler_with_lesson'),
+    path('projects/create/', create_project, name='create_project'),
+    path('projects/get_code/', get_project_code, name='get_project_code'),
+    path('delete_project/', delete_project, name='delete_project'),
 ]

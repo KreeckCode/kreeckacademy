@@ -12,7 +12,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm, Password
 from django.core.mail import send_mail
 from django.views.decorators.cache import cache_page
 from django.views.decorators.cache import cache_control
-from SMS.settings import DEBUG
+from kreeckacademy.settings import DEBUG
 from .decorators import lecturer_required, student_required, admin_required
 from course.models import Course
 from result.models import TakenCourse
@@ -359,3 +359,11 @@ class ParentAdd(CreateView):
 #             return redirect('student_list')
 #     else:
 #         form = ParentAddForm(request.POST)
+
+
+from django.contrib.auth import logout
+from django.urls import reverse
+
+def logout_view(request):
+    logout(request)
+    return redirect(reverse('landing_page'))
