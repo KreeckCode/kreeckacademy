@@ -11,19 +11,16 @@ jobs:
   # Build and Test job
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.8, 3.9, 3.10]
 
     steps:
     # Check out the repository
     - uses: actions/checkout@v4
 
     # Set up Python environment
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.10
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: "3.10"
 
     # Cache pip dependencies
     - name: Cache Dependencies
