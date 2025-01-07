@@ -4,7 +4,7 @@ name: Django CI/CD
 # Trigger the workflow on push to the production branch
 on:
   push:
-    branches: [ "production" ]
+    branches: [ "main" ]
 
 # Define the jobs in the workflow
 jobs:
