@@ -65,9 +65,22 @@ jobs:
         fi
 
     # Build and Push Docker Image
-    - name: Build and Push Docker Image
+    - name: Build and Push Docker Images
       run: |
-        docker buildx build --push --platform linux/amd64,linux/arm64 --tag kreeckdocker/kreeck-academy:latest .
+        # Build and push the app image
+        docker buildx build --push --platform linux/amd64,linux/arm64 \
+          --file DockerFile \
+          --tag kreeckdocker/kreeck-academy-app:latest .
+    
+        # Build and push the compiler image
+        docker buildx build --push --platform linux/amd64,linux/arm64 \
+          --file dockerfile.compiler \
+          --tag kreeckdocker/kreeck-academy-compiler:latest .
+    
+        # Build and push the nginx image
+        docker buildx build --push --platform linux/amd64,linux/arm64 \
+          --file nginx/Dockerfile \
+          --tag kreeckdocker/kreeck-academy-nginx:latest ./nginx
 
     # Deploy Docker Container
     - name: Deploy Docker Container
