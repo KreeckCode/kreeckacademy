@@ -6,7 +6,6 @@ on:
   push:
     branches: [ "main" ]
 
-# Define the jobs in the workflow
 jobs:
   # Build and Test job
   build:
@@ -57,26 +56,39 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Stop the running container (optional)
-    - name: Stop Running Container
-      run: |
-        if docker ps | grep -q kreeck-academy; then
-          docker stop kreeck-academy && docker rm kreeck-academy
-        fi
-
-    # Build and Push Docker Image
+    # Build and Push Docker Images
     - name: Build and Push Docker Images
       run: |
         # Build and push the app image
         docker buildx build --push --platform linux/amd64,linux/arm64 \
           --file DockerFile \
+          --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
+          --build-arg EMAIL_HOST=${{ secrets.EMAIL_HOST }} \
+          --build-arg EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} \
+          --build-arg EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} \
+          --build-arg EMAIL_PORT=${{ secrets.EMAIL_PORT }} \
+          --build-arg DEFAULT_FROM_EMAIL=${{ secrets.DEFAULT_FROM_EMAIL }} \
+          --build-arg EMAIL_USE_SSL=${{ secrets.EMAIL_USE_SSL }} \
+          --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+          --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+          --build-arg AWS_STORAGE_BUCKET_NAME=${{ secrets.AWS_STORAGE_BUCKET_NAME }} \
+          --build-arg AWS_S3_REGION_NAME=${{ secrets.AWS_S3_REGION_NAME }} \
+          --build-arg DB_NAME=${{ secrets.DB_NAME }} \
+          --build-arg DB_USER=${{ secrets.DB_USER }} \
+          --build-arg DB_PASS=${{ secrets.DB_PASS }} \
+          --build-arg DB_HOST=${{ secrets.DB_HOST }} \
+          --build-arg DB_PORT=${{ secrets.DB_PORT }} \
+          --build-arg STRIPE_LIVE_PUBLISHABLE_KEY=${{ secrets.STRIPE_LIVE_PUBLISHABLE_KEY }} \
+          --build-arg STRIPE_LIVE_SECRET_KEY=${{ secrets.STRIPE_LIVE_SECRET_KEY }} \
+          --build-arg STRIPE_TEST_SECRET_KEY=${{ secrets.STRIPE_TEST_SECRET_KEY }} \
+          --build-arg STRIPE_TEST_PUBLISHABLE_KEY=${{ secrets.STRIPE_TEST_PUBLISHABLE_KEY }} \
           --tag kreeckdocker/kreeck-academy-app:latest .
-    
+
         # Build and push the compiler image
         docker buildx build --push --platform linux/amd64,linux/arm64 \
           --file dockerfile.compiler \
           --tag kreeckdocker/kreeck-academy-compiler:latest .
-    
+
         # Build and push the nginx image
         docker buildx build --push --platform linux/amd64,linux/arm64 \
           --file nginx/Dockerfile \
@@ -85,4 +97,25 @@ jobs:
     # Deploy Docker Container
     - name: Deploy Docker Container
       run: |
-        docker run -d --name kreeck-academy --restart always -p 8000:8000 kreeckdocker/kreeck-academy:latest
+        docker run -d --name kreeck-academy --restart always -p 8000:8000 \
+          -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
+          -e EMAIL_HOST=${{ secrets.EMAIL_HOST }} \
+          -e EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} \
+          -e EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} \
+          -e EMAIL_PORT=${{ secrets.EMAIL_PORT }} \
+          -e DEFAULT_FROM_EMAIL=${{ secrets.DEFAULT_FROM_EMAIL }} \
+          -e EMAIL_USE_SSL=${{ secrets.EMAIL_USE_SSL }} \
+          -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+          -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+          -e AWS_STORAGE_BUCKET_NAME=${{ secrets.AWS_STORAGE_BUCKET_NAME }} \
+          -e AWS_S3_REGION_NAME=${{ secrets.AWS_S3_REGION_NAME }} \
+          -e DB_NAME=${{ secrets.DB_NAME }} \
+          -e DB_USER=${{ secrets.DB_USER }} \
+          -e DB_PASS=${{ secrets.DB_PASS }} \
+          -e DB_HOST=${{ secrets.DB_HOST }} \
+          -e DB_PORT=${{ secrets.DB_PORT }} \
+          -e STRIPE_LIVE_PUBLISHABLE_KEY=${{ secrets.STRIPE_LIVE_PUBLISHABLE_KEY }} \
+          -e STRIPE_LIVE_SECRET_KEY=${{ secrets.STRIPE_LIVE_SECRET_KEY }} \
+          -e STRIPE_TEST_SECRET_KEY=${{ secrets.STRIPE_TEST_SECRET_KEY }} \
+          -e STRIPE_TEST_PUBLISHABLE_KEY=${{ secrets.STRIPE_TEST_PUBLISHABLE_KEY }} \
+          kreeckdocker/kreeck-academy-app:latest
