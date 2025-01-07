@@ -1,21 +1,19 @@
 # Define the name of the workflow
 name: Django CI/CD
 
-# Specify the events that trigger the workflow
+# Trigger the workflow on push to the production branch
 on:
   push:
-    branches: [ "production" ]  # Trigger on push events to the production branch
-  pull_request:
-    branches: [ "production" ]  # Trigger on pull requests to the production branch
+    branches: [ "production" ]
 
 # Define the jobs in the workflow
 jobs:
   # Build and Test job
   build:
-    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9, 3.10]  # Test against multiple Python versions
+        python-version: [3.8, 3.9, 3.10]
 
     steps:
     # Check out the repository
@@ -42,24 +40,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    # Run tests and generate coverage report
+    # Run tests
     - name: Run Tests
       run: |
         python manage.py test
-        coverage run manage.py test
-        coverage report
-        coverage xml
 
-    # Upload test coverage to Codecov
-    - name: Upload Test Coverage
-      uses: codecov/codecov-action@v2
-      with:
-        file: ./coverage.xml
-
-  # Docker build and deploy job
+  # Docker build and push job
   deploy:
-    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
-    needs: build  # Run this job after the build job
+    runs-on: ubuntu-latest
+    needs: build
     steps:
     # Check out the repository
     - uses: actions/checkout@v4
@@ -75,42 +64,19 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Stop the running Docker container (optional based on your setup)
+    # Stop the running container (optional)
     - name: Stop Running Container
       run: |
-        if docker ps | grep -q my-django-app; then
-          docker stop my-django-app && docker rm my-django-app
+        if docker ps | grep -q kreeck-academy; then
+          docker stop kreeck-academy && docker rm kreeck-academy
         fi
 
-    # Build and push Docker image
+    # Build and Push Docker Image
     - name: Build and Push Docker Image
       run: |
-        docker buildx build --push --platform linux/amd64,linux/arm64 --tag ${{ secrets.DOCKER_USERNAME }}/my-django-app:latest .
+        docker buildx build --push --platform linux/amd64,linux/arm64 --tag kreeckdocker/kreeck-academy:latest .
 
-    # Deploy Docker container
+    # Deploy Docker Container
     - name: Deploy Docker Container
       run: |
-        docker run -d --name my-django-app --restart always -p 8000:8000 ${{ secrets.DOCKER_USERNAME }}/my-django-app:latest
-
-  # Database migrations job
-  migrations:
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-    - name: Apply Database Migrations
-      run: |
-        docker exec -it my-django-app python manage.py migrate
-
-  # Notification job
-  notify:
-    runs-on: ubuntu-latest
-    needs: [build, deploy, migrations]
-    steps:
-    - name: Send Slack Notification
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-        SLACK_COLOR: good
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-      with:
-        status: ${{ job.status }}
+        docker run -d --name kreeck-academy --restart always -p 8000:8000 kreeckdocker/kreeck-academy:latest
