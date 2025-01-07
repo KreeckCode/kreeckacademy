@@ -3,6 +3,7 @@ services:
     build: 
       context: .
       dockerfile: DockerFile
+    image: kreeckdocker/kreeck-academy:v1.0  # Specify the Docker Hub image and tag
     volumes:
       - .:/kreeckacademy
     ports:
@@ -16,6 +17,7 @@ services:
     build:
       context: .
       dockerfile: dockerfile.compiler
+    image: kreeckdocker/kreeck-academy:v1.
     volumes:
       - compiler_user_code:/home/compiler/user_code
     ports:
@@ -27,6 +29,7 @@ services:
     build: ./nginx
     ports:
       - "80:80"
+    image: kreeckdocker/kreeck-academy:v1.
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     networks:
