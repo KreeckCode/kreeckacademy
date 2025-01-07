@@ -55,40 +55,45 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Build and Push Docker Images
-    - name: Build and Push Docker Images
+    # Build and Push App Image
+    - name: Build and Push App Image
       run: |
-        # Build and push the app image
         docker buildx build --push --platform linux/amd64,linux/arm64 \
           --file DockerFile \
-          --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
-          --build-arg EMAIL_HOST=${{ secrets.EMAIL_HOST }} \
-          --build-arg EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} \
-          --build-arg EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} \
-          --build-arg EMAIL_PORT=${{ secrets.EMAIL_PORT }} \
-          --build-arg DEFAULT_FROM_EMAIL=${{ secrets.DEFAULT_FROM_EMAIL }} \
-          --build-arg EMAIL_USE_SSL=${{ secrets.EMAIL_USE_SSL }} \
-          --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
-          --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-          --build-arg AWS_STORAGE_BUCKET_NAME=${{ secrets.AWS_STORAGE_BUCKET_NAME }} \
-          --build-arg AWS_S3_REGION_NAME=${{ secrets.AWS_S3_REGION_NAME }} \
-          --build-arg DB_NAME=${{ secrets.DB_NAME }} \
-          --build-arg DB_USER=${{ secrets.DB_USER }} \
-          --build-arg DB_PASS=${{ secrets.DB_PASS }} \
-          --build-arg DB_HOST=${{ secrets.DB_HOST }} \
-          --build-arg DB_PORT=${{ secrets.DB_PORT }} \
-          --build-arg STRIPE_LIVE_PUBLISHABLE_KEY=${{ secrets.STRIPE_LIVE_PUBLISHABLE_KEY }} \
-          --build-arg STRIPE_LIVE_SECRET_KEY=${{ secrets.STRIPE_LIVE_SECRET_KEY }} \
-          --build-arg STRIPE_TEST_SECRET_KEY=${{ secrets.STRIPE_TEST_SECRET_KEY }} \
-          --build-arg STRIPE_TEST_PUBLISHABLE_KEY=${{ secrets.STRIPE_TEST_PUBLISHABLE_KEY }} \
-          --tag ${{ secrets.DOCKER_USERNAME }}/kreeck-academy-app:latest .
+          --tag ${{ secrets.DOCKER_USERNAME }}/kreeck-academy-app:latest . \
+          $(printf "%s " \
+            --build-arg SECRET_KEY="${{ secrets.SECRET_KEY }}" \
+            --build-arg EMAIL_HOST="${{ secrets.EMAIL_HOST }}" \
+            --build-arg EMAIL_HOST_USER="${{ secrets.EMAIL_HOST_USER }}" \
+            --build-arg EMAIL_HOST_PASSWORD="${{ secrets.EMAIL_HOST_PASSWORD }}" \
+            --build-arg EMAIL_PORT="${{ secrets.EMAIL_PORT }}" \
+            --build-arg DEFAULT_FROM_EMAIL="${{ secrets.DEFAULT_FROM_EMAIL }}" \
+            --build-arg EMAIL_USE_SSL="${{ secrets.EMAIL_USE_SSL }}" \
+            --build-arg AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}" \
+            --build-arg AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+            --build-arg AWS_STORAGE_BUCKET_NAME="${{ secrets.AWS_STORAGE_BUCKET_NAME }}" \
+            --build-arg AWS_S3_REGION_NAME="${{ secrets.AWS_S3_REGION_NAME }}" \
+            --build-arg DB_NAME="${{ secrets.DB_NAME }}" \
+            --build-arg DB_USER="${{ secrets.DB_USER }}" \
+            --build-arg DB_PASS="${{ secrets.DB_PASS }}" \
+            --build-arg DB_HOST="${{ secrets.DB_HOST }}" \
+            --build-arg DB_PORT="${{ secrets.DB_PORT }}" \
+            --build-arg STRIPE_LIVE_PUBLISHABLE_KEY="${{ secrets.STRIPE_LIVE_PUBLISHABLE_KEY }}" \
+            --build-arg STRIPE_LIVE_SECRET_KEY="${{ secrets.STRIPE_LIVE_SECRET_KEY }}" \
+            --build-arg STRIPE_TEST_SECRET_KEY="${{ secrets.STRIPE_TEST_SECRET_KEY }}" \
+            --build-arg STRIPE_TEST_PUBLISHABLE_KEY="${{ secrets.STRIPE_TEST_PUBLISHABLE_KEY }}" \
+          )
 
-        # Build and push the compiler image
+    # Build and Push Compiler Image
+    - name: Build and Push Compiler Image
+      run: |
         docker buildx build --push --platform linux/amd64,linux/arm64 \
           --file dockerfile.compiler \
           --tag ${{ secrets.DOCKER_USERNAME }}/kreeck-academy-compiler:latest .
 
-        # Build and push the nginx image
+    # Build and Push NGINX Image
+    - name: Build and Push NGINX Image
+      run: |
         docker buildx build --push --platform linux/amd64,linux/arm64 \
           --file nginx/Dockerfile \
           --tag ${{ secrets.DOCKER_USERNAME }}/kreeck-academy-nginx:latest ./nginx
