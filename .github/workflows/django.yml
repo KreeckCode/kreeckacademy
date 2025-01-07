@@ -36,7 +36,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-
   # Docker build and push job
   deploy:
     runs-on: ubuntu-latest
