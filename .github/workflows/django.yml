@@ -1,7 +1,7 @@
 # Define the name of the workflow
 name: Django CI/CD
 
-# Trigger the workflow on push to the production branch
+# Trigger the workflow on push to the main branch
 on:
   push:
     branches: [ "main" ]
@@ -82,17 +82,17 @@ jobs:
           --build-arg STRIPE_LIVE_SECRET_KEY=${{ secrets.STRIPE_LIVE_SECRET_KEY }} \
           --build-arg STRIPE_TEST_SECRET_KEY=${{ secrets.STRIPE_TEST_SECRET_KEY }} \
           --build-arg STRIPE_TEST_PUBLISHABLE_KEY=${{ secrets.STRIPE_TEST_PUBLISHABLE_KEY }} \
-          --tag kreeckdocker/kreeck-academy-app:latest .
+          --tag ${{ secrets.DOCKER_USERNAME }}/kreeck-academy-app:latest .
 
         # Build and push the compiler image
         docker buildx build --push --platform linux/amd64,linux/arm64 \
           --file dockerfile.compiler \
-          --tag kreeckdocker/kreeck-academy-compiler:latest .
+          --tag ${{ secrets.DOCKER_USERNAME }}/kreeck-academy-compiler:latest .
 
         # Build and push the nginx image
         docker buildx build --push --platform linux/amd64,linux/arm64 \
           --file nginx/Dockerfile \
-          --tag kreeckdocker/kreeck-academy-nginx:latest ./nginx
+          --tag ${{ secrets.DOCKER_USERNAME }}/kreeck-academy-nginx:latest ./nginx
 
     # Deploy Docker Container
     - name: Deploy Docker Container
@@ -118,4 +118,4 @@ jobs:
           -e STRIPE_LIVE_SECRET_KEY=${{ secrets.STRIPE_LIVE_SECRET_KEY }} \
           -e STRIPE_TEST_SECRET_KEY=${{ secrets.STRIPE_TEST_SECRET_KEY }} \
           -e STRIPE_TEST_PUBLISHABLE_KEY=${{ secrets.STRIPE_TEST_PUBLISHABLE_KEY }} \
-          kreeckdocker/kreeck-academy-app:latest
+          ${{ secrets.DOCKER_USERNAME }}/kreeck-academy-app:latest
