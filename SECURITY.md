@@ -17,7 +17,7 @@ To ensure the safety of our users and the integrity of our project, we take all 
 
 ### How to Report
 
-1. **Email**: Send an email to [security@example.com](mailto:security@example.com) with the details of the vulnerability. Include the following information:
+1. **Email**: Send an email to [info@kreeck.com](mailto:info@kreeck.com) with the details of the vulnerability. Include the following information:
    - A description of the vulnerability and its impact.
    - Steps to reproduce the vulnerability.
    - Any potential fixes or suggestions (if available).

@@ -3,7 +3,7 @@ services:
     build: 
       context: .
       dockerfile: DockerFile
-    image: kreeckdocker/kreeck-academy-app:v1.0  # Unique image name and tag
+    image: kreeckdocker/kreeck-academy-app:v1.5 
     volumes:
       - .:/kreeckacademy
     ports:
@@ -17,7 +17,7 @@ services:
     build:
       context: .
       dockerfile: dockerfile.compiler
-    image: kreeckdocker/kreeck-academy-compiler:v1.0  # Unique image name and tag
+    image: kreeckdocker/kreeck-academy-compiler:v1.5
     volumes:
       - compiler_user_code:/home/compiler/user_code
     ports:
@@ -27,7 +27,7 @@ services:
 
   nginx:
     build: ./nginx
-    image: kreeckdocker/kreeck-academy-nginx:v1.0  # Unique image name and tag
+    image: kreeckdocker/kreeck-academy-nginx:v1.5  # Unique image name and tag
     ports:
       - "80:80"
     volumes:
