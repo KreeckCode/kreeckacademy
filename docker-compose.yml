@@ -3,13 +3,12 @@ services:
     build: 
       context: .
       dockerfile: DockerFile
-    image: kreeckdocker/kreeck-academy-app:v1.5 
+    image: kreeckdocker/kreeck-academy-app:v1.6
     volumes:
       - .:/kreeckacademy
     ports:
       - "8000:8000"
-    env_file:
-      - .env
+      
     command: >
       sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     networks:
@@ -19,7 +18,7 @@ services:
     build:
       context: .
       dockerfile: dockerfile.compiler
-    image: kreeckdocker/kreeck-academy-compiler:v1.5
+    image: kreeckdocker/kreeck-academy-compiler:v1.6
     volumes:
       - compiler_user_code:/home/compiler/user_code
     ports:
@@ -29,7 +28,7 @@ services:
 
   nginx:
     build: ./nginx
-    image: kreeckdocker/kreeck-academy-nginx:v1.5  # Unique image name and tag
+    image: kreeckdocker/kreeck-academy-nginx:v1.6
     ports:
       - "80:80"
     volumes:
