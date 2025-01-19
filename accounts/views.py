@@ -274,6 +274,7 @@ def delete_staff(request, pk):
 # ########################################################
 
 def student_add_view(request):
+    
     if request.method == 'POST':
         form = StudentAddForm(request.POST)
         first_name = request.POST.get('first_name')
